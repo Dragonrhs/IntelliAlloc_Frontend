@@ -1,0 +1,148 @@
+/* Remove margens brancas e configura tamanho total da tela */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  color: white;
+}
+
+/* Estilização do formulário */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(3, 46, 236, 0.6);
+}
+
+/* Título */
+.login-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Card de login */
+.login-card {
+  background: transparent;
+  border: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Inputs */
+.custom-input {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-label {
+  font-size: 14px;
+}
+
+.input-field {
+  background-color: black;
+  border: 1px solid #0b08ce;
+  padding: 12px;
+  border-radius: 5px;
+  color: white;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.input-field:focus {
+  box-shadow: 0 0 8px #0b08ce;
+}
+
+/* Botão */
+.custom-button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 16px;
+  background: linear-gradient(to right, #0b08ce, #5d5dff);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-button:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 10px #0b08ce;
+}
+
+/* Criar conta */
+.register-text {
+  font-size: 12px;
+  color: #bbb;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.register-link {
+  color: #255bcf;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* Tela de carregamento */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  color: white;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #0b08ce;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
