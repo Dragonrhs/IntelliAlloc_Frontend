@@ -1,0 +1,63 @@
+/* Container principal */
+.history-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  /* Modo escuro e claro */
+  .history-container.dark-mode {
+    background-color: #000;
+  }
+  
+  .history-container.light-mode {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Conteúdo principal */
+  .history-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px 20px;
+    color: inherit;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .history-content h2 {
+    color: inherit;
+  }
+  
+  .history-content ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .history-content li {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    color: inherit;
+  }
+  
+  /* Modo escuro para itens da lista */
+  .history-container.dark-mode .history-content li {
+    background-color: #1a1a1a;
+  }
+  
+  /* Modo claro para itens da lista */
+  .history-container.light-mode .history-content li {
+    background-color: #f0f0f0;
+  }
+  
+  /* Mensagem de erro */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
+  }
