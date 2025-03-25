@@ -1,9 +1,16 @@
 import React from 'react';
-import AppRoutes from './routes';
-import './styles/global.css';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from './routes'; 
+import { ThemeProvider } from './context/ThemeContext'; 
 
 const App: React.FC = () => {
-  return <AppRoutes />;
+  return (
+    <ThemeProvider>
+      <Router>
+        <Routes /> 
+      </Router>
+    </ThemeProvider>
+  );
 };
 
 export default App;
