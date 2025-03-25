@@ -8,10 +8,8 @@ interface SidebarProps {
   isDarkMode: boolean;
   toggleTheme: () => void;
   onAddClient?: () => void;
-  onViewClients?: () => void;
-  onViewHistory?: () => void;
   isFullSidebar: boolean;
-  showBackButton?: boolean; // Nova prop para exibir o botão "Voltar"
+  showBackButton?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -20,23 +18,21 @@ const Sidebar: React.FC<SidebarProps> = ({
   isDarkMode,
   toggleTheme,
   onAddClient,
-  onViewClients,
-  onViewHistory,
   isFullSidebar,
-  showBackButton = false, // Valor padrão é false
+  showBackButton = false,
 }) => {
   const navigate = useNavigate();
 
+  const handleViewClients = () => {
+    navigate('/clients');
+  };
+
   const handleViewHistory = () => {
-    if (onViewHistory) {
-      onViewHistory();
-    } else {
-      navigate('/history');
-    }
+    navigate('/history');
   };
 
   const handleBack = () => {
-    navigate(-1); // Volta para a página anterior no histórico de navegação
+    navigate(-1);
   };
 
   return (
@@ -57,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <span className="sidebar-button">➕</span>
             {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
           </div>
-          <div className="sidebar-item" onClick={onViewClients}>
+          <div className="sidebar-item" onClick={handleViewClients}>
             <span className="sidebar-button">👥</span>
             {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
           </div>
