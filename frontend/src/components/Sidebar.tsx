@@ -25,10 +25,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
   const { role } = useTheme();
 
+  const handleViewHome = () => navigate('/home'); // Novo handler para Home
   const handleViewClients = () => navigate('/clients');
   const handleViewHistory = () => navigate('/history');
   const handleViewSystemHistory = () => navigate('/system-history');
-  const handleViewManagement = () => navigate('/management'); // Novo handler
+  const handleViewManagement = () => navigate('/management');
   const handleBack = () => navigate(-1);
 
   return (
@@ -47,36 +48,47 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="sidebar-middle">
-        {/* Adicionar Cliente - Disponível para todos exceto Research */}
-        {onAddClient && (
-          <div className="sidebar-item" onClick={onAddClient}>
-            <span className="sidebar-button">➕</span>
-            {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
-          </div>
-        )}
-        {/* Ver Clientes - Disponível para todos */}
-        <div className="sidebar-item" onClick={handleViewClients}>
-          <span className="sidebar-button">👥</span>
-          {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
+        {/* Botão Casa - Disponível para todos */}
+        <div className="sidebar-item" onClick={handleViewHome}>
+          <span className="sidebar-button">🏠</span>
+          {isExpanded && <span className="sidebar-text">Home</span>}
         </div>
-        {/* Histórico Pessoal - Disponível para todos */}
-        <div className="sidebar-item" onClick={handleViewHistory}>
-          <span className="sidebar-button">📜</span>
-          {isExpanded && <span className="sidebar-text">Histórico</span>}
-        </div>
-        {/* Histórico do Sistema - Disponível apenas para Admin */}
-        {role === 'Admin' && (
-          <div className="sidebar-item" onClick={handleViewSystemHistory}>
-            <span className="sidebar-button">🖥️</span>
-            {isExpanded && <span className="sidebar-text">Histórico do Sistema</span>}
-          </div>
-        )}
-        {/* Gerenciamento - Disponível apenas para Admin */}
-        {role === 'Admin' && (
-          <div className="sidebar-item" onClick={handleViewManagement}>
-            <span className="sidebar-button">⚙️</span>
-            {isExpanded && <span className="sidebar-text">Gerenciamento</span>}
-          </div>
+
+        {/* Funcionalidades restritas para não-Membro */}
+        {role !== 'Membro' && (
+          <>
+            {/* Adicionar Cliente - Disponível para todos exceto Research e Membro */}
+            {onAddClient && role !== 'Research' && (
+              <div className="sidebar-item" onClick={onAddClient}>
+                <span className="sidebar-button">➕</span>
+                {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
+              </div>
+            )}
+            {/* Ver Clientes - Disponível para todos exceto Membro */}
+            <div className="sidebar-item" onClick={handleViewClients}>
+              <span className="sidebar-button">👥</span>
+              {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
+            </div>
+            {/* Histórico Pessoal - Disponível para todos exceto Membro */}
+            <div className="sidebar-item" onClick={handleViewHistory}>
+              <span className="sidebar-button">📜</span>
+              {isExpanded && <span className="sidebar-text">Histórico</span>}
+            </div>
+            {/* Histórico do Sistema - Disponível apenas para Admin */}
+            {role === 'Admin' && (
+              <div className="sidebar-item" onClick={handleViewSystemHistory}>
+                <span className="sidebar-button">🖥️</span>
+                {isExpanded && <span className="sidebar-text">Histórico do Sistema</span>}
+              </div>
+            )}
+            {/* Gerenciamento - Disponível apenas para Admin */}
+            {role === 'Admin' && (
+              <div className="sidebar-item" onClick={handleViewManagement}>
+                <span className="sidebar-button">⚙️</span>
+                {isExpanded && <span className="sidebar-text">Gerenciamento</span>}
+              </div>
+            )}
+          </>
         )}
       </div>
 
