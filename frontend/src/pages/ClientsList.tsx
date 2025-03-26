@@ -80,25 +80,12 @@ const ClientsList: React.FC = () => {
             <ul>
               {clients.map((client) => (
                 <li key={client.id}>
-                  {client.client_name} (Pontuação: {client.score})
-                  <button
-                    onClick={() => handleViewClient(client.id)}
-                    style={{ marginLeft: '10px' }}
-                  >
-                    👁️
-                  </button>
-                  <button
-                    onClick={() => handleEditClient(client.id)}
-                    style={{ marginLeft: '10px' }}
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClient(client.id)}
-                    style={{ marginLeft: '10px' }}
-                  >
-                    🗑️
-                  </button>
+                  <span>{client.client_name} ({client.risk_profile || 'Não definido'})</span>
+                  <div className="client-actions">
+                    <button onClick={() => handleViewClient(client.id)}>👁️</button>
+                    <button onClick={() => handleEditClient(client.id)}>✏️</button>
+                    <button onClick={() => handleDeleteClient(client.id)}>🗑️</button>
+                  </div>
                 </li>
               ))}
             </ul>

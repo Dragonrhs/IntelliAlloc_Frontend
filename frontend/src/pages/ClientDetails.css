@@ -96,3 +96,101 @@
 .clients-list-container.light-mode .add-client-button:hover {
   background-color: #aaa;
 }
+
+.client-details-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.client-details-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.client-details-content h2 {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.client-details-card {
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  margin: 0 auto;
+}
+
+.client-details-field {
+  margin-bottom: 20px;
+}
+
+.client-details-field label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.client-details-field p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.client-details-field ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.client-details-field li {
+  margin-bottom: 5px;
+}
+
+.client-details-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.client-details-button {
+  min-width: 120px;
+}
+
+.client-details-button.delete {
+  background-color: #ff4d4d;
+}
+
+.client-details-button.delete:hover {
+  background-color: #cc0000;
+}
+
+.client-details-button.secondary {
+  background-color: #6c757d;
+}
+
+.client-details-button.secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Dark mode */
+.client-details-container.dark-mode {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.client-details-container.dark-mode .client-details-field label {
+  color: #fff;
+}
+
+/* Light mode */
+.client-details-container.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.client-details-container.light-mode .client-details-field label {
+  color: #333;
+}
