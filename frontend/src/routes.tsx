@@ -7,6 +7,7 @@ import ClientsList from './pages/ClientsList';
 import History from './pages/History';
 import Suitability from './pages/Suitability';
 import ClientDetails from './pages/ClientDetails';
+import SystemHistory from './pages/SystemHistory';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -28,6 +29,9 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para o histórico */}
       <Route path="/history" element={<History />} />
+
+      {/*Rota para o histórico do sistema */}
+      <Route path="/system-history" element={<SystemHistory />} />
 
       {/* Rota para o formulário de suitability (adicionar/editar cliente) */}
       <Route path="/suitability" element={<Suitability />} />
