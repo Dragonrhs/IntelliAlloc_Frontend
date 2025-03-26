@@ -1,0 +1,98 @@
+/* Container principal */
+.clients-list-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modo escuro e claro */
+.clients-list-container.dark-mode {
+  background-color: #000;
+}
+
+.clients-list-container.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Conteúdo principal */
+.clients-list-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 20px;
+  color: inherit;
+  transition: margin-left 0.3s ease;
+}
+
+.clients-list-content h2 {
+  color: inherit;
+}
+
+.clients-list-content ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.clients-list-content li {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  color: inherit;
+}
+
+/* Modo escuro para itens da lista */
+.clients-list-container.dark-mode .clients-list-content li {
+  background-color: #1a1a1a;
+}
+
+/* Modo claro para itens da lista */
+.clients-list-container.light-mode .clients-list-content li {
+  background-color: #f0f0f0;
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}
+
+/* Estilo do botão "+" */
+.add-client-button {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* Espaçamento acima do botão */
+}
+
+/* Modo escuro para o botão "+" */
+.clients-list-container.dark-mode .add-client-button {
+  background-color: #333;
+  color: #fff;
+}
+
+.clients-list-container.dark-mode .add-client-button:hover {
+  background-color: #555;
+}
+
+/* Modo claro para o botão "+" */
+.clients-list-container.light-mode .add-client-button {
+  background-color: #ccc;
+  color: #000;
+}
+
+.clients-list-container.light-mode .add-client-button:hover {
+  background-color: #aaa;
+}

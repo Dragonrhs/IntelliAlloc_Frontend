@@ -1,0 +1,79 @@
+/* Definir a cor padrão do texto como branco */
+body {
+  color: white;
+  margin: 0;
+}
+
+/* Container principal */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modo escuro e claro */
+.home-container.dark-mode {
+  background-color: #000;
+}
+
+.home-container.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Conteúdo principal */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 20px; 
+  text-align: center;
+  color: inherit;
+  transition: margin-left 0.3s ease;
+}
+
+/* Informações do usuário */
+.user-info {
+  margin-bottom: 20px;
+}
+
+/* Formulário de edição com CustomCard */
+.edit-form-card {
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Título do formulário de edição */
+.edit-form-card h3 {
+  color: inherit;
+}
+
+/* Botões do formulário de edição */
+.edit-form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Estilizar o botão "Excluir Usuário" */
+.login-button.delete {
+  background-color: #ff4d4d;
+}
+
+.login-button.delete:hover {
+  background-color: #cc0000;
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}

@@ -1,0 +1,49 @@
+.custom-input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .input-label {
+    font-size: 14px;
+  }
+  
+  .input-field {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  
+  /* Modo escuro */
+  .custom-input.dark-mode .input-label {
+    color: white;
+  }
+  
+  .custom-input.dark-mode .input-field {
+    background-color: #333;
+    color: white;
+    border-color: #555;
+  }
+  
+  /* Modo claro */
+  .custom-input.light-mode .input-label {
+    color: black;
+  }
+  
+  .custom-input.light-mode .input-field {
+    background-color: white;
+    color: black;
+    border-color: #ccc;
+  }
+  
+  /* Estilo neon (usado em algumas telas) */
+  .input-field.input-neon {
+    border: 2px solid #007bff;
+    box-shadow: 0 0 5px #007bff;
+  }
+  
+  .input-field.input-neon:focus {
+    outline: none;
+    box-shadow: 0 0 10px #007bff;
+  }

@@ -1,0 +1,109 @@
+/* Container principal */
+.suitability-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modo escuro e claro */
+.suitability-container.dark-mode {
+  background-color: #000;
+}
+
+.suitability-container.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Conteúdo principal */
+.suitability-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 20px;
+  color: inherit;
+  transition: margin-left 0.3s ease;
+}
+
+.suitability-content h2 {
+  color: inherit;
+}
+
+/* Card do formulário */
+.suitability-card {
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Campos do formulário */
+.suitability-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.suitability-field label {
+  color: inherit;
+  font-size: 14px;
+}
+
+.suitability-field select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Modo escuro para select */
+.suitability-container.dark-mode .suitability-field select {
+  background-color: #333;
+  color: white;
+  border-color: #555;
+}
+
+/* Modo claro para select */
+.suitability-container.light-mode .suitability-field select {
+  background-color: white;
+  color: black;
+  border-color: #ccc;
+}
+
+/* Grupo de checkboxes */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}
+
+/* Botões */
+.suitability-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.suitability-button {
+  margin-top: 10px;
+}

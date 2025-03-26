@@ -1,0 +1,212 @@
+/* Navbar */
+.navbar {
+    background-color: #007bff;
+    color: white;
+    padding: 0 20px; /* Removido o padding vertical para controlar a altura com height */
+    height: 60px; /* Altura fixa para o Navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Modo escuro */
+  .navbar.dark-mode {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Modo claro */
+  .navbar.light-mode {
+    background-color: #4a90e2;
+    color: black;
+  }
+  
+  /* Marca IntelliAlloc no centro */
+  .navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 60px; /* Alinha verticalmente com a altura do Navbar */
+  }
+  
+  /* Container do avatar (canto direito) */
+  .avatar-container {
+    margin-left: auto;
+    position: relative;
+  }
+  
+  /* Ícone do avatar */
+  .avatar-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Ajustar a cor do avatar com base no modo */
+  .navbar.dark-mode .avatar-icon {
+    background-color: #000;
+    color: white;
+  }
+  
+  .navbar.light-mode .avatar-icon {
+    background-color: #fff;
+    color: black;
+  }
+  
+  /* Tooltip (ao passar o mouse) */
+  .tooltip {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Ajustar a cor do tooltip com base no modo */
+  .navbar.dark-mode .tooltip {
+    background-color: #333;
+    color: white;
+  }
+  
+  .navbar.light-mode .tooltip {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  /* Menu dropdown (ao clicar) */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    width: 250px;
+    z-index: 1000;
+    padding: 10px 0;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Ajustar a cor do dropdown com base no modo */
+  .navbar.dark-mode .dropdown-menu {
+    background-color: #2c2c2c;
+  }
+  
+  .navbar.light-mode .dropdown-menu {
+    background-color: #f0f0f0;
+  }
+  
+  /* Cabeçalho do dropdown */
+  .dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #444;
+  }
+  
+  /* Ajustar a cor da borda do dropdown-header no modo claro */
+  .navbar.light-mode .dropdown-header {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Avatar grande no dropdown */
+  .avatar-large {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Ajustar a cor do avatar grande com base no modo */
+  .navbar.dark-mode .avatar-large {
+    background-color: #000;
+    color: white;
+  }
+  
+  .navbar.light-mode .avatar-large {
+    background-color: #fff;
+    color: black;
+  }
+  
+  /* Informações do usuário no dropdown */
+  .user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .username {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  /* Ajustar a cor do username com base no modo */
+  .navbar.dark-mode .username {
+    color: white;
+  }
+  
+  .navbar.light-mode .username {
+    color: black;
+  }
+  
+  .email {
+    font-size: 14px;
+  }
+  
+  /* Ajustar a cor do email com base no modo */
+  .navbar.dark-mode .email {
+    color: #aaa;
+  }
+  
+  .navbar.light-mode .email {
+    color: #666;
+  }
+  
+  /* Itens do dropdown */
+  .dropdown-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Ajustar a cor dos itens do dropdown com base no modo */
+  .navbar.dark-mode .dropdown-item {
+    color: white;
+  }
+  
+  .navbar.dark-mode .dropdown-item:hover {
+    background-color: #444;
+  }
+  
+  .navbar.light-mode .dropdown-item {
+    color: black;
+  }
+  
+  .navbar.light-mode .dropdown-item:hover {
+    background-color: #ddd;
+  }

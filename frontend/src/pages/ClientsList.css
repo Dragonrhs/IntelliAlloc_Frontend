@@ -1,0 +1,58 @@
+/* Container principal */
+.clients-list-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modo escuro e claro */
+.clients-list-container.dark-mode {
+  background-color: #000;
+}
+
+.clients-list-container.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Conteúdo principal */
+.clients-list-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 20px;
+  color: inherit;
+  transition: margin-left 0.3s ease;
+}
+
+.clients-list-content h2 {
+  color: inherit;
+}
+
+.clients-list-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.clients-list-content li {
+  margin: 10px 0;
+  color: inherit;
+  display: flex;
+  align-items: center;
+}
+
+.clients-list-content button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}

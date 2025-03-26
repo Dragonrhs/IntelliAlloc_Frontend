@@ -1,141 +1,118 @@
-/* Remove margens brancas e configura tamanho total da tela */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 /* Container principal */
 .login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modo escuro e claro */
+.login-container.dark-mode {
+  background-color: #000;
+}
+
+.login-container.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Conteúdo principal */
+.login-content {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  color: white;
+  padding: 80px 20px 20px;
+  transition: margin-left 0.3s ease;
 }
 
-/* Estilização do formulário */
+/* Formulário de login */
 .login-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(3, 46, 236, 0.6);
-}
-
-/* Título */
-.login-title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 20px;
   text-align: center;
+  color: inherit;
 }
 
-/* Card de login */
-.login-card {
-  background: transparent;
-  border: none;
-  width: 100%;
+/* Título do formulário */
+.login-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: inherit;
+}
+
+.login-title .dot {
+  color: #007bff;
+}
+
+/* Estilizar o conteúdo do formulário para manter o espaçamento */
+.form-content {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Inputs */
-.custom-input {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.input-label {
-  font-size: 14px;
-}
-
-.input-field {
-  background-color: black;
-  border: 1px solid #0b08ce;
-  padding: 12px;
-  border-radius: 5px;
-  color: white;
-  outline: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.input-field:focus {
-  box-shadow: 0 0 8px #0b08ce;
-}
-
-/* Botão */
-.custom-button {
+/* Garantir que o card tenha padding interno */
+.login-card {
+  padding: 20px;
   width: 100%;
-  padding: 12px;
-  border-radius: 5px;
-  font-size: 16px;
-  background: linear-gradient(to right, #0b08ce, #5d5dff);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  max-width: 400px;
+  background-color: #1a1a1a;
 }
 
-.custom-button:hover {
-  opacity: 0.9;
-  box-shadow: 0 0 10px #0b08ce;
+.login-container.light-mode .login-card {
+  background-color: #f0f0f0;
 }
 
-/* Criar conta */
-.register-text {
-  font-size: 12px;
-  color: #bbb;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.register-link {
-  color: #255bcf;
-  text-decoration: none;
-}
-
-.register-link:hover {
-  text-decoration: underline;
-}
-
-/* Mensagem de erro */
+/* Ajustar a mensagem de erro para não interferir no espaçamento */
 .error-message {
+  margin: 0;
   color: red;
   font-size: 14px;
   text-align: center;
-  margin-top: 5px;
+}
+
+/* Garantir que os botões tenham espaçamento entre si */
+.login-button + .login-button {
+  margin-top: 10px;
+}
+
+/* Links abaixo do formulário */
+.login-links {
+  margin-top: 20px;
+}
+
+.register-text,
+.forgot-password-text {
+  color: inherit;
+  font-size: 14px;
+}
+
+.register-link,
+.forgot-password-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-link:hover,
+.forgot-password-link:hover {
+  text-decoration: underline;
 }
 
 /* Tela de carregamento */
 .loading-screen {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 100vw;
+  justify-content: center;
   height: 100vh;
-  background-color: black;
-  color: white;
+  color: inherit;
 }
 
 .spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top: 4px solid #0b08ce;
-  border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 10px;
 }
 
 @keyframes spin {

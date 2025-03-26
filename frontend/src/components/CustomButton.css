@@ -1,0 +1,76 @@
+.custom-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Modo escuro */
+  .custom-button.dark-mode {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .custom-button.dark-mode:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Modo claro */
+  .custom-button.light-mode {
+    background-color: #4a90e2;
+    color: white;
+  }
+  
+  .custom-button.light-mode:hover {
+    background-color: #357ab8;
+  }
+  
+  /* Estilo secundário (usado em botões como "Voltar") */
+  .custom-button.secondary {
+    background-color: #6c757d;
+  }
+  
+  .custom-button.secondary:hover {
+    background-color: #5a6268;
+  }
+  
+  /* Estilo para botão de exclusão */
+  .custom-button.delete {
+    background-color: #ff4d4d;
+  }
+  
+  .custom-button.delete:hover {
+    background-color: #cc0000;
+  }
+  
+  /* Estilo específico para botões na barra lateral */
+  .custom-button.sidebar-button {
+    background-color: transparent; /* Fundo transparente para herdar a cor da barra lateral */
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Ajustar a cor do texto/icon no modo escuro */
+  .custom-button.sidebar-button.dark-mode {
+    color: white;
+  }
+  
+  .custom-button.sidebar-button.dark-mode:hover {
+    background-color: #333; /* Cor de hover no modo escuro */
+  }
+  
+  /* Ajustar a cor do texto/icon no modo claro */
+  .custom-button.sidebar-button.light-mode {
+    color: black;
+  }
+  
+  .custom-button.sidebar-button.light-mode:hover {
+    background-color: #ccc; /* Cor de hover no modo claro */
+  }

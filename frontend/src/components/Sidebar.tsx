@@ -1,0 +1,76 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Sidebar.css';
+
+interface SidebarProps {
+  isExpanded: boolean;
+  toggleSidebar: () => void;
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+  onAddClient?: () => void;
+  isFullSidebar: boolean;
+  showBackButton?: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({
+  isExpanded,
+  toggleSidebar,
+  isDarkMode,
+  toggleTheme,
+  onAddClient,
+  isFullSidebar,
+  showBackButton = false,
+}) => {
+  const navigate = useNavigate();
+
+  const handleViewClients = () => {
+    navigate('/clients');
+  };
+
+  const handleViewHistory = () => {
+    navigate('/history');
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  return (
+    <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className="sidebar-item" onClick={toggleSidebar}>
+        <span className="sidebar-button">{isExpanded ? '←' : '→'}</span>
+        {isExpanded && <span className="sidebar-text">Menu</span>}
+      </div>
+      {showBackButton && (
+        <div className="sidebar-item" onClick={handleBack}>
+          <span className="sidebar-button">↩</span>
+          {isExpanded && <span className="sidebar-text">Voltar</span>}
+        </div>
+      )}
+      {isFullSidebar && (
+        <>
+          <div className="sidebar-item" onClick={onAddClient}>
+            <span className="sidebar-button">➕</span>
+            {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
+          </div>
+          <div className="sidebar-item" onClick={handleViewClients}>
+            <span className="sidebar-button">👥</span>
+            {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
+          </div>
+          <div className="sidebar-item" onClick={handleViewHistory}>
+            <span className="sidebar-button">📜</span>
+            {isExpanded && <span className="sidebar-text">Histórico</span>}
+          </div>
+        </>
+      )}
+      <div className="sidebar-bottom">
+        <div className="sidebar-item" onClick={toggleTheme}>
+          <span className="sidebar-button">{isDarkMode ? '☀️' : '🌙'}</span>
+          {isExpanded && <span className="sidebar-text">{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
