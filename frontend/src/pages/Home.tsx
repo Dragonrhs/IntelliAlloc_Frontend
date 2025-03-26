@@ -6,6 +6,7 @@ import CustomButton from '../components/CustomButton';
 import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import { useTheme } from '../context/ThemeContext';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -14,9 +15,8 @@ const Home: React.FC = () => {
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const navigate = useNavigate();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, role, setRole } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,13 +27,14 @@ const Home: React.FC = () => {
         setData(response.data);
         setEditUsername(response.data.message.split('Bem-vindo ')[1].replace('!', ''));
         setEditEmail(response.data.email);
+        setRole(response.data.role); // Atualiza o role no ThemeContext
       } catch (error) {
         console.error('Erro ao acessar home:', error);
         navigate('/');
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, setRole]);
 
   const handleEditClient = (clientId: number) => {
     navigate(`/suitability/${clientId}`);
@@ -75,14 +76,6 @@ const Home: React.FC = () => {
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
   if (!data) return <div>Carregando...</div>;
 
   return (
@@ -93,6 +86,7 @@ const Home: React.FC = () => {
         email={editEmail}
         isDarkMode={isDarkMode}
         onEditProfile={() => setShowEditForm(true)}
+        role={role} // Passa o role para a Navbar
       />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -107,6 +101,7 @@ const Home: React.FC = () => {
           <div className="user-info">
             <p>{data.message}</p>
             <p>Email: {data.email}</p>
+            <p>Cargo: {role}</p> {/* Usa apenas role do ThemeContext */}
             <p>Criado em: {data.created_at}</p>
             <p>Último acesso: {data.last_access}</p>
           </div>

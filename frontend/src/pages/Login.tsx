@@ -5,7 +5,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar'; // Importar o novo componente Navbar
+import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import './Login.css';
 
@@ -20,18 +20,19 @@ const Login: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, toggleTheme, setRole } = useTheme();
 
   const handleLogin = async () => {
     setErrorMessage('');
     setLoading(true);
 
     try {
-      await axios.post(
+      const response = await axios.post(
         'http://localhost:5000/login',
         { username, password },
         { withCredentials: true }
       );
+      setRole(response.data.role);  
 
       setTimeout(() => {
         navigate('/home');
