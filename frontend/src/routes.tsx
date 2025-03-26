@@ -8,6 +8,7 @@ import History from './pages/History';
 import Suitability from './pages/Suitability';
 import ClientDetails from './pages/ClientDetails';
 import SystemHistory from './pages/SystemHistory';
+import Management from './pages/Management';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -39,6 +40,9 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para detalhes de um cliente específico */}
       <Route path="/client/:clientId" element={<ClientDetails />} />
+
+      {/* Rota para gerenciamento de usuários */}
+      <Route path="/management" element={<Management />} />
 
       {/* Rota para páginas não encontradas (404) */}
       <Route path="*" element={<div>404 - Página não encontrada</div>} />
