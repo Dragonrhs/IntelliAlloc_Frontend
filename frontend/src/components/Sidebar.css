@@ -1,69 +1,76 @@
-/* Barra lateral */
 .sidebar {
-  background-color: #1a1a1a;
+  width: 60px;
+  height: 100vh;
   position: fixed;
-  top: 60px;
+  top: 0;
   left: 0;
-  bottom: 0;
+  background-color: #f0f0f0;
+  transition: width 0.3s;
   display: flex;
   flex-direction: column;
-  z-index: 900;
-  transition: width 0.3s ease, background-color 0.3s ease;
-}
-
-.sidebar.collapsed {
-  width: 60px;
+  justify-content: space-between;
+  z-index: 1000;
 }
 
 .sidebar.expanded {
   width: 200px;
 }
 
-/* Ajustar a cor da barra lateral com base no modo */
-.sidebar.dark-mode {
-  background-color: #1a1a1a;
+.sidebar-item {
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #333; /* Cor padrão do texto e ícones no modo claro */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.sidebar.light-mode {
+.sidebar-item:hover {
   background-color: #e0e0e0;
 }
 
-/* Itens da barra lateral */
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  color: inherit;
-  cursor: pointer; /* Adiciona o cursor de "mão" ao passar o mouse */
-}
-
-/* Efeito de hover nos itens da barra lateral */
-.sidebar-item:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Adiciona um leve efeito de hover */
-}
-
-/* Botão da barra lateral */
 .sidebar-button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
   font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-right: 10px;
+  min-width: 24px;
+  text-align: center;
 }
 
-/* Texto da barra lateral (visível apenas quando expandida) */
 .sidebar-text {
-  margin-left: 10px;
-  display: none;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .sidebar.expanded .sidebar-text {
-  display: inline;
+  opacity: 1;
 }
 
-/* Itens na parte inferior da barra lateral */
+/* Dark mode */
+.dark-mode .sidebar {
+  background-color: #1e1e1e; /* Fundo escuro */
+}
+
+.dark-mode .sidebar-item {
+  color: #fff; /* Texto e ícones brancos no modo escuro */
+}
+
+.dark-mode .sidebar-item:hover {
+  background-color: #353535; /* Hover escuro */
+}
+
+/* Organização dos itens */
+.sidebar-top {
+  flex: 0;
+}
+
+.sidebar-middle {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .sidebar-bottom {
+  flex: 0;
   margin-top: auto;
 }

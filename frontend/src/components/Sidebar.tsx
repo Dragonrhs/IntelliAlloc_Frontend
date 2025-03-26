@@ -28,46 +28,58 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleViewClients = () => navigate('/clients');
   const handleViewHistory = () => navigate('/history');
   const handleViewSystemHistory = () => navigate('/system-history');
+  const handleViewManagement = () => navigate('/management'); // Novo handler
   const handleBack = () => navigate(-1);
 
   return (
-    <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <div className="sidebar-item" onClick={toggleSidebar}>
-        <span className="sidebar-button">{isExpanded ? '←' : '→'}</span>
-        {isExpanded && <span className="sidebar-text">Menu</span>}
-      </div>
-      {showBackButton && (
-        <div className="sidebar-item" onClick={handleBack}>
-          <span className="sidebar-button">↩</span>
-          {isExpanded && <span className="sidebar-text">Voltar</span>}
+    <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className="sidebar-top">
+        <div className="sidebar-item" onClick={toggleSidebar}>
+          <span className="sidebar-button">{isExpanded ? '←' : '→'}</span>
+          {isExpanded && <span className="sidebar-text">Menu</span>}
         </div>
-      )}
-      {isFullSidebar && (
-        <>
-          {/* Adicionar Cliente - Disponível para todos exceto Research */}
+        {showBackButton && (
+          <div className="sidebar-item" onClick={handleBack}>
+            <span className="sidebar-button">↩</span>
+            {isExpanded && <span className="sidebar-text">Voltar</span>}
+          </div>
+        )}
+      </div>
+
+      <div className="sidebar-middle">
+        {/* Adicionar Cliente - Disponível para todos exceto Research */}
+        {onAddClient && (
           <div className="sidebar-item" onClick={onAddClient}>
             <span className="sidebar-button">➕</span>
             {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
           </div>
-          {/* Ver Clientes - Disponível para todos */}
-          <div className="sidebar-item" onClick={handleViewClients}>
-            <span className="sidebar-button">👥</span>
-            {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
+        )}
+        {/* Ver Clientes - Disponível para todos */}
+        <div className="sidebar-item" onClick={handleViewClients}>
+          <span className="sidebar-button">👥</span>
+          {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
+        </div>
+        {/* Histórico Pessoal - Disponível para todos */}
+        <div className="sidebar-item" onClick={handleViewHistory}>
+          <span className="sidebar-button">📜</span>
+          {isExpanded && <span className="sidebar-text">Histórico</span>}
+        </div>
+        {/* Histórico do Sistema - Disponível apenas para Admin */}
+        {role === 'Admin' && (
+          <div className="sidebar-item" onClick={handleViewSystemHistory}>
+            <span className="sidebar-button">🖥️</span>
+            {isExpanded && <span className="sidebar-text">Histórico do Sistema</span>}
           </div>
-          {/* Histórico Pessoal - Disponível para todos */}
-          <div className="sidebar-item" onClick={handleViewHistory}>
-            <span className="sidebar-button">📜</span>
-            {isExpanded && <span className="sidebar-text">Histórico</span>}
+        )}
+        {/* Gerenciamento - Disponível apenas para Admin */}
+        {role === 'Admin' && (
+          <div className="sidebar-item" onClick={handleViewManagement}>
+            <span className="sidebar-button">⚙️</span>
+            {isExpanded && <span className="sidebar-text">Gerenciamento</span>}
           </div>
-          {/* Histórico do Sistema - Disponível apenas para Admin */}
-          {role === 'Admin' && (
-            <div className="sidebar-item" onClick={handleViewSystemHistory}>
-              <span className="sidebar-button">🖥️</span>
-              {isExpanded && <span className="sidebar-text">Histórico do Sistema</span>}
-            </div>
-          )}
-        </>
-      )}
+        )}
+      </div>
+
       <div className="sidebar-bottom">
         <div className="sidebar-item" onClick={toggleTheme}>
           <span className="sidebar-button">{isDarkMode ? '☀️' : '🌙'}</span>
