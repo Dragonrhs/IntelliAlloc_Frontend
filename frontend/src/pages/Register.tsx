@@ -41,14 +41,15 @@ const Register: React.FC = () => {
   return (
     <div className={`register-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
-      <Sidebar
-        isExpanded={isSidebarExpanded}
-        toggleSidebar={toggleSidebar}
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
-        isFullSidebar={false}
-      />
-      <div className="register-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+      <div className="register-content">
+        <div className="theme-toggle-container">
+          <button 
+            className={`theme-toggle-button ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+            onClick={toggleTheme}
+          >
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
+        </div>
         <h2>Registrar</h2>
         <CustomCard className="register-card" isDarkMode={isDarkMode}>
           <CustomInput
@@ -75,6 +76,7 @@ const Register: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             label="Senha"
+            className="input-neon"
             isDarkMode={isDarkMode}
           />
           {errorMessage && <p className="error-message">{errorMessage}</p>}

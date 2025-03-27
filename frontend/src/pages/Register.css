@@ -2,17 +2,19 @@
 .register-container {
   min-height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  position: relative;
 }
 
 /* Modo escuro e claro */
 .register-container.dark-mode {
-  background-color: #000;
+  background-color: #1a1a1a;
+  color: #fff;
 }
 
 .register-container.light-mode {
-  background-color: #fff;
-  color: #000;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 /* Conteúdo principal */
@@ -23,38 +25,81 @@
   align-items: center;
   justify-content: center;
   padding: 80px 20px 20px;
-  color: inherit;
-  transition: margin-left 0.3s ease;
 }
 
 .register-content h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
   color: inherit;
+  text-align: center;
 }
 
-/* Garantir que o card tenha padding interno */
+/* Botão de alternar tema */
+.theme-toggle-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.theme-toggle-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-button.light-mode {
+  background-color: #f0f0f0;
+}
+
+.theme-toggle-button.dark-mode {
+  background-color: #2c2c2c;
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Card de registro */
 .register-card {
-  padding: 20px;
   width: 100%;
   max-width: 400px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  background-color: #1a1a1a;
+  gap: 20px;
 }
 
 .register-container.light-mode .register-card {
   background-color: #f0f0f0;
 }
 
-/* Ajustar a mensagem de erro para não interferir no espaçamento */
+/* Mensagem de erro */
 .error-message {
-  margin: 0;
   color: red;
   font-size: 14px;
   text-align: center;
+  margin: 10px 0;
 }
 
-/* Garantir que os botões tenham espaçamento entre si */
-.login-button + .login-button {
+/* Botões */
+.login-button {
+  width: 100%;
   margin-top: 10px;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.login-button.secondary {
+  background-color: #6c757d;
+}
+
+.login-button.secondary:hover {
+  background-color: #5a6268;
 }

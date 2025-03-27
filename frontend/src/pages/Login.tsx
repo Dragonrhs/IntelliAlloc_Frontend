@@ -103,14 +103,7 @@ const Login: React.FC = () => {
   return (
     <div className={`login-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
-      <Sidebar
-        isExpanded={isSidebarExpanded}
-        toggleSidebar={toggleSidebar}
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
-        isFullSidebar={false}
-      />
-      <div className="login-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+      <div className="login-content">
         {loading ? (
           <div className="loading-screen">
             <div className="spinner"></div>
@@ -118,6 +111,14 @@ const Login: React.FC = () => {
           </div>
         ) : (
           <div className="login-form">
+            <div className="theme-toggle-container">
+              <button 
+                className={`theme-toggle-button ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+                onClick={toggleTheme}
+              >
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
+            </div>
             <h2 className="login-title">
               {resetStep === 'login' ? 'Faça seu login' : resetStep === 'request' ? 'Redefinir Senha' : 'Verificar Código'}
             </h2>
@@ -139,6 +140,7 @@ const Login: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     label="Senha"
+                    className="input-neon"
                     isDarkMode={isDarkMode}
                   />
                   {errorMessage && <p className="error-message">{errorMessage}</p>}
