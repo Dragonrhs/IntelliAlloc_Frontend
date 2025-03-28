@@ -3,15 +3,18 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
-  isSidebarExpanded: boolean; // Adicionando o estado da barra lateral
-  toggleSidebar: () => void; // Adicionando a função para alternar o estado
+  isSidebarExpanded: boolean;
+  toggleSidebar: () => void;
+  role: string | undefined; 
+  setRole: (role: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Estado global para a barra lateral
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [role, setRole] = useState<string | undefined>(undefined); // Estado inicial como undefined
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -22,7 +25,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, role, setRole }}>
       {children}
     </ThemeContext.Provider>
   );

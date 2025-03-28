@@ -56,6 +56,24 @@
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
+  .user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .username {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .email {
+    font-size: 14px;
+  }
+  
+  .role {
+    font-size: 14px;
+    font-style: italic;
+  }
   
   /* Ajustar a cor do avatar com base no modo */
   .navbar.dark-mode .avatar-icon {
@@ -83,28 +101,33 @@
   }
   
   /* Ajustar a cor do tooltip com base no modo */
-  .navbar.dark-mode .tooltip {
-    background-color: #333;
-    color: white;
-  }
-  
-  .navbar.light-mode .tooltip {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  /* Menu dropdown (ao clicar) */
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    width: 250px;
-    z-index: 1000;
-    padding: 10px 0;
-    transition: background-color 0.3s ease;
-  }
+.navbar.dark-mode .tooltip {
+  background-color: #333;
+  color: white;
+}
+
+.navbar.light-mode .tooltip {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Estilo para o role no tooltip */
+.tooltip div:nth-child(3) {
+  font-style: italic;
+}
+
+/* Menu dropdown (ao clicar) */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  width: 250px;
+  z-index: 1000;
+  padding: 10px 0;
+  transition: background-color 0.3s ease;
+}
   
   /* Ajustar a cor do dropdown com base no modo */
   .navbar.dark-mode .dropdown-menu {

@@ -73,8 +73,8 @@ const ClientDetails: React.FC = () => {
             <p>{client.client_name}</p>
           </div>
           <div className="client-details-field">
-            <label>Pontuação:</label>
-            <p>{client.score}</p>
+            <label>Perfil:</label>
+            <p>{client.risk_profile}</p>
           </div>
           <div className="client-details-field">
             <label>1. Duração Planejada para o Investimento:</label>
