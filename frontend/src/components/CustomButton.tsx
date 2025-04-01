@@ -2,19 +2,27 @@ import React from 'react';
 import './CustomButton.css';
 
 interface CustomButtonProps {
-  text: string;
   onClick: () => void;
+  isDarkMode: boolean;
+  disabled?: boolean;
   className?: string;
-  isDarkMode?: boolean; // Adicionada prop para modo escuro/claro
+  children: React.ReactNode;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ text, onClick, className, isDarkMode }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({ 
+  children, 
+  onClick, 
+  className, 
+  isDarkMode,
+  disabled 
+}) => {
   return (
     <button
       className={`custom-button ${className || ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
       onClick={onClick}
+      disabled={disabled}
     >
-      {text}
+      {children}
     </button>
   );
 };

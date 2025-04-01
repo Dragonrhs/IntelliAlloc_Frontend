@@ -1,50 +1,113 @@
 .sidebar {
-  width: 60px;
-  height: 100vh;
   position: fixed;
-  top: 0;
   left: 0;
-  background-color: #f0f0f0;
-  transition: width 0.3s;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  background-color: #1a1a1a;
+  transition: width 0.3s ease;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  z-index: 1000;
-}
-
-.sidebar.expanded {
-  width: 200px;
-}
-
-.sidebar-item {
-  padding: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  color: #333; /* Cor padrão do texto e ícones no modo claro */
-  white-space: nowrap;
   overflow: hidden;
 }
 
+.sidebar.expanded {
+  width: 250px;
+  padding-right: 0;
+}
+
+.sidebar-top {
+  padding: 20px 0;
+  border-bottom: 1px solid #333;
+  width: 100%;
+}
+
+.sidebar-middle {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.sidebar-bottom {
+  padding: 20px 0;
+  border-top: 1px solid #333;
+  width: 100%;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .sidebar-item:hover {
-  background-color: #e0e0e0;
+  background-color: #333;
 }
 
 .sidebar-button {
   font-size: 20px;
   margin-right: 10px;
-  min-width: 24px;
+  min-width: 20px;
   text-align: center;
 }
 
 .sidebar-text {
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebar.expanded .sidebar-text {
   opacity: 1;
+}
+
+/* Modo claro */
+.sidebar.light-mode {
+  background-color: #f8f9fa;
+}
+
+.sidebar.light-mode .sidebar-top,
+.sidebar.light-mode .sidebar-bottom {
+  border-color: #dee2e6;
+}
+
+.sidebar.light-mode .sidebar-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Estilo para o scrollbar */
+.sidebar-middle::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-middle::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-middle::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 3px;
+}
+
+.sidebar-middle::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Ajuste para o modo claro */
+.sidebar.light-mode .sidebar-middle::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+
+.sidebar.light-mode .sidebar-middle::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
 }
 
 /* Dark mode */
@@ -68,9 +131,45 @@
 .sidebar-middle {
   flex: 1;
   overflow-y: auto;
+  padding: 10px 0;
 }
 
 .sidebar-bottom {
   flex: 0;
   margin-top: auto;
+  border-top: 1px solid #ddd;
+}
+
+.dark-mode .sidebar-bottom {
+  border-top-color: #444;
+}
+
+/* Estilos específicos para os novos botões */
+.sidebar-item[onClick*="recommended-portfolio"] {
+  border-left: 3px solid transparent;
+  transition: border-left-color 0.3s;
+}
+
+.sidebar-item[onClick*="recommended-portfolio"]:hover {
+  border-left-color: #4a90e2;
+}
+
+.dark-mode .sidebar-item[onClick*="recommended-portfolio"]:hover {
+  border-left-color: #007bff;
+}
+
+/* Ajuste de espaçamento para os novos itens */
+.sidebar-middle .sidebar-item {
+  margin: 2px 0;
+}
+
+/* Estilo para itens ativos */
+.sidebar-item.active {
+  background-color: #e0e0e0;
+  border-left: 3px solid #4a90e2;
+}
+
+.dark-mode .sidebar-item.active {
+  background-color: #353535;
+  border-left-color: #007bff;
 }
