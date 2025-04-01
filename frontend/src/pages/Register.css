@@ -69,11 +69,12 @@
 /* Card de registro */
 .register-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
   padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-items: center;
 }
 
 .register-container.light-mode .register-card {
@@ -102,4 +103,37 @@
 
 .login-button.secondary:hover {
   background-color: #5a6268;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+  text-align: center;
+  width: 100%;
+}
+
+.input-group .custom-input {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.dark-mode .input-group label {
+  color: #ffffff;
+}
+
+.light-mode .input-group label {
+  color: #333333;
 }

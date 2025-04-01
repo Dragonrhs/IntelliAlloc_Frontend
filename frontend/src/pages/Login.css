@@ -32,6 +32,9 @@
   max-width: 400px;
   text-align: center;
   color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Botão de alternar tema */
@@ -90,6 +93,9 @@
   width: 100%;
   max-width: 400px;
   background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .login-container.light-mode .login-card {
@@ -157,4 +163,48 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.input-group {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+  text-align: center;
+  width: 100%;
+}
+
+.input-group .custom-input {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.dark-mode .input-group label {
+  color: #ffffff;
+}
+
+.light-mode .input-group label {
+  color: #333333;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.button-group .login-button {
+  min-width: 120px;
 }
