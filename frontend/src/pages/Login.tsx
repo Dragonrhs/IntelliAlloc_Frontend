@@ -123,126 +123,113 @@ const Login: React.FC = () => {
               {resetStep === 'login' ? 'Faça seu login' : resetStep === 'request' ? 'Redefinir Senha' : 'Verificar Código'}
             </h2>
             <CustomCard className="login-card" isDarkMode={isDarkMode}>
+              {resetStep === 'login' ? (
+                <>
+                  <div className="input-group">
+                    <label htmlFor="username">Usuário</label>
+                    <CustomInput
+                      id="username"
+                      type="text"
+                      placeholder="Digite seu usuário"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="input-neon"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="password">Senha</label>
+                    <CustomInput
+                      id="password"
+                      type="password"
+                      placeholder="Digite sua senha"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input-neon"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                </>
+              ) : resetStep === 'request' ? (
+                <div className="input-group">
+                  <label htmlFor="email">E-mail</label>
+                  <CustomInput
+                    id="email"
+                    type="email"
+                    placeholder="Digite seu e-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-neon"
+                    isDarkMode={isDarkMode}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="input-group">
+                    <label htmlFor="token">Código</label>
+                    <CustomInput
+                      id="token"
+                      type="text"
+                      placeholder="Digite o código recebido"
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      className="input-neon"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="newPassword">Nova Senha</label>
+                    <CustomInput
+                      id="newPassword"
+                      type="password"
+                      placeholder="Digite sua nova senha"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="input-neon"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                </>
+              )}
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              <div className="button-group">
+                <CustomButton
+                  onClick={resetStep === 'login' ? handleLogin : resetStep === 'request' ? handleRequestReset : handleResetPassword}
+                  className="login-button"
+                  isDarkMode={isDarkMode}
+                >
+                  {resetStep === 'login' ? 'Entrar' : resetStep === 'request' ? 'Enviar Código' : 'Redefinir Senha'}
+                </CustomButton>
+                {resetStep !== 'login' && (
+                  <CustomButton
+                    onClick={() => setResetStep(resetStep === 'verify' ? 'request' : 'login')}
+                    className="login-button secondary"
+                    isDarkMode={isDarkMode}
+                  >
+                    Voltar
+                  </CustomButton>
+                )}
+              </div>
               {resetStep === 'login' && (
-                <div onKeyDown={(e) => handleKeyDown(e, handleLogin)} className="form-content">
-                  <CustomInput
-                    type="text"
-                    placeholder="Digite seu usuário"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    label="Usuário"
-                    className="input-neon"
-                    isDarkMode={isDarkMode}
-                  />
-                  <CustomInput
-                    type="password"
-                    placeholder="Digite sua senha"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    label="Senha"
-                    className="input-neon"
-                    isDarkMode={isDarkMode}
-                  />
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
-                  <CustomButton
-                    text="Entrar"
-                    onClick={handleLogin}
-                    className="login-button"
-                    isDarkMode={isDarkMode}
-                  />
-                </div>
-              )}
-
-              {resetStep === 'request' && (
-                <div onKeyDown={(e) => handleKeyDown(e, handleRequestReset)} className="form-content">
-                  <CustomInput
-                    type="email"
-                    placeholder="Digite seu e-mail"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    label="E-mail"
-                    className="input-neon"
-                    isDarkMode={isDarkMode}
-                  />
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
-                  <CustomButton
-                    text="Enviar Código"
-                    onClick={handleRequestReset}
-                    className="login-button"
-                    isDarkMode={isDarkMode}
-                  />
-                  <CustomButton
-                    text="Voltar"
-                    onClick={() => setResetStep('login')}
-                    className="login-button secondary"
-                    isDarkMode={isDarkMode}
-                  />
-                </div>
-              )}
-
-              {resetStep === 'verify' && (
-                <div onKeyDown={(e) => handleKeyDown(e, handleResetPassword)} className="form-content">
-                  <CustomInput
-                    type="email"
-                    placeholder="Digite seu e-mail"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    label="E-mail"
-                    className="input-neon"
-                    isDarkMode={isDarkMode}
-                  />
-                  <CustomInput
-                    type="text"
-                    placeholder="Digite o código"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
-                    label="Código de Verificação"
-                    className="input-neon"
-                    isDarkMode={isDarkMode}
-                  />
-                  <CustomInput
-                    type="password"
-                    placeholder="Digite sua nova senha"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    label="Nova Senha"
-                    isDarkMode={isDarkMode}
-                  />
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
-                  <CustomButton
-                    text="Redefinir Senha"
-                    onClick={handleResetPassword}
-                    className="login-button"
-                    isDarkMode={isDarkMode}
-                  />
-                  <CustomButton
-                    text="Voltar"
-                    onClick={() => setResetStep('login')}
-                    className="login-button secondary"
-                    isDarkMode={isDarkMode}
-                  />
+                <div className="login-links">
+                  <p className="register-text">
+                    Ainda não tem uma conta?{' '}
+                    <a href="#" className="register-link" onClick={handleRegisterRedirect}>
+                      Criar conta
+                    </a>
+                  </p>
+                  <p className="forgot-password-text">
+                    <a
+                      href="#"
+                      className="forgot-password-link"
+                      onClick={() => setResetStep('request')}
+                    >
+                      Esqueci minha senha
+                    </a>
+                  </p>
                 </div>
               )}
             </CustomCard>
-            {resetStep === 'login' && (
-              <div className="login-links">
-                <p className="register-text">
-                  Ainda não tem uma conta?{' '}
-                  <a href="#" className="register-link" onClick={handleRegisterRedirect}>
-                    Criar conta
-                  </a>
-                </p>
-                <p className="forgot-password-text">
-                  <a
-                    href="#"
-                    className="forgot-password-link"
-                    onClick={() => setResetStep('request')}
-                  >
-                    Esqueci minha senha
-                  </a>
-                </p>
-              </div>
-            )}
           </div>
         )}
       </div>

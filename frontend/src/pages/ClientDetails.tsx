@@ -111,23 +111,26 @@ const ClientDetails: React.FC = () => {
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="client-details-buttons">
             <CustomButton
-              text="Editar"
               onClick={handleEdit}
               className="client-details-button"
               isDarkMode={isDarkMode}
-            />
+            >
+              Editar
+            </CustomButton>
             <CustomButton
-              text="Excluir"
               onClick={handleDelete}
               className="client-details-button delete"
               isDarkMode={isDarkMode}
-            />
+            >
+              Excluir
+            </CustomButton>
             <CustomButton
-              text="Voltar"
               onClick={() => navigate('/clients')}
               className="client-details-button secondary"
               isDarkMode={isDarkMode}
-            />
+            >
+              Voltar
+            </CustomButton>
           </div>
         </CustomCard>
       </div>

@@ -52,46 +52,57 @@ const Register: React.FC = () => {
         </div>
         <h2>Registrar</h2>
         <CustomCard className="register-card" isDarkMode={isDarkMode}>
-          <CustomInput
-            type="text"
-            placeholder="Digite seu usuário"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            label="Usuário"
-            className="input-neon"
-            isDarkMode={isDarkMode}
-          />
-          <CustomInput
-            type="email"
-            placeholder="Digite seu e-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            label="E-mail"
-            className="input-neon"
-            isDarkMode={isDarkMode}
-          />
-          <CustomInput
-            type="password"
-            placeholder="Digite sua senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            label="Senha"
-            className="input-neon"
-            isDarkMode={isDarkMode}
-          />
+          <div className="input-group">
+            <label htmlFor="username">Usuário</label>
+            <CustomInput
+              id="username"
+              type="text"
+              placeholder="Digite seu usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="input-neon"
+              isDarkMode={isDarkMode}
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="email">E-mail</label>
+            <CustomInput
+              id="email"
+              type="email"
+              placeholder="Digite seu e-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-neon"
+              isDarkMode={isDarkMode}
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="password">Senha</label>
+            <CustomInput
+              id="password"
+              type="password"
+              placeholder="Digite sua senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-neon"
+              isDarkMode={isDarkMode}
+            />
+          </div>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <CustomButton
-            text="Registrar"
             onClick={handleRegister}
             className="login-button"
             isDarkMode={isDarkMode}
-          />
+          >
+            Registrar
+          </CustomButton>
           <CustomButton
-            text="Voltar"
             onClick={() => navigate('/')}
             className="login-button secondary"
             isDarkMode={isDarkMode}
-          />
+          >
+            Voltar
+          </CustomButton>
         </CustomCard>
       </div>
     </div>

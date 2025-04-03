@@ -110,37 +110,43 @@ const Home: React.FC = () => {
             <h3>Editar Perfil</h3>
             <CustomInput
               type="text"
-              placeholder="Digite seu novo username"
+              placeholder="Digite seu nome de usuário"
               value={editUsername}
               onChange={(e) => setEditUsername(e.target.value)}
-              label="Username"
               className="input-neon"
+              isDarkMode={isDarkMode}
             />
             <CustomInput
               type="email"
-              placeholder="Digite seu novo e-mail"
+              placeholder="Digite seu e-mail"
               value={editEmail}
               onChange={(e) => setEditEmail(e.target.value)}
-              label="E-mail"
               className="input-neon"
+              isDarkMode={isDarkMode}
             />
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="edit-form-buttons">
               <CustomButton
-                text="Salvar"
                 onClick={handleUpdateUser}
                 className="login-button"
-              />
+                isDarkMode={isDarkMode}
+              >
+                Salvar
+              </CustomButton>
               <CustomButton
-                text="Cancelar"
                 onClick={() => setShowEditForm(false)}
                 className="login-button secondary"
-              />
+                isDarkMode={isDarkMode}
+              >
+                Cancelar
+              </CustomButton>
               <CustomButton
-                text="Excluir Usuário"
                 onClick={handleDeleteUser}
                 className="login-button delete"
-              />
+                isDarkMode={isDarkMode}
+              >
+                Excluir Usuário
+              </CustomButton>
             </div>
           </CustomCard>
         )}

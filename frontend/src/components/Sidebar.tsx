@@ -25,11 +25,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
   const { role } = useTheme();
 
-  const handleViewHome = () => navigate('/home'); // Novo handler para Home
+  const handleViewHome = () => navigate('/home');
   const handleViewClients = () => navigate('/clients');
   const handleViewHistory = () => navigate('/history');
   const handleViewSystemHistory = () => navigate('/system-history');
   const handleViewManagement = () => navigate('/management');
+  const handleViewRecommendedPortfolio = () => navigate('/recommended-portfolio');
+  const handleViewViewRecommendedPortfolio = () => navigate('/view-recommended-portfolio');
   const handleBack = () => navigate(-1);
 
   return (
@@ -86,6 +88,20 @@ const Sidebar: React.FC<SidebarProps> = ({
               <div className="sidebar-item" onClick={handleViewManagement}>
                 <span className="sidebar-button">⚙️</span>
                 {isExpanded && <span className="sidebar-text">Gerenciamento</span>}
+              </div>
+            )}
+            {/* Inserir Carteira Recomendada - Disponível apenas para Admin e Alocacao */}
+            {(role === 'Admin' || role === 'Alocacao') && (
+              <div className="sidebar-item" onClick={handleViewRecommendedPortfolio}>
+                <span className="sidebar-button">📊</span>
+                {isExpanded && <span className="sidebar-text">Inserir Carteira Recomendada</span>}
+              </div>
+            )}
+            {/* Visualizar Carteira Recomendada - Disponível para PS, Admin e Alocacao */}
+            {(role === 'PS' || role === 'Admin' || role === 'Alocacao') && (
+              <div className="sidebar-item" onClick={handleViewViewRecommendedPortfolio}>
+                <span className="sidebar-button">👁️</span>
+                {isExpanded && <span className="sidebar-text">Visualizar Carteira Recomendada</span>}
               </div>
             )}
           </>

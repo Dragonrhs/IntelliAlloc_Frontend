@@ -145,7 +145,6 @@ const Suitability: React.FC = () => {
             placeholder="Digite o nome do cliente"
             value={clientName}
             onChange={(e) => setClientName(e.target.value)}
-            label="Nome do Cliente *"
             className="input-neon"
             isDarkMode={isDarkMode}
           />
@@ -222,27 +221,28 @@ const Suitability: React.FC = () => {
           </div>
           <CustomInput
             type="text"
-            placeholder="Observações adicionais (opcional)"
+            placeholder="Observações adicionais"
             value={q6Observations}
             onChange={(e) => setQ6Observations(e.target.value)}
-            label="6. Observações Adicionais"
             className="input-neon"
             isDarkMode={isDarkMode}
           />
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="suitability-buttons">
             <CustomButton
-              text="Salvar"
               onClick={handleSubmit}
               className="suitability-button"
               isDarkMode={isDarkMode}
-            />
+            >
+              Salvar
+            </CustomButton>
             <CustomButton
-              text="Cancelar"
               onClick={() => navigate('/home')}
               className="suitability-button secondary"
               isDarkMode={isDarkMode}
-            />
+            >
+              Cancelar
+            </CustomButton>
           </div>
         </CustomCard>
       </div>
