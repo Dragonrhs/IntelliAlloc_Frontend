@@ -9,9 +9,8 @@ import './ClientsList.css';
 const ClientsList: React.FC = () => {
   const [clients, setClients] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -52,11 +51,7 @@ const ClientsList: React.FC = () => {
   };
 
   const handleAddClient = () => {
-    navigate('/suitability'); // Redireciona para a página de inserção de cliente
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
+    navigate('/suitability');
   };
 
   return (
@@ -67,8 +62,8 @@ const ClientsList: React.FC = () => {
         toggleSidebar={toggleSidebar}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
-        isFullSidebar={false} // Exibe apenas o botão de expandir/recolher e o botão "Voltar"
-        showBackButton={true} // Exibe o botão "Voltar"
+        isFullSidebar={false}
+        showBackButton={true}
       />
       <div className="clients-list-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <h2>Lista de Clientes</h2>

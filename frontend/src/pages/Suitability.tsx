@@ -18,10 +18,9 @@ const Suitability: React.FC = () => {
   const [q5InvestmentOptions, setQ5InvestmentOptions] = useState<string[]>([]);
   const [q6Observations, setQ6Observations] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const navigate = useNavigate();
   const { clientId } = useParams<{ clientId: string }>();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
 
   useEffect(() => {
     if (clientId) {
@@ -94,10 +93,6 @@ const Suitability: React.FC = () => {
       console.error('Erro ao salvar cliente:', error);
       setErrorMessage(error.response?.data?.error || 'Erro ao salvar cliente');
     }
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
   };
 
   const q1Options = ['Até 1 ano', 'De 1 a 3 anos', 'De 3 a 5 anos', 'Acima de 5 anos'];

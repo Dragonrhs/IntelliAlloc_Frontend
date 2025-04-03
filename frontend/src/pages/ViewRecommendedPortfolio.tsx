@@ -22,12 +22,11 @@ const ViewRecommendedPortfolio: React.FC = () => {
   const [mesComparacao, setMesComparacao] = useState<string>('');
   const [carteiras, setCarteiras] = useState<Carteira[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
   const [userRole, setUserRole] = useState<string>('');
   const [comparacaoResultado, setComparacaoResultado] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
 
   useEffect(() => {
     fetchUserRole();
@@ -109,10 +108,6 @@ const ViewRecommendedPortfolio: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
   };
 
   const renderCarteiraTable = (perfil: string) => {
