@@ -11,28 +11,63 @@ import History from './pages/History';
 import SystemHistory from './pages/SystemHistory';
 import RecommendedPortfolio from './pages/RecommendedPortfolio';
 import ViewRecommendedPortfolio from './pages/ViewRecommendedPortfolio';
+import Estatisticas from './pages/Estatisticas';
 import { ThemeProvider } from './context/ThemeContext';
+import { UserProvider, useUser } from './context/UserContext';
+
+// Componente para proteger rotas que não devem ser acessadas por membros
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { userRole, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (userRole === 'Membro') {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// Componente para proteger rotas que só podem ser acessadas por Admin
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { userRole, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (userRole !== 'Admin') {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/suitability" element={<Suitability />} />
-          <Route path="/suitability/:clientId" element={<Suitability />} />
-          <Route path="/management" element={<Management />} />
-          <Route path="/client/:clientId" element={<ClientDetails />} />
-          <Route path="/clients" element={<ClientsList />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/system-history" element={<SystemHistory />} />
-          <Route path="/recommended-portfolio" element={<RecommendedPortfolio />} />
-          <Route path="/view-recommended-portfolio" element={<ViewRecommendedPortfolio />} />
-        </Routes>
-      </Router>
+      <UserProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/suitability" element={<ProtectedRoute><Suitability /></ProtectedRoute>} />
+            <Route path="/suitability/:clientId" element={<ProtectedRoute><Suitability /></ProtectedRoute>} />
+            <Route path="/management" element={<AdminRoute><Management /></AdminRoute>} />
+            <Route path="/client/:clientId" element={<ProtectedRoute><ClientDetails /></ProtectedRoute>} />
+            <Route path="/clients" element={<ProtectedRoute><ClientsList /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+            <Route path="/system-history" element={<AdminRoute><SystemHistory /></AdminRoute>} />
+            <Route path="/recommended-portfolio" element={<AdminRoute><RecommendedPortfolio /></AdminRoute>} />
+            <Route path="/view-recommended-portfolio" element={<ProtectedRoute><ViewRecommendedPortfolio /></ProtectedRoute>} />
+            <Route path="/estatisticas" element={<AdminRoute><Estatisticas /></AdminRoute>} />
+          </Routes>
+        </Router>
+      </UserProvider>
     </ThemeProvider>
   );
 };
