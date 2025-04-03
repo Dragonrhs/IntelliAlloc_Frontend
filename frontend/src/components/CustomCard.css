@@ -1,17 +1,50 @@
 .custom-card {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+    padding: 20px;
+    transition: all 0.3s ease;
   }
   
   /* Modo escuro */
   .custom-card.dark-mode {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #404040;
   }
   
   /* Modo claro */
   .custom-card.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+  }
+
+  /* Estilos para inputs e botões dentro do card */
+  .custom-card input,
+  .custom-card button {
+    transition: all 0.3s ease;
+  }
+
+  .custom-card.dark-mode input {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #404040;
+  }
+
+  .custom-card.dark-mode button {
+    background-color: #404040;
+    color: #ffffff;
+  }
+
+  .custom-card.light-mode input {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #e0e0e0;
+  }
+
+  .custom-card.light-mode button {
     background-color: #f0f0f0;
-    color: black;
+    color: #000000;
   }
