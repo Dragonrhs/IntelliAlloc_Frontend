@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -20,99 +21,156 @@ const Sidebar: React.FC<SidebarProps> = ({
   toggleTheme,
   onAddClient,
   isFullSidebar,
-  showBackButton = false,
+  showBackButton = false
 }) => {
   const navigate = useNavigate();
-  const { role } = useTheme();
+  const { userRole } = useUser();
 
-  const handleViewHome = () => navigate('/home');
-  const handleViewClients = () => navigate('/clients');
-  const handleViewHistory = () => navigate('/history');
-  const handleViewSystemHistory = () => navigate('/system-history');
-  const handleViewManagement = () => navigate('/management');
-  const handleViewRecommendedPortfolio = () => navigate('/recommended-portfolio');
-  const handleViewViewRecommendedPortfolio = () => navigate('/view-recommended-portfolio');
-  const handleBack = () => navigate(-1);
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
 
+  // Se o usuário for membro, mostra apenas o botão de home
+  if (userRole === 'Membro') {
+    return (
+      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div className="sidebar-header">
+          <button className="toggle-button" onClick={toggleSidebar}>
+            {isExpanded ? '←' : '→'}
+          </button>
+        </div>
+
+        <nav className="sidebar-nav">
+          <ul>
+            <li>
+              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
+                {isExpanded ? 'Home' : '🏠'}
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
+            {isExpanded ? (isDarkMode ? 'Modo Claro ☀️' : 'Modo Escuro 🌙') : (isDarkMode ? '☀️' : '🌙')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Se o usuário for PS, mostra apenas as funcionalidades permitidas
+  if (userRole === 'PS') {
+    return (
+      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div className="sidebar-header">
+          <button className="toggle-button" onClick={toggleSidebar}>
+            {isExpanded ? '←' : '→'}
+          </button>
+        </div>
+
+        <nav className="sidebar-nav">
+          <ul>
+            <li>
+              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
+                {isExpanded ? 'Home' : '🏠'}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/clients')} title={!isExpanded ? 'Clientes' : ''}>
+                {isExpanded ? 'Clientes' : '👥'}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/suitability')} title={!isExpanded ? 'Novo Cliente' : ''}>
+                {isExpanded ? 'Novo Cliente' : '➕'}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/history')} title={!isExpanded ? 'Histórico' : ''}>
+                {isExpanded ? 'Histórico' : '📋'}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
+                {isExpanded ? 'Carteiras Recomendadas' : '💼'}
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
+            {isExpanded ? (isDarkMode ? 'Modo Claro ☀️' : 'Modo Escuro 🌙') : (isDarkMode ? '☀️' : '🌙')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Para Admin, mostra todas as funcionalidades
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <div className="sidebar-top">
-        <div className="sidebar-item" onClick={toggleSidebar}>
-          <span className="sidebar-button">{isExpanded ? '←' : '→'}</span>
-          {isExpanded && <span className="sidebar-text">Menu</span>}
-        </div>
-        {showBackButton && (
-          <div className="sidebar-item" onClick={handleBack}>
-            <span className="sidebar-button">↩</span>
-            {isExpanded && <span className="sidebar-text">Voltar</span>}
-          </div>
-        )}
+      <div className="sidebar-header">
+        <button className="toggle-button" onClick={toggleSidebar}>
+          {isExpanded ? '←' : '→'}
+        </button>
       </div>
 
-      <div className="sidebar-middle">
-        {/* Botão Casa - Disponível para todos */}
-        <div className="sidebar-item" onClick={handleViewHome}>
-          <span className="sidebar-button">🏠</span>
-          {isExpanded && <span className="sidebar-text">Home</span>}
-        </div>
+      <nav className="sidebar-nav">
+        <ul>
+          <li>
+            <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
+              {isExpanded ? 'Home' : '🏠'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/clients')} title={!isExpanded ? 'Clientes' : ''}>
+              {isExpanded ? 'Clientes' : '👥'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/suitability')} title={!isExpanded ? 'Novo Cliente' : ''}>
+              {isExpanded ? 'Novo Cliente' : '➕'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/history')} title={!isExpanded ? 'Histórico' : ''}>
+              {isExpanded ? 'Histórico' : '📋'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/management')} title={!isExpanded ? 'Gerenciamento' : ''}>
+              {isExpanded ? 'Gerenciamento' : '⚙️'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/system-history')} title={!isExpanded ? 'Histórico do Sistema' : ''}>
+              {isExpanded ? 'Histórico do Sistema' : '📜'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/estatisticas')} title={!isExpanded ? 'Estatísticas' : ''}>
+              {isExpanded ? 'Estatísticas' : '📊'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
+              {isExpanded ? 'Carteiras Recomendadas' : '💼'}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => handleNavigation('/recommended-portfolio')} title={!isExpanded ? 'Adicionar Carteira' : ''}>
+              {isExpanded ? 'Adicionar Carteira' : '📝'}
+            </button>
+          </li>
+        </ul>
+      </nav>
 
-        {/* Funcionalidades restritas para não-Membro */}
-        {role !== 'Membro' && (
-          <>
-            {/* Adicionar Cliente - Disponível para todos exceto Research e Membro */}
-            {onAddClient && role !== 'Research' && (
-              <div className="sidebar-item" onClick={onAddClient}>
-                <span className="sidebar-button">➕</span>
-                {isExpanded && <span className="sidebar-text">Adicionar Cliente</span>}
-              </div>
-            )}
-            {/* Ver Clientes - Disponível para todos exceto Membro */}
-            <div className="sidebar-item" onClick={handleViewClients}>
-              <span className="sidebar-button">👥</span>
-              {isExpanded && <span className="sidebar-text">Ver Clientes</span>}
-            </div>
-            {/* Histórico Pessoal - Disponível para todos exceto Membro */}
-            <div className="sidebar-item" onClick={handleViewHistory}>
-              <span className="sidebar-button">📜</span>
-              {isExpanded && <span className="sidebar-text">Histórico</span>}
-            </div>
-            {/* Histórico do Sistema - Disponível apenas para Admin */}
-            {role === 'Admin' && (
-              <div className="sidebar-item" onClick={handleViewSystemHistory}>
-                <span className="sidebar-button">🖥️</span>
-                {isExpanded && <span className="sidebar-text">Histórico do Sistema</span>}
-              </div>
-            )}
-            {/* Gerenciamento - Disponível apenas para Admin */}
-            {role === 'Admin' && (
-              <div className="sidebar-item" onClick={handleViewManagement}>
-                <span className="sidebar-button">⚙️</span>
-                {isExpanded && <span className="sidebar-text">Gerenciamento</span>}
-              </div>
-            )}
-            {/* Inserir Carteira Recomendada - Disponível apenas para Admin e Alocacao */}
-            {(role === 'Admin' || role === 'Alocacao') && (
-              <div className="sidebar-item" onClick={handleViewRecommendedPortfolio}>
-                <span className="sidebar-button">📊</span>
-                {isExpanded && <span className="sidebar-text">Inserir Carteira Recomendada</span>}
-              </div>
-            )}
-            {/* Visualizar Carteira Recomendada - Disponível para PS, Admin e Alocacao */}
-            {(role === 'PS' || role === 'Admin' || role === 'Alocacao') && (
-              <div className="sidebar-item" onClick={handleViewViewRecommendedPortfolio}>
-                <span className="sidebar-button">👁️</span>
-                {isExpanded && <span className="sidebar-text">Visualizar Carteira Recomendada</span>}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      <div className="sidebar-bottom">
-        <div className="sidebar-item" onClick={toggleTheme}>
-          <span className="sidebar-button">{isDarkMode ? '☀️' : '🌙'}</span>
-          {isExpanded && <span className="sidebar-text">{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>}
-        </div>
+      <div className="sidebar-footer">
+        <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
+          {isExpanded ? (isDarkMode ? 'Modo Claro ☀️' : 'Modo Escuro 🌙') : (isDarkMode ? '☀️' : '🌙')}
+        </button>
       </div>
     </div>
   );
