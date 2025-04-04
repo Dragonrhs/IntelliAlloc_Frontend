@@ -44,16 +44,20 @@
   flex: 1;
   padding: 10px 0;
   overflow-y: auto;
+  position: relative;
+  overflow: visible !important;
 }
 
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 .sidebar-nav li {
   margin: 2px 0;
+  position: relative;
 }
 
 .sidebar-nav button {
@@ -307,20 +311,31 @@
   position: relative;
 }
 
-.sidebar button[title]:hover::after {
+.sidebar:not(.expanded) button[title]:hover::after {
   content: attr(title);
   position: absolute;
-  left: 100%;
+  left: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%);
   background-color: var(--background-color);
   color: var(--text-color);
-  padding: 5px 10px;
+  padding: 8px 12px;
   border-radius: 4px;
   font-size: 14px;
   white-space: nowrap;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  margin-left: 10px;
+  z-index: 1001;
   border: 1px solid var(--border-color);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
 }
