@@ -1,0 +1,141 @@
+.form-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  color: var(--text-color);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.submit-button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.cancel-button {
+  background-color: var(--cancel-color);
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: var(--cancel-color-dark);
+}
+
+.error-message {
+  background-color: var(--error-background);
+  color: var(--error-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.success-message {
+  background-color: var(--success-background);
+  color: var(--success-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.access-denied {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-color);
+}
+
+/* Dark mode variables */
+.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #ffffff;
+  --border-color: #404040;
+  --input-background: #2d2d2d;
+  --primary-color: #4a90e2;
+  --primary-color-dark: #357abd;
+  --cancel-color: #dc3545;
+  --cancel-color-dark: #c82333;
+  --error-background: #dc3545;
+  --error-text: #ffffff;
+  --success-background: #28a745;
+  --success-text: #ffffff;
+}
+
+/* Light mode variables */
+.light-mode {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #ced4da;
+  --input-background: #ffffff;
+  --primary-color: #4a90e2;
+  --primary-color-dark: #357abd;
+  --cancel-color: #dc3545;
+  --cancel-color-dark: #c82333;
+  --error-background: #f8d7da;
+  --error-text: #721c24;
+  --success-background: #d4edda;
+  --success-text: #155724;
+} 
