@@ -35,10 +35,10 @@ const Navbar: React.FC<NavbarProps> = ({
       setToastType('success');
       setShowToast(true);
       
-      // Aguarda 2 segundos antes de redirecionar
+      // Aguardar 1 segundo antes de redirecionar para mostrar o toast
       setTimeout(() => {
-        navigate('/');
-      }, 2000);
+        navigate('/login');
+      }, 1000);
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
       setToastMessage('Erro ao fazer logout');
