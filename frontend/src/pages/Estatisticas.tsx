@@ -38,12 +38,12 @@ const Estatisticas: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Verificar se o usuário é Admin
+        // Verificar se o usuário é Admin ou Alocacao
         const response = await axios.get('http://localhost:5000/home', {
           withCredentials: true
         });
         
-        if (response.data.role !== 'Admin') {
+        if (!['Admin', 'Alocacao'].includes(response.data.role)) {
           navigate('/home');
           return;
         }

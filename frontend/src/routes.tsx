@@ -103,13 +103,35 @@ const AppRoutes: React.FC = () => {
       <Route path="/management" element={<AdminRoute><Management /></AdminRoute>} />
 
       {/* Rota para recomendação de portfólio */}
-      <Route path="/recommended-portfolio" element={<AdminRoute><RecommendedPortfolio /></AdminRoute>} />
+      <Route path="/recommended-portfolio" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Alocacao' ? (
+            <RecommendedPortfolio />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
 
       {/* Rota para visualização de recomendação de portfólio */}
       <Route path="/view-recommended-portfolio" element={<ProtectedRoute><ViewRecommendedPortfolio /></ProtectedRoute>} />
 
       {/* Rota para estatísticas */}
-      <Route path="/estatisticas" element={<ProtectedRoute><Estatisticas /></ProtectedRoute>} />
+      <Route path="/estatisticas" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Alocacao' ? (
+            <Estatisticas />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
 
       {/* Rota para inserir ativo */}
       <Route path="/inserir-ativo" element={

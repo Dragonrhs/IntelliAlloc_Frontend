@@ -153,7 +153,7 @@ const opcoesMasterFeeder = ['', 'Master', 'Feeder'];
 const opcoesStatus = ['Em Analise', 'Aprovado', 'Reprovado'];
 const opcoesRestritoAlocacao = ['', 'Restrito'];
 const opcoesCanal = ['MFO', 'AAI', 'Todos'];
-const opcoesEmissorEmissao = ['', 'Emissor', 'Emissao'];
+const opcoesEmissorEmissao = ['Emissor', 'Emissao'];
 const opcoesAnalistaResponsavel = [
   'Pedro Tintner',
   'Pedro Lessa',
