@@ -111,7 +111,7 @@
   --background-color: #1a1a1a;
   --text-color: #ffffff;
   --border-color: #404040;
-  --hover-color: #2d2d2d;
+  --hover-color: rgba(255, 255, 255, 0.1);
   --primary-color: #4a90e2;
 }
 
@@ -120,7 +120,7 @@
   --background-color: #ffffff;
   --text-color: #333333;
   --border-color: #e0e0e0;
-  --hover-color: #f5f5f5;
+  --hover-color: rgba(0, 0, 0, 0.1);
   --primary-color: #4a90e2;
 }
 
@@ -338,4 +338,27 @@
     opacity: 1;
     transform: translateY(-50%) translateX(0);
   }
+}
+
+.sidebar-nav .nav-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-item:hover {
+  background-color: var(--hover-color);
+}
+
+.sidebar-nav .nav-item i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-nav .nav-item span {
+  font-size: 14px;
 }
