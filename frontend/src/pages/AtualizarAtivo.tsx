@@ -335,6 +335,12 @@ const AtualizarAtivo: React.FC = () => {
     }
   };
 
+  const handleVerHistorico = () => {
+    if (ativoSelecionado) {
+      navigate(`/historico-ativo/${ativoSelecionado.id}`);
+    }
+  };
+
   return (
     <div className={`atualizar-ativo-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={true} />
@@ -409,7 +415,16 @@ const AtualizarAtivo: React.FC = () => {
 
         {ativoSelecionado && (
           <CustomCard className="edicao-card" isDarkMode={isDarkMode}>
-            <h3>Editar Ativo</h3>
+            <div className="card-header">
+              <h3>Editar Ativo</h3>
+              <CustomButton
+                onClick={handleVerHistorico}
+                isDarkMode={isDarkMode}
+                className="historico-button"
+              >
+                Ver Histórico
+              </CustomButton>
+            </div>
             <div className="edicao-form">
               <div className="input-group">
                 <label>Nome</label>

@@ -40,6 +40,26 @@ const ConsultarAtivos: React.FC = () => {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const itensPorPagina = 10;
   const [filtroButtonRefs, setFiltroButtonRefs] = useState<Record<string, React.RefObject<HTMLButtonElement | null>>>({});
+  const [colunasVisiveis, setColunasVisiveis] = useState<Record<string, boolean>>({
+    nome: true,
+    classe: true,
+    canal: true,
+    emissor: true,
+    risco_credito: true,
+    ticker: true,
+    isin: true,
+    cnpj: true,
+    gestora: true,
+    prazo_total: true,
+    data: true,
+    status: true,
+    emissor_emissao: true,
+    analista_responsavel: true,
+    perfil: true,
+    master_feeder: true,
+    restrito_alocacao: true
+  });
+  const [showColunasPopup, setShowColunasPopup] = useState(false);
 
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
 
@@ -120,7 +140,12 @@ const ConsultarAtivos: React.FC = () => {
     return Object.entries(filtrosAtivos).every(([coluna, valores]) => {
       if (!valores || valores.length === 0) return true;
       const valorAtivo = ativo[coluna as keyof Ativo];
-      if (!valorAtivo) return false;
+      
+      // Se os valores incluem '-', também retorna true para valores nulos/vazios
+      if (valores.includes('-')) {
+        return !valorAtivo || valorAtivo === '' || valorAtivo === '-' || valores.includes(String(valorAtivo));
+      }
+      
       return valores.includes(String(valorAtivo));
     });
   });
@@ -153,6 +178,43 @@ const ConsultarAtivos: React.FC = () => {
       campo,
       direcao: ordenacao.campo === campo && ordenacao.direcao === 'asc' ? 'desc' : 'asc'
     });
+  };
+
+  const toggleColuna = (coluna: string) => {
+    setColunasVisiveis(prev => ({
+      ...prev,
+      [coluna]: !prev[coluna]
+    }));
+  };
+
+  const renderColunasPopup = () => {
+    if (!showColunasPopup) return null;
+
+    return (
+      <div className="colunas-popup">
+        <div className="colunas-popup-content">
+          <h3>Colunas Visíveis</h3>
+          <div className="colunas-list">
+            {Object.entries(colunasVisiveis).map(([coluna, visivel]) => (
+              <label key={coluna} className="coluna-checkbox">
+                <input
+                  type="checkbox"
+                  checked={visivel}
+                  onChange={() => toggleColuna(coluna)}
+                />
+                {coluna.charAt(0).toUpperCase() + coluna.slice(1).replace('_', ' ')}
+              </label>
+            ))}
+          </div>
+          <button 
+            className="close-button"
+            onClick={() => setShowColunasPopup(false)}
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const renderColuna = (coluna: keyof Ativo, label: string) => {
@@ -226,38 +288,63 @@ const ConsultarAtivos: React.FC = () => {
         isFullSidebar={true}
       />
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+        <div className="tabela-header">
+          <button 
+            className="colunas-button"
+            onClick={() => setShowColunasPopup(true)}
+          >
+            Configurar Colunas
+          </button>
+        </div>
         <div className="tabela-container">
           <table>
             <thead>
               <tr>
-                {renderColuna('nome', 'Nome')}
-                {renderColuna('classe', 'Classe')}
-                {renderColuna('emissor', 'Emissor')}
-                {renderColuna('risco_credito', 'Risco')}
-                {renderColuna('ticker', 'Ticker')}
-                {renderColuna('isin', 'ISIN')}
-                {renderColuna('cnpj', 'CNPJ')}
-                {renderColuna('gestora', 'Gestora')}
-                {renderColuna('data', 'Data')}
+                {colunasVisiveis.nome && renderColuna('nome', 'Nome')}
+                {colunasVisiveis.classe && renderColuna('classe', 'Classe')}
+                {colunasVisiveis.canal && renderColuna('canal', 'Canal')}
+                {colunasVisiveis.emissor && renderColuna('emissor', 'Emissor')}
+                {colunasVisiveis.risco_credito && renderColuna('risco_credito', 'Risco')}
+                {colunasVisiveis.ticker && renderColuna('ticker', 'Ticker')}
+                {colunasVisiveis.isin && renderColuna('isin', 'ISIN')}
+                {colunasVisiveis.cnpj && renderColuna('cnpj', 'CNPJ')}
+                {colunasVisiveis.gestora && renderColuna('gestora', 'Gestora')}
+                {colunasVisiveis.prazo_total && renderColuna('prazo_total', 'Prazo Total')}
+                {colunasVisiveis.data && renderColuna('data', 'Data')}
+                {colunasVisiveis.status && renderColuna('status', 'Status')}
+                {colunasVisiveis.emissor_emissao && renderColuna('emissor_emissao', 'Emissor/Emissão')}
+                {colunasVisiveis.analista_responsavel && renderColuna('analista_responsavel', 'Analista')}
+                {colunasVisiveis.perfil && renderColuna('perfil', 'Perfil')}
+                {colunasVisiveis.master_feeder && renderColuna('master_feeder', 'Master/Feeder')}
+                {colunasVisiveis.restrito_alocacao && renderColuna('restrito_alocacao', 'Restrito')}
               </tr>
             </thead>
             <tbody>
               {ativosPaginados.map((ativo) => (
                 <tr key={ativo.id}>
-                  <td>{ativo.nome}</td>
-                  <td>{ativo.classe}</td>
-                  <td>{ativo.emissor}</td>
-                  <td>{ativo.risco_credito}</td>
-                  <td>{ativo.ticker || '-'}</td>
-                  <td>{ativo.isin || '-'}</td>
-                  <td>{formatarCNPJ(ativo.cnpj)}</td>
-                  <td>{ativo.gestora}</td>
-                  <td>{formatarData(ativo.data)}</td>
+                  {colunasVisiveis.nome && <td>{ativo.nome}</td>}
+                  {colunasVisiveis.classe && <td>{ativo.classe}</td>}
+                  {colunasVisiveis.canal && <td>{ativo.canal}</td>}
+                  {colunasVisiveis.emissor && <td>{ativo.emissor}</td>}
+                  {colunasVisiveis.risco_credito && <td>{ativo.risco_credito}</td>}
+                  {colunasVisiveis.ticker && <td>{ativo.ticker || '-'}</td>}
+                  {colunasVisiveis.isin && <td>{ativo.isin || '-'}</td>}
+                  {colunasVisiveis.cnpj && <td>{formatarCNPJ(ativo.cnpj)}</td>}
+                  {colunasVisiveis.gestora && <td>{ativo.gestora}</td>}
+                  {colunasVisiveis.prazo_total && <td>{ativo.prazo_total}</td>}
+                  {colunasVisiveis.data && <td>{formatarData(ativo.data)}</td>}
+                  {colunasVisiveis.status && <td>{ativo.status}</td>}
+                  {colunasVisiveis.emissor_emissao && <td>{ativo.emissor_emissao || '-'}</td>}
+                  {colunasVisiveis.analista_responsavel && <td>{ativo.analista_responsavel}</td>}
+                  {colunasVisiveis.perfil && <td>{ativo.perfil}</td>}
+                  {colunasVisiveis.master_feeder && <td>{ativo.master_feeder || '-'}</td>}
+                  {colunasVisiveis.restrito_alocacao && <td>{ativo.restrito_alocacao || '-'}</td>}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {renderColunasPopup()}
         <div className="paginacao">
           <button
             onClick={() => setPaginaAtual(paginaAtual - 1)}

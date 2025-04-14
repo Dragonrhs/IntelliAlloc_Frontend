@@ -223,6 +223,11 @@ const formatarCNPJ = (cnpj: string) => {
   }
 };
 
+interface ErroImportacao {
+  linha: number;
+  erro: string;
+}
+
 const InserirAtivo: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
@@ -455,6 +460,7 @@ const InserirAtivo: React.FC = () => {
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <div className="form-container">
           <h2>Inserir Novo Ativo</h2>
+
           {errorMessage && <div className="error-message">{errorMessage}</div>}
           {successMessage && <div className="success-message">{successMessage}</div>}
           
@@ -479,7 +485,7 @@ const InserirAtivo: React.FC = () => {
 
             <div className="form-actions">
               <button type="submit" className="submit-button">Inserir Ativo</button>
-              <button type="button" className="cancel-button" onClick={() => navigate('/ativos')}>
+              <button type="button" className="cancel-button" onClick={() => navigate('/consultar-ativos')}>
                 Cancelar
               </button>
             </div>

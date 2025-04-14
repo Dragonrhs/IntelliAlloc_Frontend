@@ -139,4 +139,33 @@
   .edicao-form {
     grid-template-columns: 1fr;
   }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.historico-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.historico-button:hover {
+  background-color: #5a6268;
+}
+
+.dark-mode .historico-button {
+  background-color: #495057;
+}
+
+.dark-mode .historico-button:hover {
+  background-color: #343a40;
 } 
