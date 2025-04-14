@@ -26,9 +26,14 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
   const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({});
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Remove duplicatas e valores nulos/undefined
-  const valoresUnicos = Array.from(new Set(valores.filter(v => v !== null && v !== undefined)))
+  // Remove duplicatas e valores nulos/undefined e adiciona opção vazia se existirem valores nulos
+  const valoresUnicos = Array.from(new Set(valores.filter(v => v !== null && v !== undefined && v !== '')))
     .sort((a, b) => String(a).localeCompare(String(b)));
+  
+  // Adiciona opção vazia se existirem valores nulos ou vazios
+  if (valores.some(v => v === null || v === undefined || v === '' || v === '-')) {
+    valoresUnicos.unshift('-');
+  }
 
   const valoresFiltrados = valoresUnicos.filter(valor =>
     String(valor).toLowerCase().includes(pesquisa.toLowerCase())
@@ -89,7 +94,19 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
   };
 
   const handleAplicarFiltro = () => {
-    onAplicarFiltro(valoresSelecionados);
+    // Se houver texto na pesquisa, seleciona todos os itens filtrados
+    if (pesquisa.trim() !== '') {
+      const valoresFiltrados = valoresUnicos.filter(valor =>
+        String(valor).toLowerCase().includes(pesquisa.toLowerCase())
+      );
+      onAplicarFiltro(valoresFiltrados.map(v => String(v)));
+    } else {
+      // Se o valor vazio ('-') estiver selecionado, inclui null, undefined e string vazia
+      const valoresFiltrados = valoresSelecionados.includes('-') 
+        ? [...valoresSelecionados.filter(v => v !== '-'), null, undefined, '', '-']
+        : valoresSelecionados;
+      onAplicarFiltro(valoresFiltrados.map(v => String(v)));
+    }
     onClose();
   };
 
