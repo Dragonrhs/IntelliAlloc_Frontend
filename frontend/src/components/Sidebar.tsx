@@ -19,7 +19,8 @@ import {
   faSun,
   faMoon,
   faChevronLeft,
-  faChevronRight
+  faChevronRight,
+  faClockRotateLeft
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -163,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </li>
             <li>
-              <button onClick={() => handleNavigation('/inserir-ativo')} title={!isExpanded ? 'Inserir Ativo' : ''}>
+              <button onClick={() => handleNavigation('/escolha-inserir-ativo')} title={!isExpanded ? 'Inserir Ativo' : ''}>
                 {isExpanded ? 'Inserir Ativo' : <FontAwesomeIcon icon={faEdit} />}
               </button>
             </li>
@@ -175,6 +176,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             <li>
               <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
                 {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/historico-ativo')} title={!isExpanded ? 'Histórico de Ativos' : ''}>
+                {isExpanded ? 'Histórico de Ativos' : <FontAwesomeIcon icon={faClockRotateLeft} />}
               </button>
             </li>
           </ul>
@@ -297,6 +303,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             <li>
               <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
                 {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/historico-ativo')} title={!isExpanded ? 'Histórico de Ativos' : ''}>
+                {isExpanded ? 'Histórico de Ativos' : <FontAwesomeIcon icon={faClockRotateLeft} />}
               </button>
             </li>
           </ul>
