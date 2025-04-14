@@ -15,6 +15,10 @@ import Estatisticas from './pages/Estatisticas';
 import InserirAtivo from './pages/InserirAtivo';
 import AtualizarAtivo from './pages/AtualizarAtivo';
 import ConsultarAtivos from './pages/ConsultarAtivos';
+import ImportarAtivosLote from './pages/ImportarAtivosLote';
+import EscolhaInserirAtivo from './pages/EscolhaInserirAtivo';
+import HistoricoAtivo from './pages/HistoricoAtivo';
+import HistoricoAtivosList from './pages/HistoricoAtivosList';
 import { useUser } from './context/UserContext';
 
 // Componente para proteger rotas que não devem ser acessadas por membros
@@ -163,6 +167,38 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para consultar ativos */}
       <Route path="/consultar-ativos" element={<PrivateRoute><ConsultarAtivos /></PrivateRoute>} />
+
+      {/* Rota para importar ativos em lote */}
+      <Route path="/importar-ativos-lote" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <ImportarAtivosLote />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para escolha de inserção de ativo */}
+      <Route path="/escolha-inserir-ativo" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <EscolhaInserirAtivo />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rotas para histórico de ativos */}
+      <Route path="/historico-ativo/:id" element={<ProtectedRoute><HistoricoAtivo /></ProtectedRoute>} />
+      <Route path="/historico-ativo" element={<ProtectedRoute><HistoricoAtivosList /></ProtectedRoute>} />
 
       {/* Rota para páginas não encontradas (404) */}
       <Route path="*" element={<Navigate to="/" replace />} />
