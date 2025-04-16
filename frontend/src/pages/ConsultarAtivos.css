@@ -49,6 +49,7 @@
   width: 100%;
   min-height: 400px;
   max-width: 100%;
+  padding: 0;
 }
 
 table {
@@ -403,19 +404,46 @@ td:nth-child(17), th:nth-child(17) { /* Restrito */
 
 .tabela-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
+  padding: 0;
+  width: 100%;
+}
+
+.busca-global-container {
+  flex: 1;
+  max-width: 500px;
+  margin-right: 20px;
+  padding: 0;
+}
+
+.acoes-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+}
+
+.busca-global-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  outline: none;
 }
 
 .colunas-button {
-  padding: 8px 16px;
+  padding: 12px 24px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .colunas-button:hover {
@@ -486,4 +514,89 @@ td:nth-child(17), th:nth-child(17) { /* Restrito */
 
 .close-button:hover {
   background-color: var(--secondary-color-hover);
+}
+
+.busca-global-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.busca-global-input.dark-mode {
+  background-color: #2d2d2d;
+  color: #ffffff;
+  border-color: #444;
+}
+
+.busca-global-input.dark-mode:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.25);
+}
+
+.busca-global-input.light-mode {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.busca-global-input::placeholder {
+  color: #999;
+}
+
+.busca-global-input.dark-mode::placeholder {
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .tabela-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .busca-global-container {
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  .acoes-container {
+    padding-right: 0;
+  }
+}
+
+.highlight-text {
+  background-color: rgba(255, 255, 0, 0.4);
+  padding: 2px 0;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.dark-mode .highlight-text {
+  background-color: rgba(255, 255, 0, 0.2);
+  color: #fff;
+}
+
+/* Animação suave ao aparecer o highlight */
+@keyframes highlightFade {
+  from {
+    background-color: rgba(255, 255, 0, 0.6);
+  }
+  to {
+    background-color: rgba(255, 255, 0, 0.4);
+  }
+}
+
+.highlight-text {
+  animation: highlightFade 0.3s ease-out;
+}
+
+.dark-mode .highlight-text {
+  animation: highlightFadeDark 0.3s ease-out;
+}
+
+@keyframes highlightFadeDark {
+  from {
+    background-color: rgba(255, 255, 0, 0.3);
+  }
+  to {
+    background-color: rgba(255, 255, 0, 0.2);
+  }
 } 

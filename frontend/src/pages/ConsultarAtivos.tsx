@@ -3,6 +3,7 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import FiltroPopup from '../components/FiltroPopup';
+import TextHighlight from '../components/TextHighlight';
 import { useTheme } from '../context/ThemeContext';
 import './ConsultarAtivos.css';
 
@@ -32,6 +33,7 @@ const ConsultarAtivos: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filtrosAtivos, setFiltrosAtivos] = useState<Record<string, string[]>>({});
+  const [buscaGlobal, setBuscaGlobal] = useState('');
   const [colunaFiltroAberto, setColunaFiltroAberto] = useState<string | null>(null);
   const [ordenacao, setOrdenacao] = useState<{ campo: keyof Ativo; direcao: 'asc' | 'desc' }>({
     campo: 'nome',
@@ -137,11 +139,21 @@ const ConsultarAtivos: React.FC = () => {
   };
 
   const ativosFiltrados = ativos.filter(ativo => {
+    // Primeiro aplica o filtro de busca global
+    if (buscaGlobal) {
+      const termoBusca = buscaGlobal.toLowerCase();
+      const encontrado = Object.entries(ativo).some(([chave, valor]) => {
+        if (valor === null || valor === undefined) return false;
+        return String(valor).toLowerCase().includes(termoBusca);
+      });
+      if (!encontrado) return false;
+    }
+
+    // Depois aplica os filtros específicos das colunas
     return Object.entries(filtrosAtivos).every(([coluna, valores]) => {
       if (!valores || valores.length === 0) return true;
       const valorAtivo = ativo[coluna as keyof Ativo];
       
-      // Se os valores incluem '-', também retorna true para valores nulos/vazios
       if (valores.includes('-')) {
         return !valorAtivo || valorAtivo === '' || valorAtivo === '-' || valores.includes(String(valorAtivo));
       }
@@ -289,12 +301,23 @@ const ConsultarAtivos: React.FC = () => {
       />
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <div className="tabela-header">
-          <button 
-            className="colunas-button"
-            onClick={() => setShowColunasPopup(true)}
-          >
-            Configurar Colunas
-          </button>
+          <div className="busca-global-container">
+            <input
+              type="text"
+              placeholder="Buscar em todas as colunas..."
+              value={buscaGlobal}
+              onChange={(e) => setBuscaGlobal(e.target.value)}
+              className={`busca-global-input ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+            />
+          </div>
+          <div className="acoes-container">
+            <button 
+              className="colunas-button"
+              onClick={() => setShowColunasPopup(true)}
+            >
+              Configurar Colunas
+            </button>
+          </div>
         </div>
         <div className="tabela-container">
           <table>
@@ -322,23 +345,23 @@ const ConsultarAtivos: React.FC = () => {
             <tbody>
               {ativosPaginados.map((ativo) => (
                 <tr key={ativo.id}>
-                  {colunasVisiveis.nome && <td>{ativo.nome}</td>}
-                  {colunasVisiveis.classe && <td>{ativo.classe}</td>}
-                  {colunasVisiveis.canal && <td>{ativo.canal}</td>}
-                  {colunasVisiveis.emissor && <td>{ativo.emissor}</td>}
-                  {colunasVisiveis.risco_credito && <td>{ativo.risco_credito}</td>}
-                  {colunasVisiveis.ticker && <td>{ativo.ticker || '-'}</td>}
-                  {colunasVisiveis.isin && <td>{ativo.isin || '-'}</td>}
-                  {colunasVisiveis.cnpj && <td>{formatarCNPJ(ativo.cnpj)}</td>}
-                  {colunasVisiveis.gestora && <td>{ativo.gestora}</td>}
-                  {colunasVisiveis.prazo_total && <td>{ativo.prazo_total}</td>}
-                  {colunasVisiveis.data && <td>{formatarData(ativo.data)}</td>}
-                  {colunasVisiveis.status && <td>{ativo.status}</td>}
-                  {colunasVisiveis.emissor_emissao && <td>{ativo.emissor_emissao || '-'}</td>}
-                  {colunasVisiveis.analista_responsavel && <td>{ativo.analista_responsavel}</td>}
-                  {colunasVisiveis.perfil && <td>{ativo.perfil}</td>}
-                  {colunasVisiveis.master_feeder && <td>{ativo.master_feeder || '-'}</td>}
-                  {colunasVisiveis.restrito_alocacao && <td>{ativo.restrito_alocacao || '-'}</td>}
+                  {colunasVisiveis.nome && <td><TextHighlight text={ativo.nome} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.classe && <td><TextHighlight text={ativo.classe} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.canal && <td><TextHighlight text={ativo.canal} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.emissor && <td><TextHighlight text={ativo.emissor} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.risco_credito && <td><TextHighlight text={ativo.risco_credito} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.ticker && <td><TextHighlight text={ativo.ticker} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.isin && <td><TextHighlight text={ativo.isin} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.cnpj && <td><TextHighlight text={formatarCNPJ(ativo.cnpj)} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.gestora && <td><TextHighlight text={ativo.gestora} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.prazo_total && <td><TextHighlight text={ativo.prazo_total} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.data && <td><TextHighlight text={formatarData(ativo.data)} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.status && <td><TextHighlight text={ativo.status} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.emissor_emissao && <td><TextHighlight text={ativo.emissor_emissao} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.analista_responsavel && <td><TextHighlight text={ativo.analista_responsavel} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.perfil && <td><TextHighlight text={ativo.perfil} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.master_feeder && <td><TextHighlight text={ativo.master_feeder} searchTerm={buscaGlobal} /></td>}
+                  {colunasVisiveis.restrito_alocacao && <td><TextHighlight text={ativo.restrito_alocacao} searchTerm={buscaGlobal} /></td>}
                 </tr>
               ))}
             </tbody>
