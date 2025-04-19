@@ -20,7 +20,11 @@ import {
   faMoon,
   faChevronLeft,
   faChevronRight,
-  faClockRotateLeft
+  faClockRotateLeft,
+  faBalanceScale,
+  faChartLine,
+  faSliders,
+  faCalendarCheck
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -164,6 +168,26 @@ const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </li>
             <li>
+              <button onClick={() => handleNavigation('/asset-class-evaluation')} title={!isExpanded ? 'Avaliação de Classes' : ''}>
+                {isExpanded ? 'Avaliação de Classes' : <FontAwesomeIcon icon={faBalanceScale} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/view-asset-class')} title={!isExpanded ? 'Visualizar Avaliações' : ''}>
+                {isExpanded ? 'Visualizar Avaliações' : <FontAwesomeIcon icon={faChartLine} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/avaliacao-mensal-classes')} title={!isExpanded ? 'Avaliação Mensal de Classes' : ''}>
+                {isExpanded ? 'Avaliação Mensal de Classes' : <FontAwesomeIcon icon={faCalendarCheck} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/parametros-rebalanceamento')} title={!isExpanded ? 'Parâmetros de Rebalanceamento' : ''}>
+                {isExpanded ? 'Parâmetros de Rebalanceamento' : <FontAwesomeIcon icon={faSliders} />}
+              </button>
+            </li>
+            <li>
               <button onClick={() => handleNavigation('/escolha-inserir-ativo')} title={!isExpanded ? 'Inserir Ativo' : ''}>
                 {isExpanded ? 'Inserir Ativo' : <FontAwesomeIcon icon={faEdit} />}
               </button>
@@ -225,6 +249,26 @@ const Sidebar: React.FC<SidebarProps> = ({
             <li>
               <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
                 {isExpanded ? 'Carteiras Recomendadas' : <FontAwesomeIcon icon={faBriefcase} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/asset-class-evaluation')} title={!isExpanded ? 'Avaliação de Classes' : ''}>
+                {isExpanded ? 'Avaliação de Classes' : <FontAwesomeIcon icon={faBalanceScale} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/view-asset-class')} title={!isExpanded ? 'Visualizar Avaliações' : ''}>
+                {isExpanded ? 'Visualizar Avaliações' : <FontAwesomeIcon icon={faChartLine} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/avaliacao-mensal-classes')} title={!isExpanded ? 'Avaliação Mensal de Classes' : ''}>
+                {isExpanded ? 'Avaliação Mensal de Classes' : <FontAwesomeIcon icon={faCalendarCheck} />}
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleNavigation('/parametros-rebalanceamento')} title={!isExpanded ? 'Parâmetros de Rebalanceamento' : ''}>
+                {isExpanded ? 'Parâmetros de Rebalanceamento' : <FontAwesomeIcon icon={faSliders} />}
               </button>
             </li>
             <li>

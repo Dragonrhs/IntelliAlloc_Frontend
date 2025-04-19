@@ -19,17 +19,35 @@ import ImportarAtivosLote from './pages/ImportarAtivosLote';
 import EscolhaInserirAtivo from './pages/EscolhaInserirAtivo';
 import HistoricoAtivo from './pages/HistoricoAtivo';
 import HistoricoAtivosList from './pages/HistoricoAtivosList';
+import AssetClassEvaluation from './pages/AssetClassEvaluation';
+import ViewAssetClassPage from './pages/ViewAssetClassPage';
+import ParametrosRebalanceamento from './pages/ParametrosRebalanceamento';
+import AvaliacaoMensalClasses from './pages/AvaliacaoMensalClasses';
 import { useUser } from './context/UserContext';
 
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: string[];
+}
+
 // Componente para proteger rotas que não devem ser acessadas por membros
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { userRole, isLoading } = useUser();
 
   if (isLoading) {
     return <div>Carregando...</div>;
   }
 
-  if (userRole === 'Membro') {
+  if (allowedRoles && !allowedRoles.includes(userRole || '')) {
+    return (
+      <div className="access-denied">
+        <h2>Acesso Negado</h2>
+        <p>Você não tem permissão para acessar esta página.</p>
+      </div>
+    );
+  }
+
+  if (userRole === 'Membro' && (!allowedRoles || !allowedRoles.includes('Membro'))) {
     return <Navigate to="/home" replace />;
   }
 
@@ -108,97 +126,99 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para recomendação de portfólio */}
       <Route path="/recommended-portfolio" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Alocacao' ? (
-            <RecommendedPortfolio />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <RecommendedPortfolio />
         </ProtectedRoute>
       } />
 
       {/* Rota para visualização de recomendação de portfólio */}
-      <Route path="/view-recommended-portfolio" element={<ProtectedRoute><ViewRecommendedPortfolio /></ProtectedRoute>} />
+      <Route path="/view-recommended-portfolio" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao', 'PS']}>
+          <ViewRecommendedPortfolio />
+        </ProtectedRoute>
+      } />
 
       {/* Rota para estatísticas */}
       <Route path="/estatisticas" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Alocacao' ? (
-            <Estatisticas />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <Estatisticas />
         </ProtectedRoute>
       } />
 
       {/* Rota para inserir ativo */}
       <Route path="/inserir-ativo" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Research' ? (
-            <InserirAtivo />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <InserirAtivo />
         </ProtectedRoute>
       } />
 
       {/* Rota para atualizar ativo */}
       <Route path="/atualizar-ativo" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Research' ? (
-            <AtualizarAtivo />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <AtualizarAtivo />
         </ProtectedRoute>
       } />
 
       {/* Rota para consultar ativos */}
-      <Route path="/consultar-ativos" element={<PrivateRoute><ConsultarAtivos /></PrivateRoute>} />
+      <Route path="/consultar-ativos" element={
+        <ProtectedRoute>
+          <ConsultarAtivos />
+        </ProtectedRoute>
+      } />
 
       {/* Rota para importar ativos em lote */}
       <Route path="/importar-ativos-lote" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Research' ? (
-            <ImportarAtivosLote />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <ImportarAtivosLote />
         </ProtectedRoute>
       } />
 
       {/* Rota para escolha de inserção de ativo */}
       <Route path="/escolha-inserir-ativo" element={
-        <ProtectedRoute>
-          {userRole === 'Admin' || userRole === 'Research' ? (
-            <EscolhaInserirAtivo />
-          ) : (
-            <div className="access-denied">
-              <h2>Acesso Negado</h2>
-              <p>Você não tem permissão para acessar esta página.</p>
-            </div>
-          )}
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <EscolhaInserirAtivo />
         </ProtectedRoute>
       } />
 
       {/* Rotas para histórico de ativos */}
-      <Route path="/historico-ativo/:id" element={<ProtectedRoute><HistoricoAtivo /></ProtectedRoute>} />
-      <Route path="/historico-ativo" element={<ProtectedRoute><HistoricoAtivosList /></ProtectedRoute>} />
+      <Route path="/historico-ativo/:id" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <HistoricoAtivo />
+        </ProtectedRoute>
+      } />
+      <Route path="/historico-ativo" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+          <HistoricoAtivosList />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para avaliação de classes de ativos */}
+      <Route path="/asset-class-evaluation" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <AssetClassEvaluation />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para visualização de avaliações de classes de ativos */}
+      <Route path="/view-asset-class" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <ViewAssetClassPage />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para avaliação mensal de classes de ativos */}
+      <Route path="/avaliacao-mensal-classes" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <AvaliacaoMensalClasses />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para parâmetros de rebalanceamento */}
+      <Route path="/parametros-rebalanceamento" element={
+        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+          <ParametrosRebalanceamento />
+        </ProtectedRoute>
+      } />
 
       {/* Rota para páginas não encontradas (404) */}
       <Route path="*" element={<Navigate to="/" replace />} />
