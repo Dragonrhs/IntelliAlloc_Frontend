@@ -23,7 +23,7 @@ interface ClientesTempo {
   quantidade: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+const COLORS = ['#354864', '#7894ba', '#bcc9dc'];
 
 const Estatisticas: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
