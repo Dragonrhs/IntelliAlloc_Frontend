@@ -1,0 +1,194 @@
+.filtro-popup {
+  position: fixed;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  max-width: 400px;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark-mode.filtro-popup {
+  background: #2d2d2d;
+  border-color: #444;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.filtro-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.filtro-header {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark-mode .filtro-header {
+  border-bottom-color: #444;
+}
+
+.filtro-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ordenacao-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.ordenacao-buttons button {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.dark-mode .ordenacao-buttons button {
+  background: #3d3d3d;
+  border-color: #555;
+  color: #fff;
+}
+
+.ordenacao-buttons button.active {
+  background: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.dark-mode .ordenacao-buttons button.active {
+  background: #0056b3;
+}
+
+.filtro-search {
+  margin: 16px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: calc(100% - 32px);
+}
+
+.dark-mode .filtro-search {
+  background: #3d3d3d;
+  border-color: #555;
+  color: #fff;
+}
+
+.filtro-options {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px;
+}
+
+.filtro-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.filtro-checkbox-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.filtro-valores-list {
+  margin-top: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  border-top: 1px solid #eee;
+}
+
+.dark-mode .filtro-valores-list {
+  border-top-color: #444;
+}
+
+.filtro-actions {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dark-mode .filtro-actions {
+  border-top-color: #444;
+}
+
+.filtro-actions button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filtro-actions button:not(.aplicar) {
+  background: transparent;
+  border: 1px solid #ddd;
+}
+
+.dark-mode .filtro-actions button:not(.aplicar) {
+  border-color: #555;
+  color: #fff;
+}
+
+.filtro-actions button.aplicar {
+  background: #007bff;
+  color: white;
+  border: none;
+}
+
+.dark-mode .filtro-actions button.aplicar {
+  background: #0056b3;
+}
+
+/* Scrollbar personalizada */
+.filtro-valores-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filtro-valores-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dark-mode .filtro-valores-list::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.filtro-valores-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.dark-mode .filtro-valores-list::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.filtro-valores-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dark-mode .filtro-valores-list::-webkit-scrollbar-thumb:hover {
+  background: #666;
+} 

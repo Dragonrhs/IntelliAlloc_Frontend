@@ -6,6 +6,7 @@ import CustomButton from '../components/CustomButton';
 import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import './Login.css';
 
@@ -19,6 +20,9 @@ const Login: React.FC = () => {
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, setRole } = useTheme();
 
@@ -33,10 +37,17 @@ const Login: React.FC = () => {
         { withCredentials: true }
       );
       setRole(response.data.role);  
-
+      setLoading(false);
+      
+      // Mostrar toast de sucesso
+      setToastMessage('Login realizado com sucesso!');
+      setToastType('success');
+      setShowToast(true);
+      
+      // Aguardar 1 segundo antes de redirecionar
       setTimeout(() => {
-        navigate('/home');
-      }, 2000);
+        window.location.href = '/';
+      }, 1000);
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       setErrorMessage('Usuário ou senha incorretos.');
@@ -233,6 +244,13 @@ const Login: React.FC = () => {
           </div>
         )}
       </div>
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };

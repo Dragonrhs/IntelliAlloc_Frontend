@@ -12,6 +12,13 @@ import SystemHistory from './pages/SystemHistory';
 import RecommendedPortfolio from './pages/RecommendedPortfolio';
 import ViewRecommendedPortfolio from './pages/ViewRecommendedPortfolio';
 import Estatisticas from './pages/Estatisticas';
+import InserirAtivo from './pages/InserirAtivo';
+import AtualizarAtivo from './pages/AtualizarAtivo';
+import ConsultarAtivos from './pages/ConsultarAtivos';
+import ImportarAtivosLote from './pages/ImportarAtivosLote';
+import EscolhaInserirAtivo from './pages/EscolhaInserirAtivo';
+import HistoricoAtivo from './pages/HistoricoAtivo';
+import HistoricoAtivosList from './pages/HistoricoAtivosList';
 import { useUser } from './context/UserContext';
 
 // Componente para proteger rotas que não devem ser acessadas por membros
@@ -44,20 +51,41 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const { userRole, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (!userRole) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const AppRoutes: React.FC = () => {
+  const { userRole, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <Routes>
       {/* Rota para a página inicial (redireciona para /login se não autenticado) */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
 
       {/* Rota para login */}
       <Route path="/login" element={<Login />} />
 
       {/* Rota para registro */}
       <Route path="/register" element={<Register />} />
-
-      {/* Rota para a página Home */}
-      <Route path="/home" element={<Home />} />
 
       {/* Rota para o formulário de suitability (adicionar/editar cliente) */}
       <Route path="/suitability" element={<ProtectedRoute><Suitability /></ProtectedRoute>} />
@@ -79,16 +107,101 @@ const AppRoutes: React.FC = () => {
       <Route path="/management" element={<AdminRoute><Management /></AdminRoute>} />
 
       {/* Rota para recomendação de portfólio */}
-      <Route path="/recommended-portfolio" element={<AdminRoute><RecommendedPortfolio /></AdminRoute>} />
+      <Route path="/recommended-portfolio" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Alocacao' ? (
+            <RecommendedPortfolio />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
 
       {/* Rota para visualização de recomendação de portfólio */}
       <Route path="/view-recommended-portfolio" element={<ProtectedRoute><ViewRecommendedPortfolio /></ProtectedRoute>} />
 
       {/* Rota para estatísticas */}
-      <Route path="/estatisticas" element={<AdminRoute><Estatisticas /></AdminRoute>} />
+      <Route path="/estatisticas" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Alocacao' ? (
+            <Estatisticas />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para inserir ativo */}
+      <Route path="/inserir-ativo" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <InserirAtivo />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para atualizar ativo */}
+      <Route path="/atualizar-ativo" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <AtualizarAtivo />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para consultar ativos */}
+      <Route path="/consultar-ativos" element={<PrivateRoute><ConsultarAtivos /></PrivateRoute>} />
+
+      {/* Rota para importar ativos em lote */}
+      <Route path="/importar-ativos-lote" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <ImportarAtivosLote />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para escolha de inserção de ativo */}
+      <Route path="/escolha-inserir-ativo" element={
+        <ProtectedRoute>
+          {userRole === 'Admin' || userRole === 'Research' ? (
+            <EscolhaInserirAtivo />
+          ) : (
+            <div className="access-denied">
+              <h2>Acesso Negado</h2>
+              <p>Você não tem permissão para acessar esta página.</p>
+            </div>
+          )}
+        </ProtectedRoute>
+      } />
+
+      {/* Rotas para histórico de ativos */}
+      <Route path="/historico-ativo/:id" element={<ProtectedRoute><HistoricoAtivo /></ProtectedRoute>} />
+      <Route path="/historico-ativo" element={<ProtectedRoute><HistoricoAtivosList /></ProtectedRoute>} />
 
       {/* Rota para páginas não encontradas (404) */}
-      <Route path="*" element={<div>404 - Página não encontrada</div>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
