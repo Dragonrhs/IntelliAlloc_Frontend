@@ -294,8 +294,8 @@ const HistoricoAtivosList: React.FC = () => {
               >
                 <option value="">Todos os status</option>
                 <option value="Aprovado">Aprovado</option>
-                <option value="Pendente">Pendente</option>
-                <option value="Rejeitado">Rejeitado</option>
+                <option value="Em Analise">Em Analise</option>
+                <option value="Reprovado">Reprovado</option>
               </select>
             </div>
 
