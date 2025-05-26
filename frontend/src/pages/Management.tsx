@@ -6,40 +6,72 @@ import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import './Management.css';
 
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  cargo_id: number;
+  cargo_nome: string;
+}
+
+interface Cargo {
+  id: number;
+  nome: string;
+  descricao?: string;
+}
+
 const Management: React.FC = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [cargos, setCargos] = useState<Cargo[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/users', {
+        // Buscar usuários
+        const usersResponse = await axios.get('http://localhost:5000/users', {
           withCredentials: true,
         });
-        setUsers(response.data.users);
+        setUsers(usersResponse.data);
+        
+        // Buscar cargos
+        const cargosResponse = await axios.get('http://localhost:5000/cargos', {
+          withCredentials: true,
+        });
+        setCargos(cargosResponse.data);
       } catch (error: any) {
-        console.error('Erro ao buscar usuários:', error);
-        setErrorMessage(error.response?.data?.error || 'Erro ao buscar usuários');
+        console.error('Erro ao buscar dados:', error);
+        setErrorMessage(error.response?.data?.error || 'Erro ao buscar dados');
       }
     };
-    fetchUsers();
+    fetchData();
   }, []);
 
-  const handleRoleChange = async (userId: number, newRole: string) => {
+  const handleCargoChange = async (userId: number, newCargoId: number) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:5000/users/${userId}/role`,
-        { role: newRole },
+        { cargo_id: newCargoId },
         { withCredentials: true }
       );
+      
       setUsers(users.map(user => 
-        user.id === userId ? { ...user, role: newRole } : user
+        user.id === userId ? { 
+          ...user, 
+          cargo_id: newCargoId,
+          cargo_nome: cargos.find(c => c.id === newCargoId)?.nome || user.cargo_nome
+        } : user
       ));
+      
+      setSuccessMessage('Cargo atualizado com sucesso');
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error: any) {
-      console.error('Erro ao atualizar role:', error);
-      setErrorMessage(error.response?.data?.error || 'Erro ao atualizar role');
+      console.error('Erro ao atualizar cargo:', error);
+      setErrorMessage(error.response?.data?.error || 'Erro ao atualizar cargo');
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -57,6 +89,7 @@ const Management: React.FC = () => {
       <div className={`management-content ${isDarkMode ? 'dark-mode' : 'light-mode'}`} style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <h2>Gerenciamento de Usuários</h2>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
         {users.length === 0 ? (
           <p>Nenhum usuário encontrado.</p>
         ) : (
@@ -65,7 +98,8 @@ const Management: React.FC = () => {
               <tr>
                 <th>ID</th>
                 <th>Username</th>
-                <th>Role</th>
+                <th>Email</th>
+                <th>Cargo</th>
               </tr>
             </thead>
             <tbody>
@@ -73,17 +107,18 @@ const Management: React.FC = () => {
                 <tr key={user.id}>
                   <td>{user.id}</td>
                   <td>{user.username}</td>
+                  <td>{user.email}</td>
                   <td>
                     <select
                       className={`role-select ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      value={user.cargo_id}
+                      onChange={(e) => handleCargoChange(user.id, parseInt(e.target.value, 10))}
                     >
-                      <option value="Admin">Admin</option>
-                      <option value="PS">PS</option>
-                      <option value="Alocacao">Alocacao</option>
-                      <option value="Research">Research</option>
-                      <option value="Membro">Membro</option>
+                      {cargos.map(cargo => (
+                        <option key={cargo.id} value={cargo.id}>
+                          {cargo.nome}
+                        </option>
+                      ))}
                     </select>
                   </td>
                 </tr>

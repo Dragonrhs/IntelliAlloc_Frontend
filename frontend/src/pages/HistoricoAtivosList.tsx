@@ -201,7 +201,7 @@ const HistoricoAtivosList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <Sidebar 
           isExpanded={isSidebarExpanded} 
           toggleSidebar={toggleSidebar} 
@@ -219,7 +219,7 @@ const HistoricoAtivosList: React.FC = () => {
 
   if (error) {
     return (
-      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <Sidebar 
           isExpanded={isSidebarExpanded} 
           toggleSidebar={toggleSidebar} 
@@ -236,7 +236,7 @@ const HistoricoAtivosList: React.FC = () => {
   }
 
   return (
-    <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Sidebar 
         isExpanded={isSidebarExpanded} 
         toggleSidebar={toggleSidebar} 

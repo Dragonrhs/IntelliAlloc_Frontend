@@ -121,4 +121,9 @@
 .historico-container.dark-mode .loading,
 .historico-container.dark-mode .error {
   color: #fff;
+}
+
+.historico-ativos-container.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
 } 

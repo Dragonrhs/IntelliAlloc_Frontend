@@ -38,18 +38,8 @@ const Estatisticas: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Verificar se o usuário é Admin ou Alocacao
-        const response = await axios.get('http://localhost:5000/home', {
-          withCredentials: true
-        });
-        
-        if (!['Admin', 'Alocacao'].includes(response.data.role)) {
-          navigate('/home');
-          return;
-        }
-
+        // Apenas carregar estatísticas, sem redirecionar
         await carregarEstatisticasGerais();
-
       } catch (error: any) {
         console.error('Erro ao carregar estatísticas:', error);
         setErrorMessage(error.response?.data?.error || 'Erro ao carregar estatísticas');

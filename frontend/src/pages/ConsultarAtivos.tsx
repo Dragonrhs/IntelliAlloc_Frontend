@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import FiltroPopup from '../components/FiltroPopup';
 import TextHighlight from '../components/TextHighlight';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 import './ConsultarAtivos.css';
 
 interface Ativo {
@@ -290,7 +291,6 @@ const ConsultarAtivos: React.FC = () => {
       <Navbar
         showAvatar={true}
         isDarkMode={isDarkMode}
-        role={undefined}
       />
       <Sidebar
         isExpanded={isSidebarExpanded}

@@ -1,15 +1,29 @@
+body, html {
+  background-color: #1a1a1a !important;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
 /* Container principal */
 .login-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
+  border: none !important;
 }
 
 /* Modo escuro e claro */
 .login-container.dark-mode {
   background-color: #1a1a1a;
   color: #fff;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  border: none !important;
 }
 
 .login-container.light-mode {
@@ -96,6 +110,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: none !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .login-container.light-mode .login-card {

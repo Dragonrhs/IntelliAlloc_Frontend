@@ -29,26 +29,8 @@ const ViewRecommendedPortfolio: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserRole();
     fetchMeses();
   }, []);
-
-  const fetchUserRole = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/home', {
-        withCredentials: true
-      });
-      setUserRole(response.data.role);
-      
-      // Verificar se o usuário tem permissão
-      if (!['PS', 'Admin', 'Alocacao'].includes(response.data.role)) {
-        navigate('/home');
-      }
-    } catch (error: any) {
-      console.error('Erro ao carregar role do usuário:', error);
-      navigate('/home');
-    }
-  };
 
   const fetchMeses = async () => {
     try {
@@ -161,7 +143,6 @@ const ViewRecommendedPortfolio: React.FC = () => {
       />
       <div className={`view-portfolio-content ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <h2>Visualizar Carteiras Recomendadas</h2>
-        
         <div className="controls">
           <div className="select-group">
             <select
@@ -174,7 +155,6 @@ const ViewRecommendedPortfolio: React.FC = () => {
                 <option key={mes} value={mes}>{mes}</option>
               ))}
             </select>
-
             <select
               value={mesComparacao}
               onChange={(e) => setMesComparacao(e.target.value)}
@@ -185,7 +165,6 @@ const ViewRecommendedPortfolio: React.FC = () => {
                 <option key={mes} value={mes}>{mes}</option>
               ))}
             </select>
-
             <div className="compare-button-container">
               <button
                 onClick={handleComparar}
@@ -198,22 +177,17 @@ const ViewRecommendedPortfolio: React.FC = () => {
             </div>
           </div>
         </div>
-
         {errorMessage && <p className="error-message">{errorMessage}</p>}
-
         {comparacaoResultado && (
           <CustomCard className="comparison-result" isDarkMode={isDarkMode}>
             <h3>Resultado da Comparação</h3>
             <div className="comparison-text">
               {formatComparisonText(comparacaoResultado).split('\n').map((line, index) => {
-                // Verifica se a linha é um título
                 if (line.includes('Principais Mudanças:') || 
                     line.includes('Perfil') || 
                     line.includes('Tendência Geral:')) {
                   return <h4 key={index} className="comparison-subtitle">{line}</h4>;
-                }
-                // Verifica se a linha é um item de lista
-                else if (line.trim().startsWith('*')) {
+                } else if (line.trim().startsWith('*')) {
                   return (
                     <div key={index} className="comparison-list-item">
                       <span className="bullet">•</span>
@@ -221,13 +195,11 @@ const ViewRecommendedPortfolio: React.FC = () => {
                     </div>
                   );
                 }
-                // Linha normal
                 return <p key={index} className="comparison-paragraph">{line}</p>;
               })}
             </div>
           </CustomCard>
         )}
-
         {mesSelecionado && carteiras.length > 0 && (
           <CustomCard className="carteira-view" isDarkMode={isDarkMode}>
             {['Conservador', 'Moderado', 'Sofisticado'].map(perfil => (
@@ -240,6 +212,6 @@ const ViewRecommendedPortfolio: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ViewRecommendedPortfolio; 

@@ -6,6 +6,7 @@ import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 import './ClientDetails.css';
 
 const ClientDetails: React.FC = () => {

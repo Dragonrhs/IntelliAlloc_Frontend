@@ -8,6 +8,7 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -22,28 +23,41 @@ const Home: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, role, setRole } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { userRole, user } = useUser();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5000/home', {
-          withCredentials: true,
+          withCredentials: true
         });
+        
+        // Não precisamos mais chamar setRole pois isso é feito automaticamente
+        // pelo UserContext quando carregamos as permissões
+        console.log('Dados do usuário:', response.data);
+        
+        // Armazenar dados completos
         setData(response.data);
-        const username = response.data.message.split('Bem-vindo ')[1].replace('!', '');
-        setCurrentUsername(username);
-        setCurrentEmail(response.data.email);
-        setEditUsername(username);
-        setEditEmail(response.data.email);
-        setRole(response.data.role);
+        
+        // Extrair nome de usuário com segurança
+        let username = '';
+        if (response.data.message && response.data.message.includes('Bem-vindo ')) {
+          username = response.data.message.split('Bem-vindo ')[1].replace('!', '');
+        }
+        
+        // Definir valores com verificações de segurança
+        setCurrentUsername(username || '');
+        setCurrentEmail(response.data.email || '');
+        setEditUsername(username || '');
+        setEditEmail(response.data.email || '');
       } catch (error) {
-        console.error('Erro ao acessar home:', error);
-        navigate('/');
+        console.error('Erro ao carregar dados:', error);
       }
     };
+
     fetchData();
-  }, [navigate, setRole]);
+  }, []);
 
   const handleDeleteUser = async () => {
     if (window.confirm('Tem certeza que deseja excluir sua conta? Esta ação também excluirá todos os seus clientes e não pode ser desfeita.')) {
@@ -110,7 +124,6 @@ const Home: React.FC = () => {
         email={currentEmail}
         isDarkMode={isDarkMode}
         onEditProfile={() => setShowEditForm(true)}
-        role={role}
       />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -125,7 +138,7 @@ const Home: React.FC = () => {
           <div className="user-info">
             <p>{data.message}</p>
             <p>Email: {data.email}</p>
-            <p>Cargo: {role}</p>
+            <p>Cargo: {userRole}</p>
             <p>Criado em: {data.created_at}</p>
             <p>Último acesso: {data.last_access}</p>
           </div>

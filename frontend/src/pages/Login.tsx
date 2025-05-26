@@ -8,13 +8,14 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 import './Login.css';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'login' | 'request' | 'verify'>('login');
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
@@ -24,56 +25,42 @@ const Login: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, setRole } = useTheme();
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { login } = useUser();
 
   const handleLogin = async () => {
     setErrorMessage('');
-    setLoading(true);
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/login',
-        { username, password },
-        { withCredentials: true }
-      );
-      setRole(response.data.role);  
-      setLoading(false);
-      
-      // Mostrar toast de sucesso
-      setToastMessage('Login realizado com sucesso!');
-      setToastType('success');
-      setShowToast(true);
-      
-      // Aguardar 1 segundo antes de redirecionar
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 1000);
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      setErrorMessage('Usuário ou senha incorretos.');
-      setLoading(false);
+      await login(username, password);
+      navigate('/home');
+    } catch (error: any) {
+      setErrorMessage(error.response?.data?.message || 'Erro ao fazer login');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleRequestReset = async () => {
     setErrorMessage('');
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await axios.post('http://localhost:5000/request-password-reset', { email });
       setErrorMessage(response.data.message);
       setResetStep('verify');
-      setLoading(false);
     } catch (error: any) {
       console.error('Erro ao solicitar redefinição:', error);
       setErrorMessage(error.response?.data?.error || 'Erro ao solicitar redefinição');
-      setLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
     setErrorMessage('');
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await axios.post('http://localhost:5000/reset-password', {
@@ -87,12 +74,12 @@ const Login: React.FC = () => {
         setEmail('');
         setToken('');
         setNewPassword('');
-        setLoading(false);
       }, 2000);
     } catch (error: any) {
       console.error('Erro ao redefinir senha:', error);
       setErrorMessage(error.response?.data?.error || 'Erro ao redefinir senha');
-      setLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,7 +102,7 @@ const Login: React.FC = () => {
     <div className={`login-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <div className="login-content">
-        {loading ? (
+        {isLoading ? (
           <div className="loading-screen">
             <div className="spinner"></div>
             <p>Carregando...</p>
