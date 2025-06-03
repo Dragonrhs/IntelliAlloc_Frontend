@@ -73,6 +73,12 @@
   background-color: #d4edda;
 }
 
+/* Prevenir scrollbar horizontal */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 /* Tema claro */
 .light-mode {
   --background-color: #ffffff;

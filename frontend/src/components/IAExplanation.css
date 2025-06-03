@@ -1,0 +1,44 @@
+.ia-explanation {
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+}
+
+.ia-explanation.light {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.ia-explanation.dark {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.ia-section-title {
+  margin: 20px 0 10px 0;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.ia-section-title.light {
+  color: #1a73e8;
+}
+
+.ia-section-title.dark {
+  color: #8ab4f8;
+}
+
+.ia-paragraph {
+  margin: 10px 0;
+  text-align: justify;
+}
+
+.ia-paragraph.light {
+  color: #333;
+}
+
+.ia-paragraph.dark {
+  color: #e0e0e0;
+} 
