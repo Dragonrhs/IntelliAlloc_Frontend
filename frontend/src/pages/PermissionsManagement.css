@@ -1,0 +1,75 @@
+.permissions-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.permissions-content {
+  padding: 20px;
+  margin-top: 60px;
+  transition: margin-left 0.3s;
+}
+
+.permissions-container.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.permissions-container.light-mode {
+  background-color: #f5f5f5;
+  color: #333333;
+}
+
+.dark-mode .dark-paper {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.dark-mode .dark-tabs .MuiTab-root {
+  color: #aaaaaa;
+}
+
+.dark-mode .dark-tabs .Mui-selected {
+  color: #ffffff;
+}
+
+.dark-mode .MuiPaper-root {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.dark-mode .MuiBox-root, 
+.dark-mode .MuiTypography-root, 
+.dark-mode .MuiFormControl-root,
+.dark-mode .MuiSelect-root,
+.dark-mode .MuiInputBase-root,
+.dark-mode .MuiInputLabel-root,
+.dark-mode .MuiMenuItem-root,
+.dark-mode .MuiFormControlLabel-root {
+  color: #ffffff;
+}
+
+.dark-mode .MuiAlert-standardSuccess {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+}
+
+.dark-mode .MuiAlert-standardError {
+  background-color: rgba(211, 47, 47, 0.2);
+  color: #e57373;
+}
+
+.dark-mode .MuiCheckbox-root {
+  color: #4dabf5;
+}
+
+.dark-mode .MuiTextField-root .MuiOutlinedInput-root {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 500;
+} 

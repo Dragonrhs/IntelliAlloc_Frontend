@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
@@ -23,32 +23,27 @@ import AssetClassEvaluation from './pages/AssetClassEvaluation';
 import ViewAssetClassPage from './pages/ViewAssetClassPage';
 import ParametrosRebalanceamento from './pages/ParametrosRebalanceamento';
 import AvaliacaoMensalClasses from './pages/AvaliacaoMensalClasses';
+import PermissionsManagement from './pages/PermissionsManagement';
 import { useUser } from './context/UserContext';
+import AccessDenied from './components/AccessDenied';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: string[];
 }
 
-// Componente para proteger rotas que não devem ser acessadas por membros
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { userRole, isLoading } = useUser();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { userRole, isLoading, checkPermission } = useUser();
+  const location = useLocation();
 
   if (isLoading) {
     return <div>Carregando...</div>;
   }
 
-  if (allowedRoles && !allowedRoles.includes(userRole || '')) {
-    return (
-      <div className="access-denied">
-        <h2>Acesso Negado</h2>
-        <p>Você não tem permissão para acessar esta página.</p>
-      </div>
-    );
-  }
+  // Verificar permissão específica para a rota
+  const temPermissao = checkPermission(location.pathname, 'GET');
 
-  if (userRole === 'Membro' && (!allowedRoles || !allowedRoles.includes('Membro'))) {
-    return <Navigate to="/home" replace />;
+  if (!temPermissao) {
+    return <AccessDenied />;
   }
 
   return <>{children}</>;
@@ -97,7 +92,12 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Rota para a página inicial (redireciona para /login se não autenticado) */}
-      <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+      <Route path="/" element={
+        userRole ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
+      } />
+
+      {/* Rota protegida para home */}
+      <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
 
       {/* Rota para login */}
       <Route path="/login" element={<Login />} />
@@ -126,35 +126,35 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para recomendação de portfólio */}
       <Route path="/recommended-portfolio" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <RecommendedPortfolio />
         </ProtectedRoute>
       } />
 
       {/* Rota para visualização de recomendação de portfólio */}
       <Route path="/view-recommended-portfolio" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao', 'PS']}>
+        <ProtectedRoute>
           <ViewRecommendedPortfolio />
         </ProtectedRoute>
       } />
 
       {/* Rota para estatísticas */}
       <Route path="/estatisticas" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <Estatisticas />
         </ProtectedRoute>
       } />
 
       {/* Rota para inserir ativo */}
       <Route path="/inserir-ativo" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <InserirAtivo />
         </ProtectedRoute>
       } />
 
       {/* Rota para atualizar ativo */}
       <Route path="/atualizar-ativo" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <AtualizarAtivo />
         </ProtectedRoute>
       } />
@@ -168,55 +168,62 @@ const AppRoutes: React.FC = () => {
 
       {/* Rota para importar ativos em lote */}
       <Route path="/importar-ativos-lote" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <ImportarAtivosLote />
         </ProtectedRoute>
       } />
 
       {/* Rota para escolha de inserção de ativo */}
       <Route path="/escolha-inserir-ativo" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <EscolhaInserirAtivo />
         </ProtectedRoute>
       } />
 
       {/* Rotas para histórico de ativos */}
       <Route path="/historico-ativo/:id" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <HistoricoAtivo />
         </ProtectedRoute>
       } />
       <Route path="/historico-ativo" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Research']}>
+        <ProtectedRoute>
           <HistoricoAtivosList />
         </ProtectedRoute>
       } />
 
       {/* Rota para avaliação de classes de ativos */}
       <Route path="/asset-class-evaluation" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <AssetClassEvaluation />
         </ProtectedRoute>
       } />
 
       {/* Rota para visualização de avaliações de classes de ativos */}
       <Route path="/view-asset-class" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <ViewAssetClassPage />
         </ProtectedRoute>
       } />
 
       {/* Rota para avaliação mensal de classes de ativos */}
       <Route path="/avaliacao-mensal-classes" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <AvaliacaoMensalClasses />
         </ProtectedRoute>
       } />
 
       {/* Rota para parâmetros de rebalanceamento */}
       <Route path="/parametros-rebalanceamento" element={
-        <ProtectedRoute allowedRoles={['Admin', 'Alocacao']}>
+        <ProtectedRoute>
           <ParametrosRebalanceamento />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para gerenciamento de permissões */}
+      <Route path="/permissions" element={
+        <ProtectedRoute>
+          <PermissionsManagement />
         </ProtectedRoute>
       } />
 

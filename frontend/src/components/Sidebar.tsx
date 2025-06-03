@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { useUser } from '../context/UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import { 
   faHome, 
   faUsers, 
@@ -24,7 +25,8 @@ import {
   faBalanceScale,
   faChartLine,
   faSliders,
-  faCalendarCheck
+  faCalendarCheck,
+  faLock
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -37,6 +39,68 @@ interface SidebarProps {
   showBackButton?: boolean;
 }
 
+interface Permission {
+  rota: string;
+  metodo: string;
+  permitido?: boolean;
+}
+
+// Mapeamento de rotas para ícones e rótulos
+const routeIcons: Record<string, { label: string; icon: any }> = {
+  '/home': { label: 'Home', icon: faHome },
+  '/clients': { label: 'Clientes', icon: faUsers },
+  '/suitability': { label: 'Novo Cliente', icon: faUserPlus },
+  '/history': { label: 'Histórico', icon: faHistory },
+  '/management': { label: 'Gerenciamento', icon: faCog },
+  '/permissions': { label: 'Permissões', icon: faLock },
+  '/system-history': { label: 'Histórico do Sistema', icon: faScroll },
+  '/estatisticas': { label: 'Estatísticas', icon: faChartBar },
+  '/view-recommended-portfolio': { label: 'Carteiras Recomendadas', icon: faBriefcase },
+  '/recommended-portfolio': { label: 'Adicionar Carteira', icon: faPlus },
+  '/asset-class-evaluation': { label: 'Avaliação de Classes', icon: faBalanceScale },
+  '/view-asset-class': { label: 'Visualizar Avaliações', icon: faChartLine },
+  '/avaliacao-mensal-classes': { label: 'Avaliação Mensal de Classes', icon: faCalendarCheck },
+  '/parametros-rebalanceamento': { label: 'Parâmetros de Rebalanceamento', icon: faSliders },
+  '/escolha-inserir-ativo': { label: 'Inserir Ativo', icon: faEdit },
+  '/atualizar-ativo': { label: 'Atualizar Ativo', icon: faSync },
+  '/consultar-ativos': { label: 'Consultar Ativos', icon: faSearch },
+  '/historico-ativo': { label: 'Histórico de Ativos', icon: faClockRotateLeft }
+};
+
+// Agrupamentos de menu para melhor organização
+const menuGroups = [
+  {
+    id: 'home',
+    title: 'Principal',
+    routes: ['/home']
+  },
+  {
+    id: 'clients',
+    title: 'Clientes',
+    routes: ['/clients', '/suitability', '/history']
+  },
+  {
+    id: 'admin',
+    title: 'Administração',
+    routes: ['/management', '/permissions', '/system-history']
+  },
+  {
+    id: 'portfolio',
+    title: 'Carteiras',
+    routes: ['/estatisticas', '/view-recommended-portfolio', '/recommended-portfolio']
+  },
+  {
+    id: 'assetClass',
+    title: 'Classes de Ativos',
+    routes: ['/asset-class-evaluation', '/view-asset-class', '/avaliacao-mensal-classes', '/parametros-rebalanceamento']
+  },
+  {
+    id: 'assets',
+    title: 'Ativos',
+    routes: ['/escolha-inserir-ativo', '/atualizar-ativo', '/consultar-ativos', '/historico-ativo']
+  }
+];
+
 const Sidebar: React.FC<SidebarProps> = ({
   isExpanded,
   toggleSidebar,
@@ -47,71 +111,293 @@ const Sidebar: React.FC<SidebarProps> = ({
   showBackButton = false
 }) => {
   const navigate = useNavigate();
-  const { userRole } = useUser();
+  const { userRole, user } = useUser();
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [menuItems, setMenuItems] = useState<{path: string, label: string, icon: any}[]>([]);
+  
+  // Obter userId do localStorage se não estiver disponível no contexto
+  const [localUserId, setLocalUserId] = useState<number | null>(() => {
+    const savedUserId = localStorage.getItem('userId');
+    return savedUserId ? parseInt(savedUserId, 10) : null;
+  });
+
+  useEffect(() => {
+    // Usar userId do contexto ou do localStorage
+    const effectiveUserId = user?.id || localUserId;
+    
+    console.log("Sidebar carregando com:", { userRole, user, localUserId, effectiveUserId });
+    
+    if (effectiveUserId) {
+      fetchUserPermissions(effectiveUserId);
+    } else {
+      setLoading(false);
+      console.log("Sem userId para buscar permissões", { userRole });
+    }
+  }, [user?.id, userRole, localUserId]);
+
+  useEffect(() => {
+    // Construir menu baseado nas permissões ou cargo
+    buildMenuFromPermissions();
+  }, [permissions, userRole]);
+
+  const fetchUserPermissions = async (effectiveUserId: number) => {
+    try {
+      console.log("Buscando permissões para o usuário", { effectiveUserId, userRole });
+      
+      // Primeiro, tentar obter permissões de usuário específicas
+      const response = await axios.get(`http://localhost:5000/usuarios/${effectiveUserId}/permissoes`, {
+        withCredentials: true
+      });
+      
+      // Processar e armazenar permissões
+      const userPermissions = response.data.map((p: any) => ({
+        rota: p.rota,
+        metodo: p.metodo,
+        permitido: p.permitido
+      }));
+      
+      console.log("Permissões obtidas:", userPermissions.length);
+      setPermissions(userPermissions);
+    } catch (error) {
+      console.error('Erro ao buscar permissões:', error);
+      
+      // Como fallback, tentar obter permissões de cargo se o userRole estiver disponível
+      if (userRole && userRole !== 'Membro') {
+        try {
+          // Encontrar o ID do cargo pelo nome
+          const cargosResponse = await axios.get('http://localhost:5000/cargos', {
+            withCredentials: true
+          });
+          
+          const cargo = cargosResponse.data.find((c: any) => c.nome === userRole);
+          
+          if (cargo) {
+            const cargoPermissionsResponse = await axios.get(`http://localhost:5000/cargos/${cargo.id}/permissoes`, {
+              withCredentials: true
+            });
+            
+            const cargoPermissions = cargoPermissionsResponse.data
+              .filter((p: any) => p.permissao_id) // Apenas permissões ativas
+              .map((p: any) => ({
+                rota: p.rota,
+                metodo: p.metodo,
+                permitido: true
+              }));
+            
+            console.log("Permissões de cargo obtidas:", cargoPermissions.length);
+            setPermissions(cargoPermissions);
+          }
+        } catch (cargoError) {
+          console.error('Erro ao buscar permissões de cargo:', cargoError);
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const buildMenuFromPermissions = () => {
+    const items: {path: string, label: string, icon: any}[] = [];
+    
+    // Home sempre é adicionado
+    items.push({
+      path: '/home',
+      label: 'Home',
+      icon: faHome
+    });
+    
+    if (userRole === 'Admin') {
+      // Admin tem acesso a tudo
+      Object.keys(routeIcons).forEach(route => {
+        if (route !== '/home') { // Home já foi adicionado
+          items.push({
+            path: route,
+            label: routeIcons[route].label,
+            icon: routeIcons[route].icon
+          });
+        }
+      });
+    } else {
+      // Para outros usuários, verificar permissões
+      console.log(`Construindo menu para ${userRole} com ${permissions.length} permissões`);
+      
+      // Lista de rotas permitidas
+      const allowedRoutes = new Set<string>();
+      
+      // Adicionar rotas com base nas permissões
+      permissions.forEach(permission => {
+        if (permission.permitido) {
+          // Converter rotas com parâmetros (ex: '/usuarios/<int:user_id>/permissoes') para rotas base
+          let baseRoute = permission.rota;
+          if (baseRoute.includes('<')) {
+            baseRoute = baseRoute.split('<')[0].replace(/\/$/, '');
+          }
+          
+          // Mapear rotas específicas da API para rotas do frontend
+          const frontendRoute = mapApiRouteToFrontend(baseRoute);
+          if (frontendRoute) {
+            allowedRoutes.add(frontendRoute);
+            console.log(`Permissão encontrada: ${permission.rota} -> ${frontendRoute}`);
+          }
+        }
+      });
+      
+      // Adicionar itens de menu para rotas permitidas
+      allowedRoutes.forEach(route => {
+        if (route !== '/home' && routeIcons[route]) { // Home já foi adicionado e rota deve ter ícone definido
+          items.push({
+            path: route,
+            label: routeIcons[route].label,
+            icon: routeIcons[route].icon
+          });
+        }
+      });
+    }
+    
+    console.log(`Menu construído com ${items.length} itens`);
+    setMenuItems(items);
+  };
+  
+  // Função para mapear rotas da API para rotas do frontend
+  const mapApiRouteToFrontend = (apiRoute: string): string | null => {
+    // Mapeamento direto de algumas rotas
+    const apiToFrontendMap: Record<string, string> = {
+      '/usuarios': '/management',
+      '/cargos': '/permissions',
+      '/funcionalidades': '/permissions',
+      '/permissions': '/permissions',
+      '/client': '/clients',
+      '/estatisticas': '/estatisticas',
+      '/recomendacoes': '/view-recommended-portfolio',
+      '/classes': '/view-asset-class',
+      '/ativos': '/consultar-ativos',
+      '/historico': '/history'
+    };
+    
+    // Verificar mapeamento direto
+    for (const [api, frontend] of Object.entries(apiToFrontendMap)) {
+      if (apiRoute.startsWith(api)) {
+        return frontend;
+      }
+    }
+    
+    // Rotas que não precisam de mapeamento
+    if (Object.keys(routeIcons).includes(apiRoute)) {
+      return apiRoute;
+    }
+    
+    return null;
+  };
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
 
-  const canManagePortfolio = userRole === 'Admin' || userRole === 'Alocacao';
-  const canManageAssets = userRole === 'Admin' || userRole === 'Research';
+  const hasPermission = (route: string, method: string = 'GET') => {
+    // Se ainda está carregando ou é admin, libera tudo
+    if (loading || userRole === 'Admin') return true;
+    
+    // Mapeamento de cargos para rotas permitidas (como fallback)
+    const rolePermissionsMap: Record<string, string[]> = {
+      'PS': [
+        '/clients',
+        '/suitability',
+        '/history',
+        '/view-recommended-portfolio',
+        '/consultar-ativos'
+      ],
+      'Alocacao': [
+        '/recommended-portfolio',
+        '/view-recommended-portfolio',
+        '/estatisticas',
+        '/asset-class-evaluation',
+        '/view-asset-class',
+        '/avaliacao-mensal-classes',
+        '/parametros-rebalanceamento',
+        '/consultar-ativos',
+        '/permissions'  // Adicionado aqui também para garantir
+      ],
+      'Research': [
+        '/escolha-inserir-ativo',
+        '/asset-class-evaluation',
+        '/view-asset-class',
+        '/inserir-ativo',
+        '/avaliacao-mensal-classes',
+        '/estatisticas',
+        '/consultar-ativos'
+      ],
+      'Admin': ['*']  // Admin tem acesso a tudo
+    };
+    
+    // Imprimir log detalhado para depuração
+    console.log(`Verificando permissão para ${route} (${method}) - ${permissions.length} permissões disponíveis`);
+    
+    // Verificar permissões específicas do usuário vindas da API
+    if (permissions.length > 0) {
+      // Primeiro, procurar permissão específica para essa rota e método
+      const exactPermission = permissions.find(p => 
+        p.rota === route && (p.metodo === method || p.metodo === '*')
+      );
+      
+      if (exactPermission) {
+        console.log(`Permissão encontrada para ${route} (${method}):`, exactPermission.permitido);
+        return exactPermission.permitido;
+      }
+      
+      // Segundo, procurar permissão coringa para a rota
+      const routeWildcardPermission = permissions.find(p => 
+        p.rota === route && p.metodo === '*'
+      );
+      
+      if (routeWildcardPermission) {
+        console.log(`Permissão wildcard encontrada para ${route}:`, routeWildcardPermission.permitido);
+        return routeWildcardPermission.permitido;
+      }
+      
+      // Terceiro, procurar permissão global
+      const globalPermission = permissions.find(p => p.rota === '*');
+      if (globalPermission) {
+        console.log(`Permissão global encontrada:`, globalPermission.permitido);
+        return globalPermission.permitido;
+      }
+      
+      // Verificar se existe uma permissão com nome semelhante (para depuração)
+      const similarPermissions = permissions
+        .filter(p => p.rota && p.rota.includes(route.split('/')[1]))
+        .map(p => ({ rota: p.rota, metodo: p.metodo, permitido: p.permitido }));
+      
+      if (similarPermissions.length > 0) {
+        console.log(`Permissões similares encontradas para ${route}:`, similarPermissions);
+      }
+    }
+    
+    // Fallback para mapeamento baseado em cargo
+    if (userRole && rolePermissionsMap[userRole]) {
+      const hasRoleAccess = rolePermissionsMap[userRole].includes(route) || 
+                          rolePermissionsMap[userRole].includes('*');
+                          
+      console.log(`Permissão baseada em cargo para ${route}: ${hasRoleAccess} (${userRole})`);
+      return hasRoleAccess;
+    }
+    
+    console.log(`Sem permissão para ${route} (${method})`);
+    return false;
+  };
 
-  // Se o usuário for PS, mostra apenas as funcionalidades permitidas
-  if (userRole === 'PS') {
+  // Função para renderizar um item de menu
+  const renderMenuItem = (item: {path: string, label: string, icon: any}) => {
     return (
-      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="sidebar-header">
-          <button className="toggle-button" onClick={toggleSidebar}>
-            <FontAwesomeIcon icon={isExpanded ? faChevronLeft : faChevronRight} />
-          </button>
-        </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-                {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
+      <li key={item.path}>
+        <button onClick={() => handleNavigation(item.path)} title={!isExpanded ? item.label : ''}>
+          {isExpanded ? item.label : <FontAwesomeIcon icon={item.icon} />}
               </button>
             </li>
-            <li>
-              <button onClick={() => handleNavigation('/clients')} title={!isExpanded ? 'Clientes' : ''}>
-                {isExpanded ? 'Clientes' : <FontAwesomeIcon icon={faUsers} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/suitability')} title={!isExpanded ? 'Novo Cliente' : ''}>
-                {isExpanded ? 'Novo Cliente' : <FontAwesomeIcon icon={faUserPlus} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/history')} title={!isExpanded ? 'Histórico' : ''}>
-                {isExpanded ? 'Histórico' : <FontAwesomeIcon icon={faHistory} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
-                {isExpanded ? 'Carteiras Recomendadas' : <FontAwesomeIcon icon={faBriefcase} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
-                {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-            {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
-          </button>
-        </div>
-      </div>
     );
-  }
+  };
 
-  // Se o usuário for Admin, mostra todas as funcionalidades
-  if (userRole === 'Admin') {
+  // Se estiver carregando, mostra apenas o botão de home
+  if (loading) {
     return (
       <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <div className="sidebar-header">
@@ -119,185 +405,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             <FontAwesomeIcon icon={isExpanded ? faChevronLeft : faChevronRight} />
           </button>
         </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-                {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/clients')} title={!isExpanded ? 'Clientes' : ''}>
-                {isExpanded ? 'Clientes' : <FontAwesomeIcon icon={faUsers} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/suitability')} title={!isExpanded ? 'Novo Cliente' : ''}>
-                {isExpanded ? 'Novo Cliente' : <FontAwesomeIcon icon={faUserPlus} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/history')} title={!isExpanded ? 'Histórico' : ''}>
-                {isExpanded ? 'Histórico' : <FontAwesomeIcon icon={faHistory} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/management')} title={!isExpanded ? 'Gerenciamento' : ''}>
-                {isExpanded ? 'Gerenciamento' : <FontAwesomeIcon icon={faCog} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/system-history')} title={!isExpanded ? 'Histórico do Sistema' : ''}>
-                {isExpanded ? 'Histórico do Sistema' : <FontAwesomeIcon icon={faScroll} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/estatisticas')} title={!isExpanded ? 'Estatísticas' : ''}>
-                {isExpanded ? 'Estatísticas' : <FontAwesomeIcon icon={faChartBar} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
-                {isExpanded ? 'Carteiras Recomendadas' : <FontAwesomeIcon icon={faBriefcase} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/recommended-portfolio')} title={!isExpanded ? 'Adicionar Carteira' : ''}>
-                {isExpanded ? 'Adicionar Carteira' : <FontAwesomeIcon icon={faPlus} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/asset-class-evaluation')} title={!isExpanded ? 'Avaliação de Classes' : ''}>
-                {isExpanded ? 'Avaliação de Classes' : <FontAwesomeIcon icon={faBalanceScale} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/view-asset-class')} title={!isExpanded ? 'Visualizar Avaliações' : ''}>
-                {isExpanded ? 'Visualizar Avaliações' : <FontAwesomeIcon icon={faChartLine} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/avaliacao-mensal-classes')} title={!isExpanded ? 'Avaliação Mensal de Classes' : ''}>
-                {isExpanded ? 'Avaliação Mensal de Classes' : <FontAwesomeIcon icon={faCalendarCheck} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/parametros-rebalanceamento')} title={!isExpanded ? 'Parâmetros de Rebalanceamento' : ''}>
-                {isExpanded ? 'Parâmetros de Rebalanceamento' : <FontAwesomeIcon icon={faSliders} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/escolha-inserir-ativo')} title={!isExpanded ? 'Inserir Ativo' : ''}>
-                {isExpanded ? 'Inserir Ativo' : <FontAwesomeIcon icon={faEdit} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/atualizar-ativo')} title={!isExpanded ? 'Atualizar Ativo' : ''}>
-                {isExpanded ? 'Atualizar Ativo' : <FontAwesomeIcon icon={faSync} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
-                {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/historico-ativo')} title={!isExpanded ? 'Histórico de Ativos' : ''}>
-                {isExpanded ? 'Histórico de Ativos' : <FontAwesomeIcon icon={faClockRotateLeft} />}
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-            {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Se o usuário for Alocacao, mostra apenas as funcionalidades permitidas
-  if (userRole === 'Alocacao') {
-    return (
-      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="sidebar-header">
-          <button className="toggle-button" onClick={toggleSidebar}>
-            <FontAwesomeIcon icon={isExpanded ? faChevronLeft : faChevronRight} />
-          </button>
-        </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-                {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/recommended-portfolio')} title={!isExpanded ? 'Adicionar Carteira' : ''}>
-                {isExpanded ? 'Adicionar Carteira' : <FontAwesomeIcon icon={faPlus} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/estatisticas')} title={!isExpanded ? 'Estatísticas' : ''}>
-                {isExpanded ? 'Estatísticas' : <FontAwesomeIcon icon={faChartBar} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/view-recommended-portfolio')} title={!isExpanded ? 'Carteiras Recomendadas' : ''}>
-                {isExpanded ? 'Carteiras Recomendadas' : <FontAwesomeIcon icon={faBriefcase} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/asset-class-evaluation')} title={!isExpanded ? 'Avaliação de Classes' : ''}>
-                {isExpanded ? 'Avaliação de Classes' : <FontAwesomeIcon icon={faBalanceScale} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/view-asset-class')} title={!isExpanded ? 'Visualizar Avaliações' : ''}>
-                {isExpanded ? 'Visualizar Avaliações' : <FontAwesomeIcon icon={faChartLine} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/avaliacao-mensal-classes')} title={!isExpanded ? 'Avaliação Mensal de Classes' : ''}>
-                {isExpanded ? 'Avaliação Mensal de Classes' : <FontAwesomeIcon icon={faCalendarCheck} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/parametros-rebalanceamento')} title={!isExpanded ? 'Parâmetros de Rebalanceamento' : ''}>
-                {isExpanded ? 'Parâmetros de Rebalanceamento' : <FontAwesomeIcon icon={faSliders} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
-                {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-            {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Se o usuário for Membro, mostra apenas o botão de home
-  if (userRole === 'Membro') {
-    return (
-      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="sidebar-header">
-          <button className="toggle-button" onClick={toggleSidebar}>
-            <FontAwesomeIcon icon={isExpanded ? faChevronLeft : faChevronRight} />
-          </button>
-        </div>
-
         <nav className="sidebar-nav">
           <ul>
             <li>
@@ -307,7 +414,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </li>
           </ul>
         </nav>
-
         <div className="sidebar-footer">
           <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
             {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
@@ -317,56 +423,41 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
   }
 
-  // Se o usuário for Research, mostra apenas as funcionalidades permitidas
-  if (userRole === 'Research') {
-    return (
-      <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="sidebar-header">
-          <button className="toggle-button" onClick={toggleSidebar}>
-            <FontAwesomeIcon icon={isExpanded ? faChevronLeft : faChevronRight} />
-          </button>
-        </div>
+  // Organizar itens por grupos para melhor visualização
+  const organizeMenuItemsByGroups = () => {
+    const organizedItems: {[key: string]: {path: string, label: string, icon: any}[]} = {};
+    
+    // Inicializar grupos vazios
+    menuGroups.forEach(group => {
+      organizedItems[group.id] = [];
+    });
+    
+    // Distribuir itens nos grupos
+    menuItems.forEach(item => {
+      for (const group of menuGroups) {
+        if (group.routes.includes(item.path)) {
+          organizedItems[group.id].push(item);
+          break;
+        }
+      }
+    });
+    
+    return organizedItems;
+  };
 
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-                {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/inserir-ativo')} title={!isExpanded ? 'Inserir Ativo' : ''}>
-                {isExpanded ? 'Inserir Ativo' : <FontAwesomeIcon icon={faEdit} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/atualizar-ativo')} title={!isExpanded ? 'Atualizar Ativo' : ''}>
-                {isExpanded ? 'Atualizar Ativo' : <FontAwesomeIcon icon={faSync} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/consultar-ativos')} title={!isExpanded ? 'Consultar Ativos' : ''}>
-                {isExpanded ? 'Consultar Ativos' : <FontAwesomeIcon icon={faSearch} />}
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavigation('/historico-ativo')} title={!isExpanded ? 'Histórico de Ativos' : ''}>
-                {isExpanded ? 'Histórico de Ativos' : <FontAwesomeIcon icon={faClockRotateLeft} />}
-              </button>
-            </li>
-          </ul>
-        </nav>
+  const organizedMenuItems = organizeMenuItemsByGroups();
 
-        <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-            {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/logout', {}, {
+        withCredentials: true
+      });
+      navigate('/login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
 
-  // Para outros usuários, mostra apenas o botão de home
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <div className="sidebar-header">
@@ -377,11 +468,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <nav className="sidebar-nav">
         <ul>
-          <li>
-            <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-              {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
-            </button>
-          </li>
+          {menuItems.map(renderMenuItem)}
         </ul>
       </nav>
 

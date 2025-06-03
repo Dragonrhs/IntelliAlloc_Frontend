@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Navbar.css';
 import Toast from './Toast';
+import { useUser } from '../context/UserContext';
 
 interface NavbarProps {
   showAvatar?: boolean; // Prop para controlar se o avatar deve ser exibido
@@ -10,7 +11,6 @@ interface NavbarProps {
   email?: string; // Email para exibir no dropdown
   isDarkMode: boolean; // Prop para modo escuro/claro
   onEditProfile?: () => void; // Função para abrir o formulário de edição de perfil
-  role?: string; // Role para exibir no dropdown
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -19,7 +19,6 @@ const Navbar: React.FC<NavbarProps> = ({
   email = '',
   isDarkMode,
   onEditProfile,
-  role = '', // Adiciona a prop role
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -27,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
+  const { userRole } = useUser();
 
   const handleLogout = async () => {
     try {
@@ -63,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({
               <div className="tooltip">
                 <div>{username}</div>
                 <div>{email}</div>
-                <div>{role}</div> {/* Exibe o role no tooltip */}
+                <div>{userRole}</div> {/* Exibe o userRole do contexto no tooltip */}
               </div>
             )}
             {showDropdown && (
@@ -73,7 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="user-info">
                     <div className="username">Olá, {username}!</div>
                     <div className="email">{email}</div>
-                    <div className="role">{role}</div> {/* Exibe o role no dropdown */}
+                    <div className="role">{userRole}</div> {/* Exibe o userRole do contexto no dropdown */}
                   </div>
                 </div>
                 <div className="dropdown-item" onClick={onEditProfile}>

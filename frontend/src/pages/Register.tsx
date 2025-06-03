@@ -97,7 +97,7 @@ const Register: React.FC = () => {
             Registrar
           </CustomButton>
           <CustomButton
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/login')}
             className="login-button secondary"
             isDarkMode={isDarkMode}
           >

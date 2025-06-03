@@ -9,10 +9,14 @@ import './EscolhaInserirAtivo.css';
 const EscolhaInserirAtivo: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
-  const { userRole } = useUser();
+  const { checkPermission } = useUser();
 
-  // Verificar se o usuário tem permissão
-  if (userRole !== 'Admin' && userRole !== 'Research') {
+  // Verificar permissão usando o sistema centralizado
+  const temPermissao = checkPermission('/escolha-inserir-ativo', 'GET');
+  console.log('[EscolhaInserirAtivo] Resultado da verificação de permissão:', temPermissao);
+
+  if (!temPermissao) {
+    console.log('[EscolhaInserirAtivo] Acesso negado - temPermissao é:', temPermissao);
     return (
       <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
@@ -31,6 +35,7 @@ const EscolhaInserirAtivo: React.FC = () => {
     );
   }
 
+  console.log('[EscolhaInserirAtivo] Acesso permitido - temPermissao é:', temPermissao);
   return (
     <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />

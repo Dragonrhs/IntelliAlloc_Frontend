@@ -331,3 +331,8 @@
 .historico-ativos-container.dark-mode .historico-usuario {
   color: #ced4da;
 } 
+
+.historico-ativos-container.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
+} 

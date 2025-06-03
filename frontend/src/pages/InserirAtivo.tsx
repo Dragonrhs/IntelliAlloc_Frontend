@@ -231,7 +231,7 @@ interface ErroImportacao {
 const InserirAtivo: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
-  const { userRole } = useUser();
+  const { checkPermission } = useUser();
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [camposVisiveis, setCamposVisiveis] = useState<CampoAtivo[]>([]);
@@ -322,8 +322,11 @@ const InserirAtivo: React.FC = () => {
     }
   };
 
-  // Verificar se o usuário tem permissão
-  if (userRole !== 'Admin' && userRole !== 'Research') {
+  // Checagem de permissão para visualizar e inserir
+  const podeVisualizar = checkPermission('/inserir-ativo', 'GET');
+  const podeInserir = checkPermission('/inserir-ativo', 'POST');
+
+  if (!podeVisualizar) {
     return (
       <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
@@ -484,7 +487,7 @@ const InserirAtivo: React.FC = () => {
             {renderCampo('restrito_alocacao', 'Restrito para Alocação', 'select')}
 
             <div className="form-actions">
-              <button type="submit" className="submit-button">Inserir Ativo</button>
+              <button type="submit" className="submit-button" disabled={!podeInserir}>Inserir Ativo</button>
               <button type="button" className="cancel-button" onClick={() => navigate('/consultar-ativos')}>
                 Cancelar
               </button>
