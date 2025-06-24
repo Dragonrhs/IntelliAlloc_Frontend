@@ -26,7 +26,8 @@ import {
   faChartLine,
   faSliders,
   faCalendarCheck,
-  faLock
+  faLock,
+  faTags
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -64,7 +65,9 @@ const routeIcons: Record<string, { label: string; icon: any }> = {
   '/escolha-inserir-ativo': { label: 'Inserir Ativo', icon: faEdit },
   '/atualizar-ativo': { label: 'Atualizar Ativo', icon: faSync },
   '/consultar-ativos': { label: 'Consultar Ativos', icon: faSearch },
-  '/historico-ativo': { label: 'Histórico de Ativos', icon: faClockRotateLeft }
+  '/historico-ativo': { label: 'Histórico de Ativos', icon: faClockRotateLeft },
+  '/classificar-ativos': { label: 'Classificar Ativos', icon: faTags },
+  '/historico-classificacao': { label: 'Histórico de Classificações', icon: faClockRotateLeft }
 };
 
 // Agrupamentos de menu para melhor organização
@@ -97,7 +100,7 @@ const menuGroups = [
   {
     id: 'assets',
     title: 'Ativos',
-    routes: ['/escolha-inserir-ativo', '/atualizar-ativo', '/consultar-ativos', '/historico-ativo']
+    routes: ['/escolha-inserir-ativo', '/atualizar-ativo', '/consultar-ativos', '/classificar-ativos', '/historico-ativo', '/historico-classificacao']
   }
 ];
 
@@ -272,7 +275,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       '/recomendacoes': '/view-recommended-portfolio',
       '/classes': '/view-asset-class',
       '/ativos': '/consultar-ativos',
-      '/historico': '/history'
+      '/historico': '/history',
+      '/api/history/classificacao': '/historico-classificacao'
     };
     
     // Verificar mapeamento direto
@@ -297,38 +301,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   const hasPermission = (route: string, method: string = 'GET') => {
     // Se ainda está carregando ou é admin, libera tudo
     if (loading || userRole === 'Admin') return true;
-    
-    // Mapeamento de cargos para rotas permitidas (como fallback)
-    const rolePermissionsMap: Record<string, string[]> = {
-      'PS': [
-        '/clients',
-        '/suitability',
-        '/history',
-        '/view-recommended-portfolio',
-        '/consultar-ativos'
-      ],
-      'Alocacao': [
-        '/recommended-portfolio',
-        '/view-recommended-portfolio',
-        '/estatisticas',
-        '/asset-class-evaluation',
-        '/view-asset-class',
-        '/avaliacao-mensal-classes',
-        '/parametros-rebalanceamento',
-        '/consultar-ativos',
-        '/permissions'  // Adicionado aqui também para garantir
-      ],
-      'Research': [
-        '/escolha-inserir-ativo',
-        '/asset-class-evaluation',
-        '/view-asset-class',
-        '/inserir-ativo',
-        '/avaliacao-mensal-classes',
-        '/estatisticas',
-        '/consultar-ativos'
-      ],
-      'Admin': ['*']  // Admin tem acesso a tudo
-    };
     
     // Imprimir log detalhado para depuração
     console.log(`Verificando permissão para ${route} (${method}) - ${permissions.length} permissões disponíveis`);
@@ -370,15 +342,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (similarPermissions.length > 0) {
         console.log(`Permissões similares encontradas para ${route}:`, similarPermissions);
       }
-    }
-    
-    // Fallback para mapeamento baseado em cargo
-    if (userRole && rolePermissionsMap[userRole]) {
-      const hasRoleAccess = rolePermissionsMap[userRole].includes(route) || 
-                          rolePermissionsMap[userRole].includes('*');
-                          
-      console.log(`Permissão baseada em cargo para ${route}: ${hasRoleAccess} (${userRole})`);
-      return hasRoleAccess;
     }
     
     console.log(`Sem permissão para ${route} (${method})`);
