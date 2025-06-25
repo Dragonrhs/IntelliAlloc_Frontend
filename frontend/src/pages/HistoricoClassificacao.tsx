@@ -15,6 +15,7 @@ interface ClassificacaoHistoryItem {
   ativo_id: number;
   ativo_nome: string;
   ativo_classe: string;
+  ativo_classe_anterior?: string;
   classe_investimento?: string;
   classe_investimento_anterior?: string;
   indexador_primario?: string;
@@ -30,9 +31,11 @@ const HistoricoClassificacao: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [filtroAtivo, setFiltroAtivo] = useState<string>('');
-  const [ativos, setAtivos] = useState<{id: number, nome: string}[]>([]);
   const [buscaNome, setBuscaNome] = useState('');
+  const [filtroClasseAtivo, setFiltroClasseAtivo] = useState<string>('');
+  const [dataInicial, setDataInicial] = useState<string>('');
+  const [dataFinal, setDataFinal] = useState<string>('');
+  const [classesAtivos, setClassesAtivos] = useState<string[]>([]);
   
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
   const { checkPermission } = useUser();
@@ -40,8 +43,8 @@ const HistoricoClassificacao: React.FC = () => {
 
   useEffect(() => {
     carregarHistorico();
-    carregarAtivos();
-  }, [paginaAtual, filtroAtivo]);
+    carregarClassesAtivos();
+  }, [paginaAtual]);
 
   const carregarHistorico = async () => {
     try {
@@ -49,10 +52,6 @@ const HistoricoClassificacao: React.FC = () => {
       const offset = (paginaAtual - 1) * itensPorPagina;
       
       let url = `http://localhost:5000/api/history/classificacao?limit=${itensPorPagina}&offset=${offset}`;
-      
-      if (filtroAtivo) {
-        url += `&ativo_id=${filtroAtivo}`;
-      }
       
       const response = await axios.get(url, { withCredentials: true });
       
@@ -70,24 +69,25 @@ const HistoricoClassificacao: React.FC = () => {
     }
   };
 
-  const carregarAtivos = async () => {
+  const carregarClassesAtivos = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/ativos/buscar', {
-        params: { tipo: 'todos', valor: '' },
-        withCredentials: true
+      // Extrair classes únicas dos dados já carregados
+      const classes = new Set<string>();
+      historicoItems.forEach(item => {
+        if (item.ativo_classe) {
+          classes.add(item.ativo_classe);
+        }
       });
-      
-      if (response.data && response.data.ativos) {
-        const ativosData = response.data.ativos.map((ativo: any) => ({
-          id: ativo.id,
-          nome: ativo.nome
-        }));
-        setAtivos(ativosData);
-      }
+      setClassesAtivos(Array.from(classes).sort());
     } catch (error) {
-      console.error('Erro ao carregar ativos:', error);
+      console.error('Erro ao extrair classes de ativos:', error);
     }
   };
+
+  useEffect(() => {
+    // Atualizar classes disponíveis quando os dados mudarem
+    carregarClassesAtivos();
+  }, [historicoItems]);
 
   const formatarData = (dataString: string) => {
     try {
@@ -122,10 +122,42 @@ const HistoricoClassificacao: React.FC = () => {
     
     const termoBusca = buscaNome.toLowerCase();
     return (
-      item.ativo_nome.toLowerCase().includes(termoBusca) ||
       item.user_name.toLowerCase().includes(termoBusca) ||
-      (item.classe_investimento && item.classe_investimento.toLowerCase().includes(termoBusca))
+      (item.ativo_classe && item.ativo_classe.toLowerCase().includes(termoBusca)) ||
+      (item.classe_investimento && item.classe_investimento.toLowerCase().includes(termoBusca)) ||
+      (item.indexador_primario && item.indexador_primario.toLowerCase().includes(termoBusca)) ||
+      (item.tipo_indexador && item.tipo_indexador.toLowerCase().includes(termoBusca)) ||
+      traduzirTipoAcao(item.action_type).toLowerCase().includes(termoBusca)
     );
+  };
+
+  const filtrarPorClasseAtivo = (item: ClassificacaoHistoryItem) => {
+    if (!filtroClasseAtivo) return true;
+    return item.ativo_classe === filtroClasseAtivo;
+  };
+
+  const filtrarPorData = (item: ClassificacaoHistoryItem) => {
+    if (!dataInicial && !dataFinal) return true;
+    
+    const dataItem = new Date(item.action_date);
+    
+    if (dataInicial && dataFinal) {
+      const dataInicialObj = new Date(dataInicial);
+      const dataFinalObj = new Date(dataFinal);
+      // Ajustar data final para incluir o dia inteiro
+      dataFinalObj.setHours(23, 59, 59, 999);
+      return dataItem >= dataInicialObj && dataItem <= dataFinalObj;
+    } else if (dataInicial) {
+      const dataInicialObj = new Date(dataInicial);
+      return dataItem >= dataInicialObj;
+    } else if (dataFinal) {
+      const dataFinalObj = new Date(dataFinal);
+      // Ajustar data final para incluir o dia inteiro
+      dataFinalObj.setHours(23, 59, 59, 999);
+      return dataItem <= dataFinalObj;
+    }
+    
+    return true;
   };
 
   const compararValores = (anterior: string | undefined | null, atual: string | undefined | null): boolean => {
@@ -143,7 +175,14 @@ const HistoricoClassificacao: React.FC = () => {
     return valor;
   };
 
-  const historicoFiltrado = historicoItems.filter(filtrarPorNome);
+  const aplicarFiltros = () => {
+    return historicoItems
+      .filter(filtrarPorNome)
+      .filter(filtrarPorClasseAtivo)
+      .filter(filtrarPorData);
+  };
+
+  const historicoFiltrado = aplicarFiltros();
   const totalPaginas = Math.ceil(totalItems / itensPorPagina);
 
   if (loading && paginaAtual === 1) {
@@ -184,33 +223,64 @@ const HistoricoClassificacao: React.FC = () => {
 
           <div className="filtros-container">
             <div className="filtro-item">
-              <label htmlFor="filtroAtivo">Filtrar por Ativo:</label>
+              <label htmlFor="buscaNome">Busca Geral:</label>
+              <input
+                type="text"
+                id="buscaNome"
+                value={buscaNome}
+                onChange={(e) => setBuscaNome(e.target.value)}
+                placeholder="Buscar em todas as colunas..."
+              />
+            </div>
+
+            <div className="filtro-item">
+              <label htmlFor="filtroClasseAtivo">Classe do Ativo:</label>
               <select
-                id="filtroAtivo"
-                value={filtroAtivo}
-                onChange={(e) => {
-                  setFiltroAtivo(e.target.value);
-                  setPaginaAtual(1);
-                }}
+                id="filtroClasseAtivo"
+                value={filtroClasseAtivo}
+                onChange={(e) => setFiltroClasseAtivo(e.target.value)}
               >
-                <option value="">Todos os Ativos</option>
-                {ativos.map((ativo) => (
-                  <option key={ativo.id} value={ativo.id}>
-                    {ativo.nome}
+                <option value="">Todas as Classes</option>
+                {classesAtivos.map((classe) => (
+                  <option key={classe} value={classe}>
+                    {classe}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="filtro-item">
-              <label htmlFor="buscaNome">Busca por Nome:</label>
+              <label htmlFor="dataInicial">Data Inicial:</label>
               <input
-                type="text"
-                id="buscaNome"
-                value={buscaNome}
-                onChange={(e) => setBuscaNome(e.target.value)}
-                placeholder="Buscar por ativo, usuário ou classe..."
+                type="date"
+                id="dataInicial"
+                value={dataInicial}
+                onChange={(e) => setDataInicial(e.target.value)}
               />
+            </div>
+
+            <div className="filtro-item">
+              <label htmlFor="dataFinal">Data Final:</label>
+              <input
+                type="date"
+                id="dataFinal"
+                value={dataFinal}
+                onChange={(e) => setDataFinal(e.target.value)}
+              />
+            </div>
+
+            <div className="filtro-item limpar-filtros">
+              <button 
+                onClick={() => {
+                  setBuscaNome('');
+                  setFiltroClasseAtivo('');
+                  setDataInicial('');
+                  setDataFinal('');
+                }}
+                className="btn-limpar-filtros"
+              >
+                Limpar Filtros
+              </button>
             </div>
           </div>
 
@@ -225,7 +295,6 @@ const HistoricoClassificacao: React.FC = () => {
                       <tr>
                         <th>Data</th>
                         <th>Ação</th>
-                        <th>Ativo</th>
                         <th>Classe do Ativo</th>
                         <th>Usuário</th>
                         <th>Classe de Investimento</th>
@@ -242,7 +311,6 @@ const HistoricoClassificacao: React.FC = () => {
                               {traduzirTipoAcao(item.action_type)}
                             </div>
                           </td>
-                          <td>{item.ativo_nome}</td>
                           <td>{item.ativo_classe}</td>
                           <td>{item.user_name}</td>
                           <td>
