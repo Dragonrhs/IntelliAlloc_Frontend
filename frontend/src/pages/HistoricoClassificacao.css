@@ -355,4 +355,305 @@
 
 .btn-limpar-filtros:hover {
   background-color: var(--secondary-hover, #d32f2f);
+}
+
+.highlight-text {
+  background-color: rgba(255, 213, 79, 0.4);
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.dark-mode .highlight-text {
+  background-color: rgba(255, 213, 79, 0.3);
+  color: #fff;
+}
+
+/* Botão flutuante para resumo */
+.botao-resumo {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 100;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+.botao-resumo:hover {
+  transform: scale(1.1);
+  background-color: var(--primary-hover);
+}
+
+.botao-resumo i {
+  font-size: 24px;
+}
+
+/* Modal de resumo */
+.modal-resumo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-resumo-conteudo {
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideIn 0.3s;
+  color: #333;
+}
+
+.dark-mode .modal-resumo-conteudo {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-resumo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-resumo-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.dark-mode .modal-resumo-header h3 {
+  color: #fff;
+}
+
+.fechar-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.2s;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.fechar-modal:hover {
+  color: #343a40;
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
+.dark-mode .fechar-modal {
+  color: #adb5bd;
+}
+
+.dark-mode .fechar-modal:hover {
+  color: #fff;
+  background-color: rgba(173, 181, 189, 0.1);
+}
+
+.modal-resumo-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.resumo-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin-bottom: 10px;
+}
+
+.dark-mode .resumo-item {
+  background-color: #3a3a3a;
+}
+
+.resumo-item.total {
+  background-color: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+}
+
+.dark-mode .resumo-item.total {
+  background-color: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.resumo-icone {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  font-size: 20px;
+}
+
+.resumo-icone.criadas {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #2e7d32;
+}
+
+.resumo-icone.atualizadas {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #1565c0;
+}
+
+.resumo-icone.removidas {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #c62828;
+}
+
+.resumo-icone.total {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #1565c0;
+}
+
+.resumo-icone i {
+  font-size: 20px;
+}
+
+.resumo-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.resumo-numero {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.dark-mode .resumo-numero {
+  color: #fff;
+}
+
+.resumo-texto {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.dark-mode .resumo-texto {
+  color: #adb5bd;
+}
+
+.modal-resumo-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+  text-align: right;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.dark-mode .modal-resumo-footer {
+  border-top-color: #555;
+  color: #adb5bd;
+}
+
+/* Cores para o modo escuro */
+.dark-mode .resumo-icone.criadas {
+  background-color: rgba(76, 175, 80, 0.3);
+  color: #81c784;
+}
+
+.dark-mode .resumo-icone.atualizadas {
+  background-color: rgba(33, 150, 243, 0.3);
+  color: #64b5f6;
+}
+
+.dark-mode .resumo-icone.removidas {
+  background-color: rgba(244, 67, 54, 0.3);
+  color: #e57373;
+}
+
+.dark-mode .resumo-icone.total {
+  background-color: rgba(33, 150, 243, 0.3);
+  color: #64b5f6;
+}
+
+.dark-mode .resumo-item.total {
+  background-color: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+/* Responsividade para o modal */
+@media (max-width: 576px) {
+  .modal-resumo-conteudo {
+    width: 95%;
+  }
+  
+  .resumo-icone {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .resumo-numero {
+    font-size: 20px;
+  }
+  
+  .resumo-texto {
+    font-size: 12px;
+  }
+  
+  .botao-resumo {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* Estilos para o modal de resumo - Revisado */
+.modal-resumo-revisado {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
 } 
