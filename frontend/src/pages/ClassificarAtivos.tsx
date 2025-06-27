@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
+import TextHighlight from '../components/TextHighlight';
 import './ClassificarAtivos.css';
 import * as XLSX from 'xlsx';
 
@@ -36,6 +37,7 @@ const ClassificarAtivos: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filtroClasse, setFiltroClasse] = useState<string>('');
+  const [filtroClasseInvestimento, setFiltroClasseInvestimento] = useState<string>('');
   const [buscaGlobal, setBuscaGlobal] = useState('');
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [salvando, setSalvando] = useState(false);
@@ -359,6 +361,11 @@ const ClassificarAtivos: React.FC = () => {
       return false;
     }
     if (filtroClassificacao === 'nao_classificados' && classificacoes[ativo.id]?.id) {
+      return false;
+    }
+
+    // Filtro por classe de investimento
+    if (filtroClasseInvestimento && classificacoes[ativo.id]?.classe_investimento !== filtroClasseInvestimento) {
       return false;
     }
 
@@ -760,6 +767,22 @@ const ClassificarAtivos: React.FC = () => {
             </div>
 
             <div className="filtro-item">
+              <label htmlFor="filtroClasseInvestimento">Filtrar por Classe de Investimento:</label>
+              <select
+                id="filtroClasseInvestimento"
+                value={filtroClasseInvestimento}
+                onChange={(e) => setFiltroClasseInvestimento(e.target.value)}
+              >
+                <option value="">Todas as Classes de Investimento</option>
+                {classesInvestimento.map((classe) => (
+                  <option key={classe} value={classe}>
+                    {classe}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filtro-item">
               <label htmlFor="filtroClassificacao">Status de Classificação:</label>
               <select
                 id="filtroClassificacao"
@@ -781,6 +804,20 @@ const ClassificarAtivos: React.FC = () => {
                 onChange={(e) => setBuscaGlobal(e.target.value)}
                 placeholder="Buscar por nome, ticker, ISIN ou CNPJ..."
               />
+            </div>
+
+            <div className="filtro-item limpar-filtros">
+              <button 
+                onClick={() => {
+                  setBuscaGlobal('');
+                  setFiltroClasse('');
+                  setFiltroClasseInvestimento('');
+                  setFiltroClassificacao('todos');
+                }}
+                className="btn-limpar-filtros"
+              >
+                Limpar Filtros
+              </button>
             </div>
           </div>
 
@@ -821,8 +858,8 @@ const ClassificarAtivos: React.FC = () => {
                             {isClassificado ? 'Classificado' : 'Não Classificado'}
                           </div>
                         </td>
-                        <td>{ativo.nome}</td>
-                        <td>{ativo.classe}</td>
+                        <td><TextHighlight text={ativo.nome} searchTerm={buscaGlobal} /></td>
+                        <td><TextHighlight text={ativo.classe} searchTerm={buscaGlobal} /></td>
                         <td>
                           <select
                             value={classeInvestimentoAtual}
@@ -840,9 +877,9 @@ const ClassificarAtivos: React.FC = () => {
                             ))}
                           </select>
                         </td>
-                        <td>{ativo.cnpj ? formatarCNPJ(ativo.cnpj) : '-'}</td>
-                        <td>{ativo.ticker || '-'}</td>
-                        <td>{ativo.isin || '-'}</td>
+                        <td><TextHighlight text={ativo.cnpj ? formatarCNPJ(ativo.cnpj) : '-'} searchTerm={buscaGlobal} /></td>
+                        <td><TextHighlight text={ativo.ticker || '-'} searchTerm={buscaGlobal} /></td>
+                        <td><TextHighlight text={ativo.isin || '-'} searchTerm={buscaGlobal} /></td>
                         <td>
                           <input
                             type="text"
