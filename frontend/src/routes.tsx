@@ -24,8 +24,11 @@ import ViewAssetClassPage from './pages/ViewAssetClassPage';
 import ParametrosRebalanceamento from './pages/ParametrosRebalanceamento';
 import AvaliacaoMensalClasses from './pages/AvaliacaoMensalClasses';
 import PermissionsManagement from './pages/PermissionsManagement';
+import ClassificarAtivos from './pages/ClassificarAtivos';
 import { useUser } from './context/UserContext';
 import AccessDenied from './components/AccessDenied';
+import PageTransition from './components/PageTransition';
+import HistoricoClassificacao from './pages/HistoricoClassificacao';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -90,6 +93,7 @@ const AppRoutes: React.FC = () => {
   }
 
   return (
+    <PageTransition>
     <Routes>
       {/* Rota para a página inicial (redireciona para /login se não autenticado) */}
       <Route path="/" element={
@@ -166,6 +170,13 @@ const AppRoutes: React.FC = () => {
         </ProtectedRoute>
       } />
 
+        {/* Rota para classificar ativos */}
+        <Route path="/classificar-ativos" element={
+          <ProtectedRoute>
+            <ClassificarAtivos />
+          </ProtectedRoute>
+        } />
+
       {/* Rota para importar ativos em lote */}
       <Route path="/importar-ativos-lote" element={
         <ProtectedRoute>
@@ -227,9 +238,17 @@ const AppRoutes: React.FC = () => {
         </ProtectedRoute>
       } />
 
+        {/* Rota para histórico de classificações */}
+        <Route path="/historico-classificacao" element={
+          <ProtectedRoute>
+            <HistoricoClassificacao />
+          </ProtectedRoute>
+        } />
+
       {/* Rota para páginas não encontradas (404) */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </PageTransition>
   );
 };
 

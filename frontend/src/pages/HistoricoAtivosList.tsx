@@ -36,6 +36,14 @@ interface Filtros {
   gestora: string;
 }
 
+interface ResumoAtividades {
+  classificacoes: number;
+  atualizacoes_classificacao: number;
+  importacoes: number;
+  atualizacoes: number;
+  total: number;
+}
+
 const formatarAlteracoes = (changes: string): React.ReactElement => {
   try {
     const dados = JSON.parse(changes);
@@ -67,6 +75,14 @@ const HistoricoAtivosList: React.FC = () => {
   const [ativosFiltrados, setAtivosFiltrados] = useState<Ativo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [mostrarResumo, setMostrarResumo] = useState(false);
+  const [resumoDiario, setResumoDiario] = useState<ResumoAtividades>({
+    classificacoes: 0,
+    atualizacoes_classificacao: 0,
+    importacoes: 0,
+    atualizacoes: 0,
+    total: 0
+  });
   const [filtros, setFiltros] = useState<Filtros>({
     busca: '',
     classe: '',
@@ -115,7 +131,26 @@ const HistoricoAtivosList: React.FC = () => {
     };
 
     fetchAtivos();
+    carregarResumoDiario();
   }, []);
+
+  const carregarResumoDiario = async () => {
+    try {
+      // Obter a data atual no formato YYYY-MM-DD
+      const hoje = new Date().toISOString().split('T')[0];
+      
+      // Fazer uma requisição para obter as atividades do dia atual
+      const response = await axios.get(`http://localhost:5000/api/ativos/historico/resumo?date=${hoje}`, { 
+        withCredentials: true 
+      });
+      
+      if (response.data && response.data.resumo) {
+        setResumoDiario(response.data.resumo);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar resumo diário:', error);
+    }
+  };
 
   useEffect(() => {
     const filtrarAtivos = () => {
@@ -197,6 +232,10 @@ const HistoricoAtivosList: React.FC = () => {
 
   const handleVerHistorico = (ativoId: number) => {
     navigate(`/historico-ativo/${ativoId}`);
+  };
+
+  const toggleResumo = () => {
+    setMostrarResumo(!mostrarResumo);
   };
 
   if (loading) {
@@ -364,6 +403,166 @@ const HistoricoAtivosList: React.FC = () => {
                   </button>
                 </CustomCard>
               ))}
+            </div>
+          )}
+          
+          {/* Botão flutuante para mostrar resumo */}
+          <div className="botao-resumo" onClick={toggleResumo}>
+            <i className="fas fa-chart-bar"></i>
+          </div>
+
+          {/* Modal de resumo diário */}
+          {mostrarResumo && (
+            <div className="modal-resumo">
+              <div 
+                className="modal-resumo-conteudo"
+                style={{
+                  backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff',
+                  color: isDarkMode ? '#fff' : '#333'
+                }}
+              >
+                <div 
+                  className="modal-resumo-header"
+                  style={{
+                    borderBottomColor: isDarkMode ? '#555' : '#e9ecef'
+                  }}
+                >
+                  <h3 style={{ color: isDarkMode ? '#fff' : '#333' }}>Resumo de Atividades do Dia</h3>
+                  <button className="fechar-modal" onClick={toggleResumo}>×</button>
+                </div>
+                <div className="modal-resumo-body">
+                  <div 
+                    className="resumo-item"
+                    style={{
+                      backgroundColor: isDarkMode ? '#3a3a3a' : '#f8f9fa'
+                    }}
+                  >
+                    <div className="resumo-icone classificacoes">
+                      <i className="fas fa-tags"></i>
+                    </div>
+                    <div className="resumo-info">
+                      <span 
+                        className="resumo-numero"
+                        style={{ color: isDarkMode ? '#fff' : '#333' }}
+                      >
+                        {resumoDiario.classificacoes}
+                      </span>
+                      <span 
+                        className="resumo-texto"
+                        style={{ color: isDarkMode ? '#adb5bd' : '#6c757d' }}
+                      >
+                        Classificações
+                      </span>
+                    </div>
+                  </div>
+                  <div 
+                    className="resumo-item"
+                    style={{
+                      backgroundColor: isDarkMode ? '#3a3a3a' : '#f8f9fa'
+                    }}
+                  >
+                    <div className="resumo-icone atualizacoes-classificacao">
+                      <i className="fas fa-tag"></i>
+                    </div>
+                    <div className="resumo-info">
+                      <span 
+                        className="resumo-numero"
+                        style={{ color: isDarkMode ? '#fff' : '#333' }}
+                      >
+                        {resumoDiario.atualizacoes_classificacao}
+                      </span>
+                      <span 
+                        className="resumo-texto"
+                        style={{ color: isDarkMode ? '#adb5bd' : '#6c757d' }}
+                      >
+                        Atualizações de Classificação
+                      </span>
+                    </div>
+                  </div>
+                  <div 
+                    className="resumo-item"
+                    style={{
+                      backgroundColor: isDarkMode ? '#3a3a3a' : '#f8f9fa'
+                    }}
+                  >
+                    <div className="resumo-icone importacoes">
+                      <i className="fas fa-file-import"></i>
+                    </div>
+                    <div className="resumo-info">
+                      <span 
+                        className="resumo-numero"
+                        style={{ color: isDarkMode ? '#fff' : '#333' }}
+                      >
+                        {resumoDiario.importacoes}
+                      </span>
+                      <span 
+                        className="resumo-texto"
+                        style={{ color: isDarkMode ? '#adb5bd' : '#6c757d' }}
+                      >
+                        Importações de Ativo
+                      </span>
+                    </div>
+                  </div>
+                  <div 
+                    className="resumo-item"
+                    style={{
+                      backgroundColor: isDarkMode ? '#3a3a3a' : '#f8f9fa'
+                    }}
+                  >
+                    <div className="resumo-icone atualizacoes">
+                      <i className="fas fa-edit"></i>
+                    </div>
+                    <div className="resumo-info">
+                      <span 
+                        className="resumo-numero"
+                        style={{ color: isDarkMode ? '#fff' : '#333' }}
+                      >
+                        {resumoDiario.atualizacoes}
+                      </span>
+                      <span 
+                        className="resumo-texto"
+                        style={{ color: isDarkMode ? '#adb5bd' : '#6c757d' }}
+                      >
+                        Atualizações de Ativo
+                      </span>
+                    </div>
+                  </div>
+                  <div 
+                    className="resumo-item total"
+                    style={{
+                      backgroundColor: isDarkMode ? 'rgba(33, 150, 243, 0.15)' : 'rgba(33, 150, 243, 0.1)',
+                      borderColor: isDarkMode ? 'rgba(33, 150, 243, 0.3)' : 'rgba(33, 150, 243, 0.2)'
+                    }}
+                  >
+                    <div className="resumo-icone total">
+                      <i className="fas fa-calculator"></i>
+                    </div>
+                    <div className="resumo-info">
+                      <span 
+                        className="resumo-numero"
+                        style={{ color: isDarkMode ? '#fff' : '#333' }}
+                      >
+                        {resumoDiario.total}
+                      </span>
+                      <span 
+                        className="resumo-texto"
+                        style={{ color: isDarkMode ? '#adb5bd' : '#6c757d' }}
+                      >
+                        Total de Atividades
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div 
+                  className="modal-resumo-footer"
+                  style={{
+                    borderTopColor: isDarkMode ? '#555' : '#e9ecef',
+                    color: isDarkMode ? '#adb5bd' : '#6c757d'
+                  }}
+                >
+                  <p>Data: {new Date().toLocaleDateString('pt-BR')}</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
