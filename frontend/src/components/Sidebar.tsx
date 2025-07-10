@@ -27,7 +27,8 @@ import {
   faSliders,
   faCalendarCheck,
   faLock,
-  faTags
+  faTags,
+  faDatabase
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -67,7 +68,9 @@ const routeIcons: Record<string, { label: string; icon: any }> = {
   '/consultar-ativos': { label: 'Consultar Ativos', icon: faSearch },
   '/historico-ativo': { label: 'Histórico de Ativos', icon: faClockRotateLeft },
   '/classificar-ativos': { label: 'Classificar Ativos', icon: faTags },
-  '/historico-classificacao': { label: 'Histórico de Classificações', icon: faClockRotateLeft }
+  '/historico-classificacao': { label: 'Histórico de Classificações', icon: faClockRotateLeft },
+  '/dados': { label: 'Dados e Integração', icon: faDatabase },
+  '/visualizacao-dados': { label: 'Visualização de Dados', icon: faChartLine }
 };
 
 // Agrupamentos de menu para melhor organização
@@ -101,6 +104,11 @@ const menuGroups = [
     id: 'assets',
     title: 'Ativos',
     routes: ['/escolha-inserir-ativo', '/atualizar-ativo', '/consultar-ativos', '/classificar-ativos', '/historico-ativo', '/historico-classificacao']
+  },
+  {
+    id: 'integration',
+    title: 'Integração',
+    routes: ['/dados', '/visualizacao-dados']
   }
 ];
 

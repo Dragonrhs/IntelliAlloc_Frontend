@@ -25,6 +25,8 @@ import ParametrosRebalanceamento from './pages/ParametrosRebalanceamento';
 import AvaliacaoMensalClasses from './pages/AvaliacaoMensalClasses';
 import PermissionsManagement from './pages/PermissionsManagement';
 import ClassificarAtivos from './pages/ClassificarAtivos';
+import Dados from './pages/Dados';
+import VisualizacaoDados from './pages/VisualizacaoDados';
 import { useUser } from './context/UserContext';
 import AccessDenied from './components/AccessDenied';
 import PageTransition from './components/PageTransition';
@@ -174,8 +176,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/classificar-ativos" element={
           <ProtectedRoute>
             <ClassificarAtivos />
-          </ProtectedRoute>
-        } />
+        </ProtectedRoute>
+      } />
 
       {/* Rota para importar ativos em lote */}
       <Route path="/importar-ativos-lote" element={
@@ -244,6 +246,16 @@ const AppRoutes: React.FC = () => {
             <HistoricoClassificacao />
           </ProtectedRoute>
         } />
+
+      {/* Rota para a página de Dados e Integração */}
+      <Route path="/dados" element={
+        <ProtectedRoute>
+          <Dados />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para visualização de dados */}
+      <Route path="/visualizacao-dados" element={<VisualizacaoDados />} />
 
       {/* Rota para páginas não encontradas (404) */}
       <Route path="*" element={<Navigate to="/" replace />} />
