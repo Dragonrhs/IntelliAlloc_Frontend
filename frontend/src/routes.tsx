@@ -27,6 +27,7 @@ import PermissionsManagement from './pages/PermissionsManagement';
 import ClassificarAtivos from './pages/ClassificarAtivos';
 import Dados from './pages/Dados';
 import VisualizacaoDados from './pages/VisualizacaoDados';
+import CarteiraCliente from './pages/CarteiraCliente';
 import { useUser } from './context/UserContext';
 import AccessDenied from './components/AccessDenied';
 import PageTransition from './components/PageTransition';
@@ -141,6 +142,13 @@ const AppRoutes: React.FC = () => {
       <Route path="/view-recommended-portfolio" element={
         <ProtectedRoute>
           <ViewRecommendedPortfolio />
+        </ProtectedRoute>
+      } />
+
+      {/* Rota para confecção de carteira para cliente */}
+      <Route path="/carteira-cliente" element={
+        <ProtectedRoute>
+          <CarteiraCliente />
         </ProtectedRoute>
       } />
 
