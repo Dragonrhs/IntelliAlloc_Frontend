@@ -1,7 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faChartBar, 
+  faSave, 
+  faSpinner, 
+  faCheckCircle, 
+  faExclamationTriangle,
+  faInfoCircle,
+  faShieldAlt,
+  faCoins,
+  faBuilding,
+  faGlobe,
+  faRocket,
+  faChartLine
+} from '@fortawesome/free-solid-svg-icons';
 import CustomCard from './CustomCard';
 import CustomButton from './CustomButton';
+import Toast from './Toast';
 import { useTheme } from '../context/ThemeContext';
 import './AvaliacaoMensalClassesComponent.css';
 
@@ -40,6 +56,18 @@ const CLASSES_ATIVO = [
   'Renda Variável Internacional'
 ] as const;
 
+const CLASSES_ICONS: Record<string, any> = {
+  'Pós-Fixado': faShieldAlt,
+  'Inflação': faChartLine,
+  'Pré-Fixado': faChartLine,
+  'Multimercado': faCoins,
+  'Renda Variável Brasil': faBuilding,
+  'Fundos Listados': faChartBar,
+  'Alternativos': faRocket,
+  'Renda Fixa Global': faGlobe,
+  'Renda Variável Internacional': faGlobe
+};
+
 const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentProps> = ({
   mesSelecionado,
   onAvaliacaoSalva
@@ -50,6 +78,9 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
   const [successMessage, setSuccessMessage] = useState('');
   const [existemAvaliacoes, setExistemAvaliacoes] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const { isDarkMode } = useTheme();
 
   useEffect(() => {
@@ -64,8 +95,12 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
 
   useEffect(() => {
     if (successMessage) {
+      setToastMessage(successMessage);
+      setToastType('success');
+      setShowToast(true);
       const timer = setTimeout(() => {
         setSuccessMessage('');
+        setShowToast(false);
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -106,10 +141,16 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
       } else {
         console.error('Formato de resposta inválido:', response.data);
         setErrorMessage('Erro ao carregar parâmetros: formato de resposta inválido');
+        setToastMessage('Erro ao carregar parâmetros');
+        setToastType('error');
+        setShowToast(true);
       }
     } catch (error) {
       console.error('Erro ao carregar parâmetros:', error);
       setErrorMessage('Erro ao carregar parâmetros de rebalanceamento');
+      setToastMessage('Erro ao carregar parâmetros');
+      setToastType('error');
+      setShowToast(true);
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +181,9 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
       } else {
         console.error('Erro ao carregar avaliações:', error);
         setErrorMessage('Erro ao carregar avaliações do mês selecionado');
+        setToastMessage('Erro ao carregar avaliações');
+        setToastType('error');
+        setShowToast(true);
       }
     } finally {
       setIsLoading(false);
@@ -181,6 +225,7 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
 
   const salvarAvaliacoes = async () => {
     try {
+      setIsLoading(true);
       const avaliacoesCompletas = CLASSES_ATIVO.flatMap((classe: string) =>
         parametros.map((parametro: Parametro) => ({
           classe_ativo: classe,
@@ -201,8 +246,14 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
       setExistemAvaliacoes(true);
       onAvaliacaoSalva();
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.error || 'Erro ao salvar avaliações');
+      const errorMsg = error.response?.data?.error || 'Erro ao salvar avaliações';
+      setErrorMessage(errorMsg);
       setSuccessMessage('');
+      setToastMessage(errorMsg);
+      setToastType('error');
+      setShowToast(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -219,13 +270,16 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
 
     return (
       <div className="avaliacao-grid">
-        {Object.entries(parametrosPorClasse).map(([classe, avaliacoesClasse]) => (
-          <div key={classe} className="avaliacao-classe">
-            <h3>{classe}</h3>
+        {Object.entries(parametrosPorClasse).map(([classe, avaliacoesClasse], index) => (
+          <div key={classe} className="avaliacao-classe" style={{ animationDelay: `${index * 0.1}s` }}>
+            <div className="classe-header">
+              <FontAwesomeIcon icon={CLASSES_ICONS[classe] || faChartBar} className="classe-icon" />
+              <h3>{classe}</h3>
+            </div>
             <div className="parametros-grid">
               {avaliacoesClasse.map((avaliacao) => (
                 <div key={`${avaliacao.classe_ativo}-${avaliacao.parametro_id}`} className="parametro-item">
-                  <label>{avaliacao.nome_parametro} (Peso: {avaliacao.peso})</label>
+                  <label>{avaliacao.nome_parametro} <span className="peso-info">(Peso: {avaliacao.peso})</span></label>
                   <input
                     type="number"
                     min="0"
@@ -233,6 +287,7 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
                     step="0.1"
                     value={avaliacao.nota}
                     onChange={(e) => handleNotaChange(avaliacao.classe_ativo, avaliacao.parametro_id, e.target.value)}
+                    className="nota-input"
                   />
                 </div>
               ))}
@@ -251,54 +306,92 @@ const AvaliacaoMensalClassesComponent: React.FC<AvaliacaoMensalClassesComponentP
     return (
       <CustomCard className="avaliacao-mensal" isDarkMode={isDarkMode}>
         <div className="loading-container">
-          <p>Carregando...</p>
+          <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+          <p>Carregando avaliação mensal...</p>
         </div>
       </CustomCard>
     );
   }
 
   return (
-    <CustomCard className="avaliacao-mensal" isDarkMode={isDarkMode}>
-      <div className="avaliacao-header">
-        <h3>Avaliação Mensal das Classes de Ativos</h3>
-        <div className="status-info">
-          {existemAvaliacoes !== null && (
-            <span className={`status-badge ${existemAvaliacoes ? 'existente' : 'novo'}`}>
-              {existemAvaliacoes ? 'Avaliação Existente' : 'Nova Avaliação'}
-            </span>
-          )}
+    <>
+      <CustomCard className="avaliacao-mensal" isDarkMode={isDarkMode}>
+        <div className="avaliacao-header">
+          <div className="header-info">
+            <FontAwesomeIcon icon={faChartBar} className="header-icon" />
+            <div className="header-text">
+              <h3>Avaliação Mensal das Classes de Ativos</h3>
+              <p>Configure as notas para cada parâmetro de rebalanceamento</p>
+            </div>
+          </div>
+          <div className="status-info">
+            {existemAvaliacoes !== null && (
+              <span className={`status-badge ${existemAvaliacoes ? 'existente' : 'novo'}`}>
+                <FontAwesomeIcon icon={existemAvaliacoes ? faCheckCircle : faInfoCircle} />
+                {existemAvaliacoes ? 'Avaliação Existente' : 'Nova Avaliação'}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
-      
-      {errorMessage && (
-        <div className={`error-message ${isDarkMode ? 'dark-mode' : ''}`}>
-          {errorMessage}
-        </div>
-      )}
-      
-      {successMessage && (
-        <div className={`success-message ${isDarkMode ? 'dark-mode' : ''}`}>
-          {successMessage}
-        </div>
-      )}
+        
+        {errorMessage && (
+          <div className="message error">
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+        
+        {successMessage && (
+          <div className="message success">
+            <FontAwesomeIcon icon={faCheckCircle} />
+            <span>{successMessage}</span>
+          </div>
+        )}
 
-      {parametros.length === 0 ? (
-        <div className="no-parameters-message">
-          <p>Nenhum parâmetro de rebalanceamento ativo encontrado.</p>
-          <p>Por favor, configure os parâmetros antes de realizar a avaliação mensal.</p>
-        </div>
-      ) : (
-        renderAvaliacoesGrid()
-      )}
+        {parametros.length === 0 ? (
+          <div className="no-parameters-message">
+            <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+            <div className="info-content">
+              <h4>Nenhum Parâmetro Ativo</h4>
+              <p>Nenhum parâmetro de rebalanceamento ativo encontrado.</p>
+              <p>Por favor, configure os parâmetros antes de realizar a avaliação mensal.</p>
+            </div>
+          </div>
+        ) : (
+          renderAvaliacoesGrid()
+        )}
 
-      {parametros.length > 0 && (
-        <div className="avaliacao-actions">
-          <CustomButton onClick={salvarAvaliacoes} isDarkMode={isDarkMode}>
-            {existemAvaliacoes ? 'Atualizar Avaliações' : 'Salvar Avaliações'}
-          </CustomButton>
-        </div>
+        {parametros.length > 0 && (
+          <div className="avaliacao-actions">
+            <CustomButton 
+              onClick={salvarAvaliacoes} 
+              isDarkMode={isDarkMode}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faSave} />
+                  {existemAvaliacoes ? 'Atualizar Avaliações' : 'Salvar Avaliações'}
+                </>
+              )}
+            </CustomButton>
+          </div>
+        )}
+      </CustomCard>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
       )}
-    </CustomCard>
+    </>
   );
 };
 
