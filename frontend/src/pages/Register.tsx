@@ -27,7 +27,7 @@ const Register: React.FC = () => {
         password,
       });
       alert('Registro realizado com sucesso! Faça login.');
-      navigate('/');
+      navigate('/login');
     } catch (error: any) {
       console.error('Erro ao registrar:', error);
       setErrorMessage(error.response?.data?.error || 'Erro ao registrar');
