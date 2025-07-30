@@ -1,76 +1,264 @@
+/* CustomButton modernizado com glassmorphism */
 .custom-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Efeito de brilho */
+.custom-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.custom-button:hover::before {
+  left: 100%;
+}
+
+/* Estados de hover */
+.custom-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.custom-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Efeito de ripple */
+.custom-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.custom-button:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Modo escuro */
+.custom-button.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.custom-button.dark-mode:hover {
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Modo claro */
+.custom-button.light-mode {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+  color: white;
+}
+
+.custom-button.light-mode:hover {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+}
+
+/* Variantes de botão */
+.custom-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-button.primary:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.custom-button.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.custom-button.success {
+  background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(81, 207, 102, 0.3);
+}
+
+.custom-button.success:hover {
+  background: linear-gradient(135deg, #40c057 0%, #51cf66 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(81, 207, 102, 0.4);
+}
+
+.custom-button.danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #fa5252 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.custom-button.danger:hover {
+  background: linear-gradient(135deg, #fa5252 0%, #ff6b6b 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.custom-button.warning {
+  background: linear-gradient(135deg, #ffd43b 0%, #fcc419 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 212, 59, 0.3);
+  color: #333;
+}
+
+.custom-button.warning:hover {
+  background: linear-gradient(135deg, #fcc419 0%, #ffd43b 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(255, 212, 59, 0.4);
+}
+
+/* Estados especiais */
+.custom-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+  
+.custom-button:disabled:hover {
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+.custom-button:disabled::before {
+  display: none;
+}
+
+.custom-button:disabled::after {
+  display: none;
+  }
+  
+/* Botão de carregamento */
+.custom-button.loading {
+  position: relative;
+  color: transparent;
+  }
+  
+.custom-button.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: buttonSpin 1s linear infinite;
+}
+
+@keyframes buttonSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+  }
+  
+/* Tamanhos de botão */
+.custom-button.small {
+  padding: 10px 20px;
+  font-size: 14px;
+  }
+  
+.custom-button.large {
+  padding: 20px 40px;
+  font-size: 18px;
+  }
+  
+/* Botão com ícone */
+.custom-button.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-button.with-icon svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.custom-button.with-icon:hover svg {
+  transform: scale(1.1);
+  }
+  
+/* Responsividade */
+@media (max-width: 768px) {
+  .custom-button {
+    padding: 12px 24px;
+    font-size: 16px; /* Mantém 16px para evitar zoom no iOS */
+  }
+  
+  .custom-button.small {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  .custom-button.large {
+    padding: 16px 32px;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-button {
+    padding: 10px 20px;
   }
   
-  /* Modo escuro */
-  .custom-button.dark-mode {
-    background-color: #007bff;
-    color: white;
+  .custom-button.with-icon {
+    gap: 6px;
   }
   
-  .custom-button.dark-mode:hover {
-    background-color: #0056b3;
+  .custom-button.with-icon svg {
+    width: 16px;
+    height: 16px;
   }
-  
-  /* Modo claro */
-  .custom-button.light-mode {
-    background-color: #4a90e2;
-    color: white;
-  }
-  
-  .custom-button.light-mode:hover {
-    background-color: #357ab8;
-  }
-  
-  /* Estilo secundário (usado em botões como "Voltar") */
-  .custom-button.secondary {
-    background-color: #6c757d;
-  }
-  
-  .custom-button.secondary:hover {
-    background-color: #5a6268;
-  }
-  
-  /* Estilo para botão de exclusão */
-  .custom-button.delete {
-    background-color: #ff4d4d;
-  }
-  
-  .custom-button.delete:hover {
-    background-color: #cc0000;
-  }
-  
-  /* Estilo específico para botões na barra lateral */
-  .custom-button.sidebar-button {
-    background-color: transparent; /* Fundo transparente para herdar a cor da barra lateral */
-    border: none;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Ajustar a cor do texto/icon no modo escuro */
-  .custom-button.sidebar-button.dark-mode {
-    color: white;
-  }
-  
-  .custom-button.sidebar-button.dark-mode:hover {
-    background-color: #333; /* Cor de hover no modo escuro */
-  }
-  
-  /* Ajustar a cor do texto/icon no modo claro */
-  .custom-button.sidebar-button.light-mode {
-    color: black;
-  }
-  
-  .custom-button.sidebar-button.light-mode:hover {
-    background-color: #ccc; /* Cor de hover no modo claro */
   }
