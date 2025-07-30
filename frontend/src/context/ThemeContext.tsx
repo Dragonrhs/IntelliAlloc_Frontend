@@ -7,6 +7,8 @@ interface ThemeContextType {
   toggleSidebar: () => void;
   role: string | undefined; 
   setRole: (role: string) => void;
+  isBackgroundAnimationEnabled: boolean;
+  toggleBackgroundAnimation: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,7 +16,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [role, setRole] = useState<string | undefined>(undefined); // Estado inicial como undefined
+  const [role, setRole] = useState<string | undefined>(undefined);
+  const [isBackgroundAnimationEnabled, setIsBackgroundAnimationEnabled] = useState(true);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -24,8 +27,21 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
+  const toggleBackgroundAnimation = () => {
+    setIsBackgroundAnimationEnabled(!isBackgroundAnimationEnabled);
+  };
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, role, setRole }}>
+    <ThemeContext.Provider value={{ 
+      isDarkMode, 
+      toggleTheme, 
+      isSidebarExpanded, 
+      toggleSidebar, 
+      role, 
+      setRole,
+      isBackgroundAnimationEnabled,
+      toggleBackgroundAnimation
+    }}>
       {children}
     </ThemeContext.Provider>
   );
