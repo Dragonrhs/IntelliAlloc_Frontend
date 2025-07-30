@@ -1,75 +1,404 @@
+/* Reset e configurações globais */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Container principal */
 .permissions-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.permissions-container.animated {
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Animação do gradiente de fundo */
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+}
+
+/* Modo escuro */
+.permissions-container.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.permissions-container.dark-mode.animated {
+  animation: darkGradientShift 20s ease infinite;
+}
+
+@keyframes darkGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+  33% {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  }
+  66% {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 50%, #1a1a2e 100%);
+  }
+}
+
+/* Modo claro */
+.permissions-container.light-mode {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.permissions-container.light-mode.animated {
+  animation: lightGradientShift 15s ease infinite;
+}
+
+@keyframes lightGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+}
+
+/* Conteúdo principal */
+.permissions-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  transition: background-color 0.3s, color 0.3s;
+  padding: 90px 30px 30px;
+  transition: margin-left 0.3s ease;
+  overflow-y: auto;
+  position: relative;
 }
 
-.permissions-content {
-  padding: 20px;
-  margin-top: 60px;
-  transition: margin-left 0.3s;
+/* Tela de acesso negado */
+.access-denied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  padding: 40px;
 }
 
-.permissions-container.dark-mode {
-  background-color: #121212;
-  color: #ffffff;
-}
-
-.permissions-container.light-mode {
-  background-color: #f5f5f5;
-  color: #333333;
-}
-
-.dark-mode .dark-paper {
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-.dark-mode .dark-tabs .MuiTab-root {
-  color: #aaaaaa;
-}
-
-.dark-mode .dark-tabs .Mui-selected {
-  color: #ffffff;
-}
-
-.dark-mode .MuiPaper-root {
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-.dark-mode .MuiBox-root, 
-.dark-mode .MuiTypography-root, 
-.dark-mode .MuiFormControl-root,
-.dark-mode .MuiSelect-root,
-.dark-mode .MuiInputBase-root,
-.dark-mode .MuiInputLabel-root,
-.dark-mode .MuiMenuItem-root,
-.dark-mode .MuiFormControlLabel-root {
-  color: #ffffff;
-}
-
-.dark-mode .MuiAlert-standardSuccess {
-  background-color: rgba(76, 175, 80, 0.2);
-  color: #81c784;
-}
-
-.dark-mode .MuiAlert-standardError {
-  background-color: rgba(211, 47, 47, 0.2);
-  color: #e57373;
-}
-
-.dark-mode .MuiCheckbox-root {
-  color: #4dabf5;
-}
-
-.dark-mode .MuiTextField-root .MuiOutlinedInput-root {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-h2 {
+.access-denied-icon {
+  font-size: 4rem;
+  color: #ff6b6b;
   margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: 500;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.access-denied h2 {
+  font-size: 2rem;
+  margin: 0 0 15px 0;
+  color: white;
+}
+
+.access-denied p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Header da página */
+.permissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  animation: slideInDown 0.8s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: #667eea;
+}
+
+.header-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Ações do admin */
+.admin-actions {
+  margin-bottom: 30px;
+  animation: slideInUp 0.8s ease 0.2s both;
+}
+
+.register-permissions-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.register-permissions-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.register-permissions-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Container de tabs */
+.tabs-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideInUp 0.8s ease 0.4s both;
+}
+
+/* Header das tabs */
+.tabs-header {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 20px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.tab-button:hover::before {
+  left: 100%;
+}
+
+.tab-button:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-button.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 3px solid #667eea;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Conteúdo das tabs */
+.tab-content {
+  padding: 30px;
+}
+
+.tab-panel {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animações */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos específicos para modo claro */
+.permissions-container.light-mode .header-title h1,
+.permissions-container.light-mode .header-content p,
+.permissions-container.light-mode .access-denied h2,
+.permissions-container.light-mode .access-denied p,
+.permissions-container.light-mode .tab-button {
+  color: #333 !important;
+}
+
+.permissions-container.light-mode .permissions-header,
+.permissions-container.light-mode .tabs-container {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.permissions-container.light-mode .tabs-header {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.permissions-container.light-mode .tab-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.permissions-container.light-mode .tab-button.active {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .permissions-content {
+    padding: 80px 20px 20px;
+  }
+  
+  .permissions-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .header-title h1 {
+    font-size: 2rem;
+  }
+  
+  .tabs-header {
+    flex-direction: column;
+  }
+  
+  .tab-button {
+    padding: 15px 20px;
+    font-size: 14px;
+  }
+  
+  .tab-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .permissions-content {
+    padding: 70px 15px 15px;
+  }
+  
+  .header-title h1 {
+    font-size: 1.8rem;
+  }
+  
+  .permissions-header {
+    padding: 20px;
+  }
+  
+  .tab-button {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+  
+  .tab-content {
+    padding: 15px;
+  }
 } 

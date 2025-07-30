@@ -1,35 +1,62 @@
 import React, { useState } from 'react';
-import { Tab, Tabs, Box, Typography, Paper, Container, Button, Alert } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faLock,
+  faUserShield,
+  faUsers,
+  faUserCog,
+  faShieldAlt,
+  faUserLock,
+  faCog,
+  faCheck,
+  faTimes,
+  faExclamationTriangle,
+  faCheckCircle,
+  faInfoCircle,
+  faPlus,
+  faSave,
+  faSearch,
+  faFilter,
+  faDatabase,
+  faKey,
+  faUserCheck,
+  faUserTimes
+} from '@fortawesome/free-solid-svg-icons';
 import UserPermissions from '../components/permissions/UserPermissions';
 import RolePermissions from '../components/permissions/RolePermissions';
 import { useUser } from '../context/UserContext';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import axios from 'axios';
 import './PermissionsManagement.css';
 
 const PermissionsManagement: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const { userRole } = useUser();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
-  const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
 
   // Permitir acesso para Admin e Alocacao
   if (userRole !== 'Admin' && userRole !== 'Alocacao') {
     return (
-      <Container>
-        <Typography variant="h5" color="error" sx={{ mt: 4 }}>
-          Acesso Negado. Apenas administradores e usuários de alocação podem acessar esta página.
-        </Typography>
-      </Container>
+      <div className={`permissions-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+        <div className="access-denied">
+          <FontAwesomeIcon icon={faUserTimes} className="access-denied-icon" />
+          <h2>Acesso Negado</h2>
+          <p>Apenas administradores e usuários de alocação podem acessar esta página.</p>
+        </div>
+      </div>
     );
   }
 
   // Verificar permissões específicas para usuários não-admin
   const isAdmin = userRole === 'Admin';
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -40,19 +67,14 @@ const PermissionsManagement: React.FC = () => {
         {},
         { withCredentials: true }
       );
-      setMessage({
-        text: `Permissões iniciais registradas com sucesso! ${response.data.funcionalidades_registradas} funcionalidades registradas.`,
-        type: 'success'
-      });
-      
-      // Limpar a mensagem após 5 segundos
-      setTimeout(() => setMessage(null), 5000);
+      setToastMessage(`Permissões iniciais registradas com sucesso! ${response.data.funcionalidades_registradas} funcionalidades registradas.`);
+      setToastType('success');
+      setShowToast(true);
     } catch (error) {
       console.error('Erro ao registrar permissões iniciais:', error);
-      setMessage({
-        text: 'Erro ao registrar permissões iniciais. Tentando rota alternativa...',
-        type: 'error'
-      });
+      setToastMessage('Erro ao registrar permissões iniciais. Tentando rota alternativa...');
+      setToastType('error');
+      setShowToast(true);
       
       try {
         // Tentar rota alternativa sem autenticação
@@ -60,22 +82,20 @@ const PermissionsManagement: React.FC = () => {
           'http://localhost:5000/registrar-permissoes-sem-autenticacao',
           {}
         );
-        setMessage({
-          text: `Permissões iniciais registradas com sucesso via rota alternativa! ${alternativeResponse.data.funcionalidades_registradas} funcionalidades registradas.`,
-          type: 'success'
-        });
+        setToastMessage(`Permissões iniciais registradas com sucesso via rota alternativa! ${alternativeResponse.data.funcionalidades_registradas} funcionalidades registradas.`);
+        setToastType('success');
+        setShowToast(true);
       } catch (alternativeError) {
         console.error('Erro na rota alternativa:', alternativeError);
-        setMessage({
-          text: 'Falha em ambas as tentativas de registrar permissões. Verifique o console para mais detalhes.',
-          type: 'error'
-        });
+        setToastMessage('Falha em ambas as tentativas de registrar permissões. Verifique o console para mais detalhes.');
+        setToastType('error');
+        setShowToast(true);
       }
     }
   };
 
   return (
-    <div className={`permissions-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`permissions-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -85,54 +105,73 @@ const PermissionsManagement: React.FC = () => {
         isFullSidebar={false}
         showBackButton={true}
       />
-      <div 
-        className="permissions-content" 
-        style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}
-      >
-        <h2>Gerenciamento de Permissões</h2>
-        
-        {message && (
-          <Alert 
-            severity={message.type} 
-            sx={{ mb: 3 }}
-            onClose={() => setMessage(null)}
-          >
-            {message.text}
-          </Alert>
-        )}
-        
-        {/* Botão disponível apenas para administradores */}
-        {isAdmin && (
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={handleRegisterInitialPermissions}
-            sx={{ mb: 3 }}
-          >
-            Registrar Permissões Iniciais
-          </Button>
-        )}
-        
-        <Paper 
-          sx={{ p: 3 }}
-          className={isDarkMode ? 'dark-paper' : ''}
-        >
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-            <Tabs 
-              value={tabValue} 
-              onChange={handleTabChange}
-              className={isDarkMode ? 'dark-tabs' : ''}
-            >
-              <Tab label="Permissões por Cargo" />
-              <Tab label="Permissões por Usuário" />
-            </Tabs>
-          </Box>
+      
+      <div className="permissions-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+        {/* Header */}
+        <div className="permissions-header">
+          <div className="header-content">
+            <div className="header-title">
+              <FontAwesomeIcon icon={faShieldAlt} className="header-icon" />
+              <h1>Gerenciamento de Permissões</h1>
+            </div>
+            <p>Configure permissões e acessos dos usuários e cargos do sistema</p>
+          </div>
+        </div>
 
-          {/* Usuários de Alocação só podem visualizar, não editar */}
-          {tabValue === 0 && <RolePermissions readOnly={!isAdmin} />}
-          {tabValue === 1 && <UserPermissions readOnly={!isAdmin} />}
-        </Paper>
+        {/* Botão de registrar permissões iniciais - apenas para admin */}
+        {isAdmin && (
+          <div className="admin-actions">
+            <button 
+              className="register-permissions-btn"
+              onClick={handleRegisterInitialPermissions}
+            >
+              <FontAwesomeIcon icon={faDatabase} />
+              <span>Registrar Permissões Iniciais</span>
+            </button>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="tabs-container">
+          <div className="tabs-header">
+            <button 
+              className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+              onClick={() => handleTabChange(0)}
+            >
+              <FontAwesomeIcon icon={faUserShield} />
+              <span>Permissões por Cargo</span>
+            </button>
+            <button 
+              className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+              onClick={() => handleTabChange(1)}
+            >
+              <FontAwesomeIcon icon={faUserCog} />
+              <span>Permissões por Usuário</span>
+            </button>
+          </div>
+
+          <div className="tab-content">
+            {tabValue === 0 && (
+              <div className="tab-panel">
+                <RolePermissions readOnly={!isAdmin} />
+              </div>
+            )}
+            {tabValue === 1 && (
+              <div className="tab-panel">
+                <UserPermissions readOnly={!isAdmin} />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };
