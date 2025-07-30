@@ -1,235 +1,464 @@
-/* Navbar */
+/* Navbar moderna com glassmorphism */
 .navbar {
-    background-color: #007bff;
-    color: white;
-    padding: 0 20px; /* Removido o padding vertical para controlar a altura com height */
-    height: 60px; /* Altura fixa para o Navbar */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Modo escuro */
-  .navbar.dark-mode {
-    background-color: #0056b3;
-    color: white;
-  }
-  
-  /* Modo claro */
-  .navbar.light-mode {
-    background-color: #4a90e2;
-    color: black;
-  }
-  
-  /* Marca IntelliAlloc no centro */
-  .navbar-brand {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 60px; /* Alinha verticalmente com a altura do Navbar */
-  }
-  
-  /* Container do avatar (canto direito) */
-  .avatar-container {
-    margin-left: auto;
-    position: relative;
-  }
-  
-  /* Ícone do avatar */
-  .avatar-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .user-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .username {
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .email {
-    font-size: 14px;
-  }
-  
-  .role {
-    font-size: 14px;
-    font-style: italic;
-  }
-  
-  /* Ajustar a cor do avatar com base no modo */
-  .navbar.dark-mode .avatar-icon {
-    background-color: #000;
-    color: white;
-  }
-  
-  .navbar.light-mode .avatar-icon {
-    background-color: #fff;
-    color: black;
-  }
-  
-  /* Tooltip (ao passar o mouse) */
-  .tooltip {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    font-size: 14px;
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Ajustar a cor do tooltip com base no modo */
-.navbar.dark-mode .tooltip {
-  background-color: #333;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
+  padding: 0 30px;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modo escuro */
+.navbar.dark-mode {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Modo claro */
+.navbar.light-mode {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Marca IntelliAlloc com animação */
+.navbar-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 70px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: brandGlow 3s ease-in-out infinite alternate;
+  letter-spacing: 1px;
+}
+
+@keyframes brandGlow {
+  from {
+    filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
+  }
+  to {
+    filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.6));
+  }
+}
+
+/* Container do avatar com animações */
+.avatar-container {
+  margin-left: auto;
+  position: relative;
+  animation: fadeInRight 0.6s ease 0.3s both;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Ícone do avatar modernizado */
+.avatar-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.avatar-icon:hover::before {
+  left: 100%;
+}
+
+.avatar-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.avatar-icon:active {
+  transform: scale(0.95);
+}
+
+/* Modo escuro para o avatar */
+.navbar.dark-mode .avatar-icon {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Modo claro para o avatar */
+.navbar.light-mode .avatar-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+/* Tooltip modernizado */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 14px;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  animation: tooltipSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 200px;
+}
+
+@keyframes tooltipSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modo escuro para tooltip */
+.navbar.dark-mode .tooltip {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modo claro para tooltip */
 .navbar.light-mode .tooltip {
-  background-color: #ddd;
-  color: black;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #333;
 }
 
 /* Estilo para o role no tooltip */
 .tooltip div:nth-child(3) {
   font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
 }
 
-/* Menu dropdown (ao clicar) */
+/* Menu dropdown modernizado */
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 10px);
   right: 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  width: 250px;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  width: 280px;
   z-index: 1000;
-  padding: 10px 0;
-  transition: background-color 0.3s ease;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
-  
-  /* Ajustar a cor do dropdown com base no modo */
-  .navbar.dark-mode .dropdown-menu {
-    background-color: #2c2c2c;
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modo escuro para dropdown */
+.navbar.dark-mode .dropdown-menu {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Modo claro para dropdown */
+.navbar.light-mode .dropdown-menu {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Cabeçalho do dropdown */
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Modo escuro para dropdown-header */
+.navbar.dark-mode .dropdown-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Modo claro para dropdown-header */
+.navbar.light-mode .dropdown-header {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Avatar grande no dropdown */
+.avatar-large {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-right: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.avatar-large:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Modo escuro para avatar-large */
+.navbar.dark-mode .avatar-large {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Modo claro para avatar-large */
+.navbar.light-mode .avatar-large {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3);
+}
+
+/* Informações do usuário no dropdown */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Modo escuro para username */
+.navbar.dark-mode .username {
+  color: white;
+}
+
+/* Modo claro para username */
+.navbar.light-mode .username {
+  color: #333;
+}
+
+.email {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2px;
+}
+
+/* Modo escuro para email */
+.navbar.dark-mode .email {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Modo claro para email */
+.navbar.light-mode .email {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.role {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Modo escuro para role */
+.navbar.dark-mode .role {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Modo claro para role */
+.navbar.light-mode .role {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Itens do dropdown */
+.dropdown-item {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.dropdown-item:hover::before {
+  left: 100%;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+/* Modo escuro para dropdown-item */
+.navbar.dark-mode .dropdown-item {
+  color: white;
+}
+
+.navbar.dark-mode .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Modo claro para dropdown-item */
+.navbar.light-mode .dropdown-item {
+  color: #333;
+}
+
+.navbar.light-mode .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+    height: 60px;
   }
   
-  .navbar.light-mode .dropdown-menu {
-    background-color: #f0f0f0;
-  }
-  
-  /* Cabeçalho do dropdown */
-  .dropdown-header {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    border-bottom: 1px solid #444;
-  }
-  
-  /* Ajustar a cor da borda do dropdown-header no modo claro */
-  .navbar.light-mode .dropdown-header {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  /* Avatar grande no dropdown */
-  .avatar-large {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .navbar-brand {
     font-size: 24px;
-    font-weight: bold;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    line-height: 60px;
   }
   
-  /* Ajustar a cor do avatar grande com base no modo */
-  .navbar.dark-mode .avatar-large {
-    background-color: #000;
-    color: white;
-  }
-  
-  .navbar.light-mode .avatar-large {
-    background-color: #fff;
-    color: black;
-  }
-  
-  /* Informações do usuário no dropdown */
-  .user-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .username {
+  .avatar-icon {
+    width: 40px;
+    height: 40px;
     font-size: 16px;
-    font-weight: bold;
   }
   
-  /* Ajustar a cor do username com base no modo */
-  .navbar.dark-mode .username {
-    color: white;
+  .dropdown-menu {
+    width: 250px;
+    right: -10px;
   }
   
-  .navbar.light-mode .username {
-    color: black;
+  .tooltip {
+    right: -10px;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 15px;
   }
   
-  .email {
+  .navbar-brand {
+    font-size: 20px;
+  }
+  
+  .avatar-icon {
+    width: 35px;
+    height: 35px;
     font-size: 14px;
   }
   
-  /* Ajustar a cor do email com base no modo */
-  .navbar.dark-mode .email {
-    color: #aaa;
+  .dropdown-menu {
+    width: 220px;
+    right: -15px;
   }
   
-  .navbar.light-mode .email {
-    color: #666;
+  .tooltip {
+    right: -15px;
+    min-width: 160px;
   }
-  
-  /* Itens do dropdown */
-  .dropdown-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Ajustar a cor dos itens do dropdown com base no modo */
-  .navbar.dark-mode .dropdown-item {
-    color: white;
-  }
-  
-  .navbar.dark-mode .dropdown-item:hover {
-    background-color: #444;
-  }
-  
-  .navbar.light-mode .dropdown-item {
-    color: black;
-  }
-  
-  .navbar.light-mode .dropdown-item:hover {
-    background-color: #ddd;
-  }
+}
