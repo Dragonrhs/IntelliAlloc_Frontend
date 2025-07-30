@@ -1,8 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChartLine,
+  faUsers,
+  faUserShield,
+  faChartPie,
+  faArrowLeft,
+  faSpinner,
+  faExclamationTriangle,
+  faCheckCircle,
+  faInfoCircle,
+  faDatabase,
+  faCalendarAlt,
+  faChartBar,
+  faUserTie,
+  faShieldAlt
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import CustomCard from '../components/CustomCard';
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import './Estatisticas.css';
@@ -23,7 +42,7 @@ interface ClientesTempo {
   quantidade: number;
 }
 
-const COLORS = ['#354864', '#7894ba', '#bcc9dc'];
+const COLORS = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
 
 const Estatisticas: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -31,18 +50,28 @@ const Estatisticas: React.FC = () => {
   const [clientesTempo, setClientesTempo] = useState<ClientesTempo[]>([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<number | null>(null);
   const [perfilSelecionado, setPerfilSelecionado] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Apenas carregar estatísticas, sem redirecionar
+        setIsLoading(true);
         await carregarEstatisticasGerais();
+        setToastMessage('Estatísticas carregadas com sucesso!');
+        setToastType('success');
+        setShowToast(true);
       } catch (error: any) {
         console.error('Erro ao carregar estatísticas:', error);
-        setErrorMessage(error.response?.data?.error || 'Erro ao carregar estatísticas');
+        setToastMessage(error.response?.data?.error || 'Erro ao carregar estatísticas');
+        setToastType('error');
+        setShowToast(true);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -73,7 +102,7 @@ const Estatisticas: React.FC = () => {
       setUsuarioSelecionado(null);
     } catch (error: any) {
       console.error('Erro ao carregar estatísticas gerais:', error);
-      setErrorMessage(error.response?.data?.error || 'Erro ao carregar estatísticas gerais');
+      throw error;
     }
   };
 
@@ -93,7 +122,9 @@ const Estatisticas: React.FC = () => {
       setClientesTempo(tempoResponse.data.estatisticas);
     } catch (error: any) {
       console.error('Erro ao carregar estatísticas do usuário:', error);
-      setErrorMessage(error.response?.data?.error || 'Erro ao carregar estatísticas do usuário');
+      setToastMessage(error.response?.data?.error || 'Erro ao carregar estatísticas do usuário');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
@@ -116,16 +147,88 @@ const Estatisticas: React.FC = () => {
       setClientesTempo(tempoResponse.data.estatisticas);
     } catch (error: any) {
       console.error('Erro ao carregar usuários por perfil:', error);
-      setErrorMessage(error.response?.data?.error || 'Erro ao carregar usuários por perfil');
+      setToastMessage(error.response?.data?.error || 'Erro ao carregar usuários por perfil');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
-  const handleResetClick = () => {
-    carregarEstatisticasGerais();
+  const handleResetClick = async () => {
+    try {
+      setIsLoading(true);
+      await carregarEstatisticasGerais();
+      setToastMessage('Visão geral restaurada!');
+      setToastType('success');
+      setShowToast(true);
+    } catch (error: any) {
+      setToastMessage('Erro ao restaurar visão geral');
+      setToastType('error');
+      setShowToast(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const getStats = () => {
+    const totalUsuarios = usuarios.length;
+    const totalClientes = usuarios.reduce((sum, user) => sum + user.quantidade_clientes, 0);
+    const totalPerfis = perfilRisco.length;
+    const mediaClientesPorUsuario = totalUsuarios > 0 ? (totalClientes / totalUsuarios).toFixed(1) : '0';
+
+    return [
+      { 
+        label: 'Total de Usuários', 
+        value: totalUsuarios, 
+        icon: faUsers, 
+        color: '#667eea',
+        description: 'Usuários ativos no sistema'
+      },
+      { 
+        label: 'Total de Clientes', 
+        value: totalClientes, 
+        icon: faUserTie, 
+        color: '#764ba2',
+        description: 'Clientes cadastrados'
+      },
+      { 
+        label: 'Perfis de Risco', 
+        value: totalPerfis, 
+        icon: faShieldAlt, 
+        color: '#f093fb',
+        description: 'Tipos de perfil disponíveis'
+      },
+      { 
+        label: 'Média por Usuário', 
+        value: mediaClientesPorUsuario, 
+        icon: faChartBar, 
+        color: '#4facfe',
+        description: 'Clientes por usuário'
+      }
+    ];
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+        <div className="loading-container">
+          <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+          <p>Carregando estatísticas...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -135,84 +238,156 @@ const Estatisticas: React.FC = () => {
         isFullSidebar={false}
         showBackButton={true}
       />
-      <div className="estatisticas-container">
-        <div className="estatisticas-card">
-          <h2 className="estatisticas-titulo">
-            {usuarioSelecionado 
-              ? `Evolução do Número de Clientes - ${usuarios.find(u => u.id_usuario === usuarioSelecionado)?.nome_usuario}`
-              : perfilSelecionado
-                ? `Evolução do Número de Clientes - Perfil ${perfilSelecionado}`
-                : 'Evolução do Número de Clientes'}
-          </h2>
-          <div className="grafico-container">
+      
+      <div className="estatisticas-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+        {/* Header */}
+        <div className="estatisticas-header">
+          <div className="header-content">
+            <div className="header-title">
+              <FontAwesomeIcon icon={faChartLine} className="header-icon" />
+              <h1>Estatísticas do Sistema</h1>
+            </div>
+            <p>Análise completa de usuários, clientes e perfis de risco</p>
+          </div>
+        </div>
+
+        {/* Estatísticas Gerais */}
+        <div className="stats-section">
+          <div className="stats-grid">
+            {getStats().map((stat, index) => (
+              <CustomCard key={index} className="stat-card" isDarkMode={isDarkMode}>
+                <div className="stat-icon" style={{ backgroundColor: stat.color }}>
+                  <FontAwesomeIcon icon={stat.icon} />
+                </div>
+                <div className="stat-content">
+                  <h3>{stat.value}</h3>
+                  <p className="stat-label">{stat.label}</p>
+                  <p className="stat-description">{stat.description}</p>
+                </div>
+              </CustomCard>
+            ))}
+          </div>
+        </div>
+
+        {/* Gráfico de Evolução Temporal */}
+        <CustomCard className="evolution-card" isDarkMode={isDarkMode}>
+          <div className="card-header">
+            <div className="header-info">
+              <FontAwesomeIcon icon={faChartLine} className="card-icon" />
+              <h2>
+                {usuarioSelecionado 
+                  ? `Evolução - ${usuarios.find(u => u.id_usuario === usuarioSelecionado)?.nome_usuario}`
+                  : perfilSelecionado
+                    ? `Evolução - Perfil ${perfilSelecionado}`
+                    : 'Evolução do Número de Clientes'}
+              </h2>
+            </div>
+            {(perfilSelecionado || usuarioSelecionado) && (
+              <button onClick={handleResetClick} className="reset-button">
+                <FontAwesomeIcon icon={faArrowLeft} />
+                <span>Voltar para Visão Geral</span>
+              </button>
+            )}
+          </div>
+          <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={clientesTempo}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} />
                 <XAxis 
                   dataKey="data" 
-                  stroke={isDarkMode ? '#fff' : '#000'}
+                  stroke={isDarkMode ? '#fff' : '#333'}
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={formatDate}
                 />
                 <YAxis 
-                  stroke={isDarkMode ? '#fff' : '#000'}
+                  stroke={isDarkMode ? '#fff' : '#333'}
+                  tick={{ fontSize: 12 }}
                 />
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(0,0,0,0.9)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                    fontSize: '12px',
+                    padding: '8px 12px'
+                  }}
+                  labelFormatter={formatDate}
+                />
                 <Line 
                   type="monotone" 
                   dataKey="quantidade" 
-                  stroke="#8884d8" 
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
+                  stroke="#667eea" 
+                  strokeWidth={3}
+                  dot={{ r: 6, fill: '#667eea', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 8, stroke: '#667eea', strokeWidth: 2, fill: '#fff' }}
                   name="Número de Clientes"
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </CustomCard>
 
-        <div className="graficos-grid">
-          <div className="estatisticas-card">
+        {/* Grid de Gráficos */}
+        <div className="charts-grid">
+          {/* Tabela de Usuários */}
+          <CustomCard className="users-card" isDarkMode={isDarkMode}>
             <div className="card-header">
-              <h2 className="estatisticas-titulo">
-                {perfilSelecionado 
-                  ? `Usuários com Clientes ${perfilSelecionado}s`
-                  : 'Usuários e Quantidade de Clientes'}
-              </h2>
-              {(perfilSelecionado || usuarioSelecionado) && (
-                <button onClick={handleResetClick} className="reset-button">
-                  Voltar para Visão Geral
-                </button>
-              )}
+              <div className="header-info">
+                <FontAwesomeIcon icon={faUsers} className="card-icon" />
+                <h2>
+                  {perfilSelecionado 
+                    ? `Usuários com Clientes ${perfilSelecionado}s`
+                    : 'Usuários e Quantidade de Clientes'}
+                </h2>
+              </div>
             </div>
-            <table className="tabela-usuarios">
-              <thead>
-                <tr>
-                  <th>Usuário</th>
-                  <th>Quantidade de Clientes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuarios.map((usuario) => (
-                  <tr 
-                    key={usuario.id_usuario}
-                    onClick={() => handleUsuarioClick(usuario.id_usuario)}
-                    className={usuarioSelecionado === usuario.id_usuario ? 'selecionado' : ''}
-                  >
-                    <td>{usuario.nome_usuario}</td>
-                    <td>{usuario.quantidade_clientes}</td>
+            <div className="table-container">
+              <table className="users-table">
+                <thead>
+                  <tr>
+                    <th>Usuário</th>
+                    <th>Quantidade de Clientes</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {usuarios.map((usuario) => (
+                    <tr 
+                      key={usuario.id_usuario}
+                      onClick={() => handleUsuarioClick(usuario.id_usuario)}
+                      className={usuarioSelecionado === usuario.id_usuario ? 'selected' : ''}
+                    >
+                      <td>
+                        <div className="user-info">
+                          <FontAwesomeIcon icon={faUserTie} />
+                          <span>{usuario.nome_usuario}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="client-count">{usuario.quantidade_clientes}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CustomCard>
 
-          <div className="estatisticas-card">
-            <h2 className="estatisticas-titulo">
-              {usuarioSelecionado 
-                ? 'Distribuição por Perfil de Risco do Usuário'
-                : 'Distribuição por Perfil de Risco'}
-            </h2>
-            <div className="grafico-container">
-              <ResponsiveContainer width="100%" height="100%">
+          {/* Gráfico de Pizza */}
+          <CustomCard className="pie-chart-card" isDarkMode={isDarkMode}>
+            <div className="card-header">
+              <div className="header-info">
+                <FontAwesomeIcon icon={faChartPie} className="card-icon" />
+                <h2>
+                  {usuarioSelecionado 
+                    ? 'Distribuição por Perfil de Risco'
+                    : 'Distribuição por Perfil de Risco'}
+                </h2>
+              </div>
+            </div>
+            <div className="pie-chart-container">
+              <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
                     data={perfilRisco}
@@ -220,9 +395,9 @@ const Estatisticas: React.FC = () => {
                     nameKey="perfil_risco"
                     cx="50%"
                     cy="50%"
-                    outerRadius={120}
+                    outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ perfil_risco, quantidade_clientes }) => `${perfil_risco}: ${quantidade_clientes}`}
                     onClick={(data) => handlePerfilClick(data.perfil_risco)}
                     cursor="pointer"
                   >
@@ -234,14 +409,38 @@ const Estatisticas: React.FC = () => {
                       />
                     ))}
                   </Pie>
-                  <Tooltip />
-                  <Legend onClick={(entry) => handlePerfilClick(entry.value)} />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(0,0,0,0.9)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                      fontSize: '12px',
+                      padding: '8px 12px'
+                    }}
+                  />
+                  <Legend 
+                    onClick={(entry) => handlePerfilClick(entry.value)}
+                    wrapperStyle={{
+                      color: isDarkMode ? '#fff' : '#333',
+                      fontSize: '12px'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </CustomCard>
         </div>
       </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };
