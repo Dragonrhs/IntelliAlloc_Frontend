@@ -1,50 +1,283 @@
+/* CustomCard modernizado com glassmorphism */
 .custom-card {
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+    overflow: hidden;
+  animation: cardFloat 0.8s ease both;
+}
+
+@keyframes cardFloat {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Efeito de brilho no card */
+.custom-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.custom-card:hover::before {
+  left: 100%;
+}
+
+/* Hover effects */
+.custom-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
   }
   
   /* Modo escuro */
   .custom-card.dark-mode {
-    background-color: #2d2d2d;
-    color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    border: 1px solid #404040;
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.custom-card.dark-mode:hover {
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
   }
   
   /* Modo claro */
   .custom-card.light-mode {
-    background-color: #ffffff;
-    color: #000000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+}
+
+.custom-card.light-mode:hover {
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Variantes de card */
+.custom-card.elevated {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.custom-card.elevated:hover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.custom-card.flat {
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-card.flat:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 
-  /* Estilos para inputs e botões dentro do card */
-  .custom-card input,
-  .custom-card button {
-    transition: all 0.3s ease;
+/* Card com gradiente */
+.custom-card.gradient {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.custom-card.gradient:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+/* Card com borda animada */
+.custom-card.animated-border {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+}
+
+.custom-card.animated-border::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: borderRotate 3s linear infinite;
+}
+
+@keyframes borderRotate {
+  0% {
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+  }
+  25% {
+    background: linear-gradient(135deg, #764ba2, #f093fb, #f5576c, #667eea);
+  }
+  50% {
+    background: linear-gradient(135deg, #f093fb, #f5576c, #667eea, #764ba2);
+  }
+  75% {
+    background: linear-gradient(135deg, #f5576c, #667eea, #764ba2, #f093fb);
+  }
+  100% {
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+  }
+}
+
+/* Tamanhos de card */
+.custom-card.small {
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.custom-card.large {
+  padding: 40px;
+  border-radius: 24px;
   }
 
-  .custom-card.dark-mode input {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #404040;
+/* Card com header */
+.custom-card.with-header {
+  padding: 0;
+  overflow: hidden;
+}
+
+.custom-card.with-header .card-header {
+  padding: 20px 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin: -30px -30px 20px -30px;
+}
+
+.custom-card.with-header .card-body {
+  padding: 0 30px 30px 30px;
+}
+
+/* Card com footer */
+.custom-card.with-footer {
+  padding: 0;
+  overflow: hidden;
   }
 
-  .custom-card.dark-mode button {
-    background-color: #404040;
-    color: #ffffff;
+.custom-card.with-footer .card-body {
+  padding: 30px;
+}
+
+.custom-card.with-footer .card-footer {
+  padding: 20px 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 20px -30px -30px -30px;
   }
 
-  .custom-card.light-mode input {
-    background-color: #ffffff;
-    color: #000000;
-    border: 1px solid #e0e0e0;
+/* Estados especiais */
+.custom-card.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: cardShimmer 1.5s infinite;
+}
+
+@keyframes cardShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.custom-card.error {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.05);
   }
 
-  .custom-card.light-mode button {
-    background-color: #f0f0f0;
-    color: #000000;
+.custom-card.success {
+  border-color: rgba(81, 207, 102, 0.3);
+  background: rgba(81, 207, 102, 0.05);
+}
+
+.custom-card.warning {
+  border-color: rgba(255, 212, 59, 0.3);
+  background: rgba(255, 212, 59, 0.05);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .custom-card {
+    padding: 25px;
+    border-radius: 16px;
+  }
+  
+  .custom-card.small {
+    padding: 15px;
+    border-radius: 12px;
+  }
+  
+  .custom-card.large {
+    padding: 30px;
+    border-radius: 20px;
+  }
+  
+  .custom-card.with-header .card-header,
+  .custom-card.with-footer .card-footer {
+    padding: 15px 25px;
+    margin: -25px -25px 15px -25px;
+  }
+  
+  .custom-card.with-header .card-body,
+  .custom-card.with-footer .card-body {
+    padding: 0 25px 25px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .custom-card.small {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .custom-card.large {
+    padding: 25px;
+    border-radius: 16px;
+  }
+  
+  .custom-card.with-header .card-header,
+  .custom-card.with-footer .card-footer {
+    padding: 12px 20px;
+    margin: -20px -20px 12px -20px;
+  }
+  
+  .custom-card.with-header .card-body,
+  .custom-card.with-footer .card-body {
+    padding: 0 20px 20px 20px;
+  }
   }
