@@ -2,7 +2,24 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTheme } from '../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faMinus, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faArrowUp, 
+  faArrowDown, 
+  faMinus, 
+  faExclamationTriangle,
+  faChartBar,
+  faChartLine,
+  faEquals,
+  faSpinner,
+  faInfoCircle,
+  faShieldAlt,
+  faGlobe,
+  faCoins,
+  faBuilding,
+  faRocket
+} from '@fortawesome/free-solid-svg-icons';
+import CustomCard from './CustomCard';
+import Toast from './Toast';
 import './ViewAssetClassEvaluation.css';
 
 interface Avaliacao {
@@ -14,11 +31,27 @@ interface ViewAssetClassEvaluationProps {
   mesSelecionado: string;
 }
 
+const CLASSES_ICONS: Record<string, any> = {
+  'Pós-Fixado': faShieldAlt,
+  'Inflação': faChartLine,
+  'Pré-Fixado': faChartLine,
+  'Multimercado': faCoins,
+  'Renda Variável Brasil': faBuilding,
+  'Fundos Listados': faChartBar,
+  'Alternativos': faRocket,
+  'Renda Fixa Global': faGlobe,
+  'Renda Variável Internacional': faGlobe
+};
+
 const ViewAssetClassEvaluation: React.FC<ViewAssetClassEvaluationProps> = ({ mesSelecionado }) => {
   const [avaliacoesAtuais, setAvaliacoesAtuais] = useState<Avaliacao[]>([]);
   const [avaliacoesAnteriores, setAvaliacoesAnteriores] = useState<Avaliacao[]>([]);
   const [erroMesAtual, setErroMesAtual] = useState<boolean>(false);
   const [erroMesAnterior, setErroMesAnterior] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const { isDarkMode } = useTheme();
 
   useEffect(() => {
@@ -36,6 +69,7 @@ const ViewAssetClassEvaluation: React.FC<ViewAssetClassEvaluationProps> = ({ mes
 
   const carregarAvaliacoes = async () => {
     try {
+      setIsLoading(true);
       const mesAnterior = getMesAnterior(mesSelecionado);
       
       const [resAtual, resAnterior] = await Promise.all([
@@ -62,24 +96,53 @@ const ViewAssetClassEvaluation: React.FC<ViewAssetClassEvaluationProps> = ({ mes
         setAvaliacoesAnteriores([]);
         setErroMesAnterior(true);
       }
+
+      setToastMessage('Avaliações carregadas com sucesso!');
+      setToastType('success');
+      setShowToast(true);
     } catch (error) {
       console.error('Erro ao carregar avaliações:', error);
       setErroMesAtual(true);
       setErroMesAnterior(true);
+      setToastMessage('Erro ao carregar avaliações');
+      setToastType('error');
+      setShowToast(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const renderVariacao = (avaliacaoAtual: number, avaliacaoAnterior: number) => {
     if (erroMesAnterior) {
-      return <FontAwesomeIcon icon={faMinus} className="variacao manteve" />;
+      return (
+        <div className="variacao-wrapper manteve">
+          <FontAwesomeIcon icon={faMinus} className="variacao-icon" />
+          <span className="variacao-label">N/A</span>
+        </div>
+      );
     }
     
     if (avaliacaoAtual > avaliacaoAnterior) {
-      return <FontAwesomeIcon icon={faArrowUp} className="variacao subiu" />;
+      return (
+        <div className="variacao-wrapper subiu">
+          <FontAwesomeIcon icon={faArrowUp} className="variacao-icon" />
+          <span className="variacao-label">Subiu</span>
+        </div>
+      );
     } else if (avaliacaoAtual < avaliacaoAnterior) {
-      return <FontAwesomeIcon icon={faArrowDown} className="variacao desceu" />;
+      return (
+        <div className="variacao-wrapper desceu">
+          <FontAwesomeIcon icon={faArrowDown} className="variacao-icon" />
+          <span className="variacao-label">Desceu</span>
+        </div>
+      );
     } else {
-      return <FontAwesomeIcon icon={faMinus} className="variacao manteve" />;
+      return (
+        <div className="variacao-wrapper manteve">
+          <FontAwesomeIcon icon={faEquals} className="variacao-icon" />
+          <span className="variacao-label">Manteve</span>
+        </div>
+      );
     }
   };
 
@@ -97,12 +160,21 @@ const ViewAssetClassEvaluation: React.FC<ViewAssetClassEvaluationProps> = ({ mes
                 avaliacaoAtual === nota ? 'atual' : 
                 (!erroMesAnterior && avaliacaoAnterior === nota && avaliacaoAtual !== nota) ? 'anterior' : ''
               }`}
+              title={`Nota: ${nota}`}
             />
           ))}
         </div>
         <div className="indicadores">
-          {!erroMesAnterior && <span className="indicador-anterior">Anterior</span>}
-          <span className="indicador-atual">Atual</span>
+          {!erroMesAnterior && (
+            <div className="indicador-anterior">
+              <div className="indicador-dot anterior"></div>
+              <span>Anterior</span>
+            </div>
+          )}
+          <div className="indicador-atual">
+            <div className="indicador-dot atual"></div>
+            <span>Atual</span>
+          </div>
         </div>
       </div>
     );
@@ -111,162 +183,160 @@ const ViewAssetClassEvaluation: React.FC<ViewAssetClassEvaluationProps> = ({ mes
   const renderMensagensErro = () => {
     if (erroMesAtual && erroMesAnterior) {
       return (
-        <div className="erro-container">
-          <FontAwesomeIcon icon={faExclamationTriangle} className="erro-icone" />
-          <p>Não existem dados disponíveis para o mês selecionado e o mês anterior.</p>
-        </div>
+        <CustomCard className="erro-container" isDarkMode={isDarkMode}>
+          <div className="erro-content">
+            <FontAwesomeIcon icon={faExclamationTriangle} className="erro-icone" />
+            <div className="erro-text">
+              <h3>Dados Indisponíveis</h3>
+              <p>Não existem dados disponíveis para o mês selecionado e o mês anterior.</p>
+            </div>
+          </div>
+        </CustomCard>
       );
     }
 
     if (erroMesAtual || erroMesAnterior) {
       return (
-        <div className="aviso-container">
-          <FontAwesomeIcon icon={faExclamationTriangle} className="aviso-icone" />
-          <p>
-            {erroMesAtual 
-              ? 'Não existem dados para o mês selecionado.' 
-              : 'Não existem dados do mês anterior para comparação.'}
-          </p>
-        </div>
+        <CustomCard className="aviso-container" isDarkMode={isDarkMode}>
+          <div className="aviso-content">
+            <FontAwesomeIcon icon={faInfoCircle} className="aviso-icone" />
+            <div className="aviso-text">
+              <h3>Aviso</h3>
+              <p>
+                {erroMesAtual 
+                  ? 'Não existem dados para o mês selecionado.' 
+                  : 'Não existem dados do mês anterior para comparação.'}
+              </p>
+            </div>
+          </div>
+        </CustomCard>
       );
     }
 
     return null;
   };
 
+  const renderClasseItem = (classe: string, index: number) => {
+    const avaliacaoAtual = avaliacoesAtuais.find(a => a.classe_ativo === classe)?.nota || 0;
+    const avaliacaoAnterior = avaliacoesAnteriores.find(a => a.classe_ativo === classe)?.nota || 0;
+    const icon = CLASSES_ICONS[classe] || faChartBar;
+
+    return (
+      <div key={classe} className="classe-item" style={{ animationDelay: `${index * 0.1}s` }}>
+        <div className="classe-info">
+          <FontAwesomeIcon icon={icon} className="classe-icon" />
+          <span className="classe-nome">{classe}</span>
+        </div>
+        {renderBarraAvaliacao(classe)}
+        <div className="variacao-container">
+          {renderVariacao(avaliacaoAtual, avaliacaoAnterior)}
+        </div>
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+        <p>Carregando avaliações...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className={`view-asset-class-evaluation ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      {renderMensagensErro()}
-      <div className="header">
-        <div className="scale-labels">
-          <div className="label-group">
-            <span>Underweight</span>
-            <div className="symbol-group">
-              <span>--</span>
-              <span>-</span>
+    <>
+      <CustomCard className="view-asset-class-evaluation" isDarkMode={isDarkMode}>
+        {renderMensagensErro()}
+        
+        <div className="evaluation-header">
+          <div className="header-info">
+            <FontAwesomeIcon icon={faChartBar} className="header-icon" />
+            <div className="header-text">
+              <h2>Visualização de Avaliações</h2>
+              <p>Comparação entre mês atual e anterior</p>
             </div>
           </div>
-          <div className="label-group">
-            <span className="neutro-label">Neutro</span>
-            <div className="symbol-group">
-              <span>=</span>
-            </div>
-          </div>
-          <div className="label-group">
-            <span>Overweight</span>
-            <div className="symbol-group">
-              <span>+</span>
-              <span>++</span>
-            </div>
-          </div>
-          <div className="var-label">
-            <span>Var.</span>
+          <div className="month-badge">
+            <span>{mesSelecionado}</span>
           </div>
         </div>
-      </div>
 
-      <div className="classes-container">
-        <div className="renda-fixa-section">
-          <h3>Renda Fixa Brasil</h3>
-          <div className="classe-item">
-            <span className="classe-nome">Pós Fixado</span>
-            {renderBarraAvaliacao('Pós-Fixado')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Pós-Fixado')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Pós-Fixado')?.nota || 0
-              )}
+        <div className="scale-header">
+          <div className="scale-labels">
+            <div className="label-group">
+              <span className="label-title">Underweight</span>
+              <div className="symbol-group">
+                <span className="symbol">--</span>
+                <span className="symbol">-</span>
+              </div>
             </div>
-          </div>
-          <div className="classe-item">
-            <span className="classe-nome">Inflação</span>
-            {renderBarraAvaliacao('Inflação')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Inflação')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Inflação')?.nota || 0
-              )}
+            <div className="label-group">
+              <span className="label-title neutro">Neutro</span>
+              <div className="symbol-group">
+                <span className="symbol">=</span>
+              </div>
             </div>
-          </div>
-          <div className="classe-item">
-            <span className="classe-nome">Pré Fixado</span>
-            {renderBarraAvaliacao('Pré-Fixado')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Pré-Fixado')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Pré-Fixado')?.nota || 0
-              )}
+            <div className="label-group">
+              <span className="label-title">Overweight</span>
+              <div className="symbol-group">
+                <span className="symbol">+</span>
+                <span className="symbol">++</span>
+              </div>
+            </div>
+            <div className="var-label">
+              <span>Var.</span>
             </div>
           </div>
         </div>
 
-        <div className="classes-diversificacao">
-          <div className="classe-item">
-            <span className="classe-nome">Multimercado</span>
-            {renderBarraAvaliacao('Multimercado')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Multimercado')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Multimercado')?.nota || 0
-              )}
+        <div className="classes-container">
+          <div className="section-group">
+            <div className="section-header">
+              <FontAwesomeIcon icon={faShieldAlt} className="section-icon" />
+              <h3>Renda Fixa Brasil</h3>
+            </div>
+            <div className="section-content">
+              {renderClasseItem('Pós-Fixado', 0)}
+              {renderClasseItem('Inflação', 1)}
+              {renderClasseItem('Pré-Fixado', 2)}
             </div>
           </div>
-          <div className="classe-item">
-            <span className="classe-nome">Renda Variável Brasil</span>
-            {renderBarraAvaliacao('Renda Variável Brasil')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Renda Variável Brasil')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Renda Variável Brasil')?.nota || 0
-              )}
-            </div>
-          </div>
-          <div className="classe-item">
-            <span className="classe-nome">Fundos Listados</span>
-            {renderBarraAvaliacao('Fundos Listados')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Fundos Listados')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Fundos Listados')?.nota || 0
-              )}
-            </div>
-          </div>
-          <div className="classe-item">
-            <span className="classe-nome">Alternativos</span>
-            {renderBarraAvaliacao('Alternativos')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Alternativos')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Alternativos')?.nota || 0
-              )}
-            </div>
-          </div>
-        </div>
 
-        <div className="classes-internacional">
-          <div className="classe-item">
-            <span className="classe-nome">Renda Fixa Global</span>
-            {renderBarraAvaliacao('Renda Fixa Global')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Renda Fixa Global')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Renda Fixa Global')?.nota || 0
-              )}
+          <div className="section-group">
+            <div className="section-header">
+              <FontAwesomeIcon icon={faCoins} className="section-icon" />
+              <h3>Parcela de Risco</h3>
+            </div>
+            <div className="section-content">
+              {renderClasseItem('Multimercado', 3)}
+              {renderClasseItem('Renda Variável Brasil', 4)}
+              {renderClasseItem('Fundos Listados', 5)}
+              {renderClasseItem('Alternativos', 6)}
             </div>
           </div>
-          <div className="classe-item">
-            <span className="classe-nome">Renda Variável Internacional</span>
-            {renderBarraAvaliacao('Renda Variável Internacional')}
-            <div className="variacao-container">
-              {renderVariacao(
-                avaliacoesAtuais.find(a => a.classe_ativo === 'Renda Variável Internacional')?.nota || 0,
-                avaliacoesAnteriores.find(a => a.classe_ativo === 'Renda Variável Internacional')?.nota || 0
-              )}
+
+          <div className="section-group">
+            <div className="section-header">
+              <FontAwesomeIcon icon={faGlobe} className="section-icon" />
+              <h3>Internacional</h3>
+            </div>
+            <div className="section-content">
+              {renderClasseItem('Renda Fixa Global', 7)}
+              {renderClasseItem('Renda Variável Internacional', 8)}
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CustomCard>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
+    </>
   );
 };
 
