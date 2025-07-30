@@ -1,11 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faUserPlus,
+  faEdit,
+  faArrowLeft,
+  faClock,
+  faBullseye,
+  faPiggyBank,
+  faGraduationCap,
+  faList,
+  faComments,
+  faSave,
+  faTimes,
+  faExclamationTriangle,
+  faCheckCircle,
+  faUser
+} from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import './Suitability.css';
 
@@ -18,14 +36,19 @@ const Suitability: React.FC = () => {
   const [q5InvestmentOptions, setQ5InvestmentOptions] = useState<string[]>([]);
   const [q6Observations, setQ6Observations] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
   const { clientId } = useParams<{ clientId: string }>();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
 
   useEffect(() => {
     if (clientId) {
       const fetchClient = async () => {
         try {
+          setIsLoading(true);
           const response = await axios.get(`http://localhost:5000/client/${clientId}`, {
             withCredentials: true,
           });
@@ -39,7 +62,11 @@ const Suitability: React.FC = () => {
           setQ6Observations(client.q6_observations || '');
         } catch (error) {
           console.error('Erro ao carregar cliente:', error);
-          setErrorMessage('Erro ao carregar cliente');
+          setToastMessage('Erro ao carregar dados do cliente');
+          setToastType('error');
+          setShowToast(true);
+        } finally {
+          setIsLoading(false);
         }
       };
       fetchClient();
@@ -68,6 +95,7 @@ const Suitability: React.FC = () => {
       return;
     }
 
+    setIsLoading(true);
     const clientData = {
       client_name: clientName,
       q1_investment_duration: q1InvestmentDuration,
@@ -83,15 +111,25 @@ const Suitability: React.FC = () => {
         await axios.put(`http://localhost:5000/client/${clientId}`, clientData, {
           withCredentials: true,
         });
+        setToastMessage('Cliente atualizado com sucesso!');
       } else {
         await axios.post('http://localhost:5000/add-client', clientData, {
           withCredentials: true,
         });
+        setToastMessage('Cliente adicionado com sucesso!');
       }
-      navigate('/home');
+      setToastType('success');
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/clients');
+      }, 1500);
     } catch (error: any) {
       console.error('Erro ao salvar cliente:', error);
-      setErrorMessage(error.response?.data?.error || 'Erro ao salvar cliente');
+      setToastMessage(error.response?.data?.error || 'Erro ao salvar cliente');
+      setToastType('error');
+      setShowToast(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,8 +160,19 @@ const Suitability: React.FC = () => {
     'Não realiza investimentos',
   ];
 
+  if (isLoading) {
+    return (
+      <div className={`suitability-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`suitability-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`suitability-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -132,115 +181,208 @@ const Suitability: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={false}
       />
+      
       <div className="suitability-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-        <h2>{clientId ? 'Editar Cliente' : 'Adicionar Cliente'}</h2>
-        <CustomCard className="suitability-card" isDarkMode={isDarkMode}>
-          <CustomInput
-            type="text"
-            placeholder="Digite o nome do cliente"
-            value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
-            className="input-neon"
-            isDarkMode={isDarkMode}
-          />
-          <div className="suitability-field">
-            <label>1. Qual a duração planejada para o investimento? *</label>
-            <select
-              value={q1InvestmentDuration}
-              onChange={(e) => setQ1InvestmentDuration(e.target.value)}
-            >
-              <option value="">Selecione uma opção</option>
-              {q1Options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+        {/* Header */}
+        <div className="suitability-header">
+          <div className="header-content">
+            <div className="header-title">
+              <FontAwesomeIcon icon={clientId ? faEdit : faUserPlus} className="header-icon" />
+              <h1>{clientId ? 'Editar Cliente' : 'Novo Cliente'}</h1>
+            </div>
+            <p>Preencha o questionário de suitability para {clientId ? 'atualizar' : 'adicionar'} o cliente</p>
           </div>
-          <div className="suitability-field">
-            <label>2. Qual o principal objetivo do investimento? *</label>
-            <select
-              value={q2InvestmentPurpose}
-              onChange={(e) => setQ2InvestmentPurpose(e.target.value)}
+          <div className="header-actions">
+            <CustomButton
+              onClick={() => navigate('/clients')}
+              className="back-button"
+              isDarkMode={isDarkMode}
             >
-              <option value="">Selecione uma opção</option>
-              {q2Options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              Voltar
+            </CustomButton>
           </div>
-          <div className="suitability-field">
-            <label>3. Qual percentual do seu patrimônio será destinado a investimentos? *</label>
-            <select
-              value={q3InvestmentAllocation}
-              onChange={(e) => setQ3InvestmentAllocation(e.target.value)}
-            >
-              <option value="">Selecione uma opção</option>
-              {q3Options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="suitability-field">
-            <label>4. Qual o seu nível de experiência com investimentos? *</label>
-            <select
-              value={q4FinancialExperience}
-              onChange={(e) => setQ4FinancialExperience(e.target.value)}
-            >
-              <option value="">Selecione uma opção</option>
-              {q4Options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="suitability-field">
-            <label>5. Quais tipos de investimentos você já realizou ou tem interesse? (Selecione todas as opções aplicáveis) *</label>
-            <div className="checkbox-group">
-              {q5Options.map((option) => (
-                <label key={option} className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={q5InvestmentOptions.includes(option)}
-                    onChange={() => handleQ5Change(option)}
-                  />
-                  {option}
-                </label>
-              ))}
+        </div>
+
+        {/* Formulário */}
+        <div className="form-section">
+          <CustomCard className="client-info-card" isDarkMode={isDarkMode}>
+            <div className="card-header">
+              <FontAwesomeIcon icon={faUser} />
+              <h3>Informações do Cliente</h3>
+            </div>
+            <CustomInput
+              type="text"
+              placeholder="Digite o nome do cliente"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              className="input-neon"
+              isDarkMode={isDarkMode}
+            />
+          </CustomCard>
+
+          {/* Questionário */}
+          <div className="questions-section">
+            <h3>Questionário de Suitability</h3>
+            
+            <div className="questions-grid">
+              {/* Pergunta 1 */}
+              <CustomCard className="question-card" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faClock} />
+                  <h4>1. Duração Planejada para o Investimento</h4>
+                </div>
+                <select
+                  value={q1InvestmentDuration}
+                  onChange={(e) => setQ1InvestmentDuration(e.target.value)}
+                  className="modern-select"
+                >
+                  <option value="">Selecione uma opção</option>
+                  {q1Options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </CustomCard>
+
+              {/* Pergunta 2 */}
+              <CustomCard className="question-card" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faBullseye} />
+                  <h4>2. Principal Objetivo do Investimento</h4>
+                </div>
+                <select
+                  value={q2InvestmentPurpose}
+                  onChange={(e) => setQ2InvestmentPurpose(e.target.value)}
+                  className="modern-select"
+                >
+                  <option value="">Selecione uma opção</option>
+                  {q2Options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </CustomCard>
+
+              {/* Pergunta 3 */}
+              <CustomCard className="question-card" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faPiggyBank} />
+                  <h4>3. Percentual do Patrimônio para Investimentos</h4>
+                </div>
+                <select
+                  value={q3InvestmentAllocation}
+                  onChange={(e) => setQ3InvestmentAllocation(e.target.value)}
+                  className="modern-select"
+                >
+                  <option value="">Selecione uma opção</option>
+                  {q3Options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </CustomCard>
+
+              {/* Pergunta 4 */}
+              <CustomCard className="question-card" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faGraduationCap} />
+                  <h4>4. Nível de Experiência com Investimentos</h4>
+                </div>
+                <select
+                  value={q4FinancialExperience}
+                  onChange={(e) => setQ4FinancialExperience(e.target.value)}
+                  className="modern-select"
+                >
+                  <option value="">Selecione uma opção</option>
+                  {q4Options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </CustomCard>
+
+              {/* Pergunta 5 */}
+              <CustomCard className="question-card full-width" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faList} />
+                  <h4>5. Tipos de Investimentos Realizados ou de Interesse</h4>
+                </div>
+                <div className="checkbox-grid">
+                  {q5Options.map((option) => (
+                    <label key={option} className="checkbox-item">
+                      <input
+                        type="checkbox"
+                        checked={q5InvestmentOptions.includes(option)}
+                        onChange={() => handleQ5Change(option)}
+                      />
+                      <span className="checkmark"></span>
+                      <span className="checkbox-text">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </CustomCard>
+
+              {/* Observações */}
+              <CustomCard className="question-card full-width" isDarkMode={isDarkMode}>
+                <div className="question-header">
+                  <FontAwesomeIcon icon={faComments} />
+                  <h4>6. Observações Adicionais (Opcional)</h4>
+                </div>
+                <CustomInput
+                  type="text"
+                  placeholder="Digite observações adicionais..."
+                  value={q6Observations}
+                  onChange={(e) => setQ6Observations(e.target.value)}
+                  className="input-neon"
+                  isDarkMode={isDarkMode}
+                />
+              </CustomCard>
             </div>
           </div>
-          <CustomInput
-            type="text"
-            placeholder="Observações adicionais"
-            value={q6Observations}
-            onChange={(e) => setQ6Observations(e.target.value)}
-            className="input-neon"
-            isDarkMode={isDarkMode}
-          />
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <div className="suitability-buttons">
+
+          {/* Mensagem de erro */}
+          {errorMessage && (
+            <div className="error-container">
+              <FontAwesomeIcon icon={faExclamationTriangle} />
+              <p className="error-message">{errorMessage}</p>
+            </div>
+          )}
+
+          {/* Botões de ação */}
+          <div className="action-buttons">
             <CustomButton
               onClick={handleSubmit}
-              className="suitability-button"
+              className="save-button"
               isDarkMode={isDarkMode}
+              disabled={isLoading}
             >
-              Salvar
+              <FontAwesomeIcon icon={faSave} />
+              {isLoading ? 'Salvando...' : 'Salvar Cliente'}
             </CustomButton>
             <CustomButton
-              onClick={() => navigate('/home')}
-              className="suitability-button secondary"
+              onClick={() => navigate('/clients')}
+              className="cancel-button"
               isDarkMode={isDarkMode}
             >
+              <FontAwesomeIcon icon={faTimes} />
               Cancelar
             </CustomButton>
           </div>
-        </CustomCard>
+        </div>
       </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };
