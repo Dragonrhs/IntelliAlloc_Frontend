@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faPlus, 
+  faSpinner, 
+  faCheckCircle, 
+  faExclamationTriangle,
+  faCalendarAlt,
+  faTag,
+  faLayerGroup,
+  faBroadcastTower,
+  faBuilding,
+  faShieldAlt,
+  faChartLine,
+  faBarcode,
+  faIdCard,
+  faUserTie,
+  faClock,
+  faCheckDouble,
+  faUser,
+  faSitemap,
+  faBan
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import CustomInput from '../components/CustomInput';
@@ -164,6 +186,27 @@ const opcoesAnalistaResponsavel = [
 ];
 const opcoesPrazoTotal = ['1', '2', '3', '6', '9', '12', '24'];
 
+// Mapeamento de ícones para campos
+const campoIcons: Record<CampoAtivo, any> = {
+  data: faCalendarAlt,
+  nome: faTag,
+  classe: faLayerGroup,
+  canal: faBroadcastTower,
+  emissor: faBuilding,
+  risco_credito: faShieldAlt,
+  ticker: faChartLine,
+  isin: faBarcode,
+  cnpj: faIdCard,
+  gestora: faUserTie,
+  prazo_total: faClock,
+  status: faCheckDouble,
+  emissor_emissao: faBuilding,
+  analista_responsavel: faUser,
+  perfil: faUserTie,
+  master_feeder: faSitemap,
+  restrito_alocacao: faBan
+};
+
 const validarISIN = (isin: string) => {
   return /^[A-Z]{2}[A-Z0-9]{10}$/.test(isin);
 };
@@ -230,11 +273,12 @@ interface ErroImportacao {
 
 const InserirAtivo: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
   const { checkPermission } = useUser();
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [camposVisiveis, setCamposVisiveis] = useState<CampoAtivo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     data: '',
@@ -305,6 +349,7 @@ const InserirAtivo: React.FC = () => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+    setIsLoading(true);
 
     try {
       const response = await axios.post('http://localhost:5000/api/ativos', formData, {
@@ -319,6 +364,8 @@ const InserirAtivo: React.FC = () => {
       }
     } catch (error: any) {
       setErrorMessage(error.response?.data?.error || 'Erro ao inserir ativo');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -328,7 +375,7 @@ const InserirAtivo: React.FC = () => {
 
   if (!podeVisualizar) {
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
         <Sidebar
           isExpanded={isSidebarExpanded}
@@ -338,8 +385,10 @@ const InserirAtivo: React.FC = () => {
           isFullSidebar={false}
         />
         <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-          <h2>Acesso Negado</h2>
-          <p>Você não tem permissão para acessar esta página.</p>
+          <div className="form-container">
+            <h2>Acesso Negado</h2>
+            <p>Você não tem permissão para acessar esta página.</p>
+          </div>
         </div>
       </div>
     );
@@ -392,6 +441,7 @@ const InserirAtivo: React.FC = () => {
     return (
       <div className="form-group">
         <label htmlFor={nome}>
+          <FontAwesomeIcon icon={campoIcons[nome]} style={{ marginRight: '8px', color: '#4facfe' }} />
           {label} {isObrigatorio && <span className="required">*</span>}
         </label>
         {tipo === 'select' ? (
@@ -402,6 +452,7 @@ const InserirAtivo: React.FC = () => {
             onChange={handleCampoChange}
             required={isObrigatorio}
             className={`custom-select ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+            disabled={isLoading}
           >
             <option value="">Selecione...</option>
             {nome === 'classe' && classesAtivos.map(option => (
@@ -444,6 +495,7 @@ const InserirAtivo: React.FC = () => {
             isDarkMode={isDarkMode}
             pattern={nome === 'isin' ? '[A-Z]{2}[A-Z0-9]{10}' : undefined}
             maxLength={nome === 'cnpj' ? 14 : undefined}
+            disabled={isLoading}
           />
         )}
       </div>
@@ -451,7 +503,7 @@ const InserirAtivo: React.FC = () => {
   };
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -462,7 +514,10 @@ const InserirAtivo: React.FC = () => {
       />
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <div className="form-container">
-          <h2>Inserir Novo Ativo</h2>
+          <h2>
+            <FontAwesomeIcon icon={faPlus} style={{ marginRight: '15px', color: '#4facfe' }} />
+            Inserir Novo Ativo
+          </h2>
 
           {errorMessage && <div className="error-message">{errorMessage}</div>}
           {successMessage && <div className="success-message">{successMessage}</div>}
@@ -487,8 +542,29 @@ const InserirAtivo: React.FC = () => {
             {renderCampo('restrito_alocacao', 'Restrito para Alocação', 'select')}
 
             <div className="form-actions">
-              <button type="submit" className="submit-button" disabled={!podeInserir}>Inserir Ativo</button>
-              <button type="button" className="cancel-button" onClick={() => navigate('/consultar-ativos')}>
+              <button 
+                type="submit" 
+                className="submit-button" 
+                disabled={!podeInserir || isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                    Inserindo...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faPlus} />
+                    Inserir Ativo
+                  </>
+                )}
+              </button>
+              <button 
+                type="button" 
+                className="cancel-button" 
+                onClick={() => navigate('/escolha-inserir-ativo')}
+                disabled={isLoading}
+              >
                 Cancelar
               </button>
             </div>

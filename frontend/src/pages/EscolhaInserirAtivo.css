@@ -1,56 +1,364 @@
+/* Reset global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Container principal */
+.app-container {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 0.3s ease;
+}
+
+.app-container.animated {
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #f5576c 0%, #4facfe 100%);
+  }
+}
+
+/* Modo escuro */
+.app-container.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.app-container.dark-mode.animated {
+  animation: darkGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes darkGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #533483 0%, #1a1a2e 100%);
+  }
+}
+
+/* Modo claro */
+.app-container.light-mode {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.app-container.light-mode.animated {
+  animation: lightGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes lightGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #00f2fe 0%, #43e97b 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #38f9d7 0%, #4facfe 100%);
+  }
+}
+
+/* Conteúdo principal */
+.main-content {
+  padding: 90px 30px 30px;
+  transition: margin-left 0.3s ease;
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Container de escolha modernizado */
 .escolha-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 60px);
-  padding: 20px;
+  min-height: calc(100vh - 120px);
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease-out 0.2s both;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
+.app-container.light-mode .escolha-container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Header modernizado */
 .escolha-container h2 {
-  margin-bottom: 40px;
-  color: var(--text-color);
+  margin-bottom: 50px;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInDown 0.6s ease-out;
 }
 
+.app-container.light-mode .escolha-container h2 {
+  color: #333;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Container de botões modernizado */
 .botoes-container {
   display: flex;
-  gap: 20px;
+  gap: 30px;
   flex-wrap: wrap;
   justify-content: center;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botões de escolha modernizados */
 .botao-escolha {
-  padding: 20px 40px;
-  font-size: 1.2rem;
-  border-radius: 8px;
+  padding: 30px 40px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 20px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 250px;
+  min-width: 280px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.6s ease-out both;
 }
 
-.light-mode .botao-escolha {
-  background-color: #f0f0f0;
+.botao-escolha:nth-child(1) {
+  animation-delay: 0.5s;
+}
+
+.botao-escolha:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Efeito de brilho nos botões */
+.botao-escolha::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.botao-escolha:hover::before {
+  left: 100%;
+}
+
+/* Modo claro */
+.app-container.light-mode .botao-escolha {
+  background: rgba(255, 255, 255, 0.9);
   color: #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-.dark-mode .botao-escolha {
-  background-color: #2d2d2d;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+/* Modo escuro */
+.app-container.dark-mode .botao-escolha {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Hover effects */
 .botao-escolha:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
-.light-mode .botao-escolha:hover {
-  background-color: #e0e0e0;
+.app-container.light-mode .botao-escolha:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(79, 172, 254, 0.3);
+  box-shadow: 0 15px 35px rgba(79, 172, 254, 0.2);
 }
 
-.dark-mode .botao-escolha:hover {
-  background-color: #3d3d3d;
+.app-container.dark-mode .botao-escolha:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus states */
+.botao-escolha:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.3);
+}
+
+/* Active states */
+.botao-escolha:active {
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .escolha-container {
+    max-width: 700px;
+    padding: 30px;
+  }
+  
+  .escolha-container h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .botao-escolha {
+    min-width: 250px;
+    padding: 25px 35px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 80px 20px 20px;
+  }
+  
+  .escolha-container {
+    max-width: 100%;
+    padding: 25px;
+    border-radius: 20px;
+    min-height: calc(100vh - 100px);
+  }
+  
+  .escolha-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 35px;
+  }
+  
+  .botoes-container {
+    gap: 20px;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .botao-escolha {
+    width: 100%;
+    min-width: auto;
+    padding: 25px 30px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 70px 15px 15px;
+  }
+  
+  .escolha-container {
+    padding: 20px;
+    border-radius: 16px;
+    min-height: calc(100vh - 80px);
+  }
+  
+  .escolha-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+  }
+  
+  .botoes-container {
+    gap: 15px;
+  }
+  
+  .botao-escolha {
+    padding: 20px 25px;
+    font-size: 1rem;
+    border-radius: 16px;
+  }
+}
+
+/* Prevenir scrollbar horizontal */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
 } 

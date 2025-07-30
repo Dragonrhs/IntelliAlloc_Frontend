@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faUpload, 
+  faSpinner, 
+  faCheckCircle, 
+  faExclamationTriangle,
+  faFileExcel,
+  faTimes,
+  faExclamationCircle
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
@@ -14,7 +24,7 @@ interface ErroImportacao {
 
 const ImportarAtivosLote: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
   const { userRole } = useUser();
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [errosImportacao, setErrosImportacao] = useState<ErroImportacao[]>([]);
@@ -67,7 +77,7 @@ const ImportarAtivosLote: React.FC = () => {
   // Verificar se o usuário tem permissão
   if (userRole !== 'Admin' && userRole !== 'Research') {
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
         <Sidebar
           isExpanded={isSidebarExpanded}
@@ -77,15 +87,20 @@ const ImportarAtivosLote: React.FC = () => {
           isFullSidebar={false}
         />
         <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-          <h2>Acesso Negado</h2>
-          <p>Você não tem permissão para acessar esta página.</p>
+          <div className="importar-container">
+            <h2>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{ marginRight: '15px', color: '#ff4757' }} />
+              Acesso Negado
+            </h2>
+            <p>Você não tem permissão para acessar esta página.</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -96,7 +111,10 @@ const ImportarAtivosLote: React.FC = () => {
       />
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <div className="importar-container">
-          <h2>Importar Ativos em Lote</h2>
+          <h2>
+            <FontAwesomeIcon icon={faUpload} style={{ marginRight: '15px', color: '#4facfe' }} />
+            Importar Ativos em Lote
+          </h2>
           
           {mensagemImportacao && (
             <div className={`mensagem-importacao ${errosImportacao.length > 0 ? 'erro' : 'sucesso'}`}>
@@ -106,21 +124,45 @@ const ImportarAtivosLote: React.FC = () => {
 
           <form onSubmit={handleImportSubmit} className="importar-form">
             <div className="form-group">
-              <label htmlFor="arquivo">Selecione o arquivo Excel (.xlsx ou .xls)</label>
+              <label htmlFor="arquivo">
+                <FontAwesomeIcon icon={faFileExcel} style={{ marginRight: '8px', color: '#4facfe' }} />
+                Selecione o arquivo Excel (.xlsx ou .xls)
+              </label>
               <input
                 type="file"
                 id="arquivo"
                 accept=".xlsx,.xls"
                 onChange={handleArquivoChange}
                 className="file-input"
+                disabled={isLoading}
               />
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="submit-button" disabled={isLoading}>
-                {isLoading ? 'Importando...' : 'Importar'}
+              <button 
+                type="submit" 
+                className="submit-button" 
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                    Importando...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faUpload} />
+                    Importar
+                  </>
+                )}
               </button>
-              <button type="button" className="cancel-button" onClick={() => navigate('/consultar-ativos')}>
+              <button 
+                type="button" 
+                className="cancel-button" 
+                onClick={() => navigate('/escolha-inserir-ativo')}
+                disabled={isLoading}
+              >
+                <FontAwesomeIcon icon={faTimes} />
                 Cancelar
               </button>
             </div>
@@ -128,7 +170,10 @@ const ImportarAtivosLote: React.FC = () => {
 
           {errosImportacao.length > 0 && (
             <div className="erros-container">
-              <h3>Erros encontrados:</h3>
+              <h3>
+                <FontAwesomeIcon icon={faExclamationTriangle} style={{ marginRight: '10px', color: '#ff4757' }} />
+                Erros encontrados:
+              </h3>
               <table className="erros-table">
                 <thead>
                   <tr>
