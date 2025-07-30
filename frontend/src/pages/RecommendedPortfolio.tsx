@@ -1,11 +1,32 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChartPie,
+  faEdit,
+  faPlus,
+  faSave,
+  faTimes,
+  faRobot,
+  faSpinner,
+  faCheckCircle,
+  faExclamationTriangle,
+  faInfoCircle,
+  faCog,
+  faArrowLeft,
+  faBrain,
+  faPercentage,
+  faCalendarAlt,
+  faShieldAlt,
+  faBalanceScale
+} from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import CustomCard from '../components/CustomCard';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import './RecommendedPortfolio.css';
 import IAExplanation from '../components/IAExplanation';
@@ -44,8 +65,12 @@ const RecommendedPortfolio: React.FC = () => {
   const [isIAEnabled, setIsIAEnabled] = useState(false);
   const [isIALoading, setIsIALoading] = useState(false);
   const [avaliacoes, setAvaliacoes] = useState<any[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
 
   useEffect(() => {
     fetchMeses();
@@ -53,13 +78,18 @@ const RecommendedPortfolio: React.FC = () => {
 
   const fetchMeses = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get('http://localhost:5000/api/carteira/meses', {
         withCredentials: true
       });
       setMeses(response.data.meses);
     } catch (error: any) {
-      setErrorMessage('Erro ao carregar meses disponíveis');
+      setToastMessage('Erro ao carregar meses disponíveis');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,21 +115,31 @@ const RecommendedPortfolio: React.FC = () => {
 
     if (mes) {
       try {
+        setIsLoading(true);
         const response = await axios.get(`http://localhost:5000/api/carteira/${mes}`, {
           withCredentials: true
         });
         setCarteiras(response.data.carteiras);
         await fetchAvaliacoes(mes);
+        setToastMessage('Carteira carregada com sucesso!');
+        setToastType('success');
+        setShowToast(true);
       } catch (error: any) {
-        setErrorMessage('Erro ao carregar carteiras do mês selecionado');
+        setToastMessage('Erro ao carregar carteiras do mês selecionado');
+        setToastType('error');
+        setShowToast(true);
         console.error('Erro:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleEditClick = () => {
     if (!mesSelecionado) {
-      setErrorMessage('Selecione um mês para editar');
+      setToastMessage('Selecione um mês para editar');
+      setToastType('error');
+      setShowToast(true);
       return;
     }
     setIsEditing(true);
@@ -139,12 +179,16 @@ const RecommendedPortfolio: React.FC = () => {
     if (isIAEnabled) {
       setIsIAEnabled(false);
       setErrorMessage('');
-      setSuccessMessage('IA desativada com sucesso!');
+      setToastMessage('IA desativada com sucesso!');
+      setToastType('success');
+      setShowToast(true);
       return;
     }
 
     if (!canEnableIA()) {
-      setErrorMessage('Preencha todas as bandas inferiores e superiores para ativar a IA');
+      setToastMessage('Preencha todas as bandas inferiores e superiores para ativar a IA');
+      setToastType('error');
+      setShowToast(true);
       return;
     }
 
@@ -187,14 +231,18 @@ const RecommendedPortfolio: React.FC = () => {
             />
           );
         } else {
-          setSuccessMessage('IA ativada com sucesso! As bandas neutras foram calculadas automaticamente.');
+          setToastMessage('IA ativada com sucesso! As bandas neutras foram calculadas automaticamente.');
+          setToastType('success');
+          setShowToast(true);
         }
       }
 
       setIsIAEnabled(true);
       setErrorMessage('');
     } catch (error: any) {
-      setErrorMessage('Erro ao consultar a IA: ' + (error.response?.data?.error || 'Erro desconhecido'));
+      setToastMessage('Erro ao consultar a IA: ' + (error.response?.data?.error || 'Erro desconhecido'));
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro:', error);
     } finally {
       setIsIALoading(false);
@@ -242,12 +290,15 @@ const RecommendedPortfolio: React.FC = () => {
     // Validar soma dos percentuais para cada perfil
     for (const perfil of PERFIS) {
       if (!validateSomaPercentuais(carteiras, perfil)) {
-        setErrorMessage(`A soma dos percentuais da banda neutra para o perfil ${perfil} deve ser 100%`);
+        setToastMessage(`A soma dos percentuais da banda neutra para o perfil ${perfil} deve ser 100%`);
+        setToastType('error');
+        setShowToast(true);
         return;
       }
     }
 
     try {
+      setIsLoading(true);
       if (isAdding) {
         await axios.post('http://localhost:5000/api/carteira/adicionar', {
           mes_referencia: mesSelecionado,
@@ -255,22 +306,30 @@ const RecommendedPortfolio: React.FC = () => {
         }, {
           withCredentials: true
         });
-        setSuccessMessage('Carteira adicionada com sucesso');
+        setToastMessage('Carteira adicionada com sucesso!');
+        setToastType('success');
+        setShowToast(true);
       } else if (isEditing) {
         await axios.put(`http://localhost:5000/api/carteira/editar/${mesSelecionado}`, {
           carteiras: carteiras
         }, {
           withCredentials: true
         });
-        setSuccessMessage('Carteira atualizada com sucesso');
+        setToastMessage('Carteira atualizada com sucesso!');
+        setToastType('success');
+        setShowToast(true);
       }
 
       setIsEditing(false);
       setIsAdding(false);
       fetchMeses();
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.error || 'Erro ao salvar carteira');
+      setToastMessage(error.response?.data?.error || 'Erro ao salvar carteira');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -287,8 +346,45 @@ const RecommendedPortfolio: React.FC = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
+  const getPerfilColor = (perfil: string) => {
+    switch (perfil) {
+      case 'Conservador':
+        return '#4CAF50';
+      case 'Moderado':
+        return '#FF9800';
+      case 'Sofisticado':
+        return '#9C27B0';
+      default:
+        return '#667eea';
+    }
+  };
+
+  const getPerfilIcon = (perfil: string) => {
+    switch (perfil) {
+      case 'Conservador':
+        return faShieldAlt;
+      case 'Moderado':
+        return faBalanceScale;
+      case 'Sofisticado':
+        return faBrain;
+      default:
+        return faChartPie;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+        <div className="loading-container">
+          <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+          <p>Carregando carteiras...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -296,72 +392,140 @@ const RecommendedPortfolio: React.FC = () => {
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
         isFullSidebar={false}
+        showBackButton={true}
       />
-      <div className={`recommended-portfolio-content ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <h2>Gerenciar Carteiras Recomendadas</h2>
-        
-        <div className="controls">
-          <select
-            value={mesSelecionado}
-            onChange={handleMesChange}
-            disabled={isAdding}
-            className={isDarkMode ? 'dark-mode' : 'light-mode'}
-          >
-            <option value="">Selecione um mês</option>
-            {meses.map(mes => (
-              <option key={mes} value={mes}>{mes}</option>
-            ))}
-          </select>
-
-          <CustomButton
-            onClick={handleEditClick}
-            disabled={!mesSelecionado || isAdding}
-            isDarkMode={isDarkMode}
-          >
-            Editar Carteira
-          </CustomButton>
-
-          <CustomButton
-            onClick={handleAddClick}
-            disabled={isEditing}
-            isDarkMode={isDarkMode}
-          >
-            Adicionar Nova Carteira
-          </CustomButton>
+      
+      <div className="recommended-portfolio-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+        {/* Header */}
+        <div className="portfolio-header">
+          <div className="header-content">
+            <div className="header-title">
+              <FontAwesomeIcon icon={faChartPie} className="header-icon" />
+              <h1>Gerenciar Carteiras Recomendadas</h1>
+            </div>
+            <p>Configure e otimize as carteiras de investimento recomendadas por perfil de risco</p>
+          </div>
         </div>
 
+        {/* Controles */}
+        <div className="controls-section">
+          <div className="controls-grid">
+            <div className="control-group">
+              <label>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>Selecionar Mês</span>
+              </label>
+              <select
+                value={mesSelecionado}
+                onChange={handleMesChange}
+                disabled={isAdding}
+                className={`month-selector ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+              >
+                <option value="">Selecione um mês</option>
+                {meses.map(mes => (
+                  <option key={mes} value={mes}>{mes}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="action-buttons">
+              <CustomButton
+                onClick={handleEditClick}
+                disabled={!mesSelecionado || isAdding}
+                isDarkMode={isDarkMode}
+                className="edit-button"
+              >
+                <FontAwesomeIcon icon={faEdit} />
+                <span>Editar Carteira</span>
+              </CustomButton>
+
+              <CustomButton
+                onClick={handleAddClick}
+                disabled={isEditing}
+                isDarkMode={isDarkMode}
+                className="add-button"
+              >
+                <FontAwesomeIcon icon={faPlus} />
+                <span>Nova Carteira</span>
+              </CustomButton>
+            </div>
+          </div>
+        </div>
+
+        {/* Formulário de Carteira */}
         {(isEditing || isAdding) && (
           <CustomCard className="carteira-form" isDarkMode={isDarkMode}>
+            {/* Controles de IA */}
             {isAdding && (
               <div className="ia-controls">
-                <CustomInput
-                  type="text"
-                  placeholder="YYYY-MM"
-                  value={mesSelecionado}
-                  onChange={(e) => setMesSelecionado(e.target.value)}
-                  isDarkMode={isDarkMode}
-                />
-                <CustomButton
-                  onClick={handleIAChange}
-                  disabled={!canEnableIA() || isIALoading}
-                  isDarkMode={isDarkMode}
-                  className={isIAEnabled ? 'ia-enabled' : 'ia-disabled'}
-                >
-                  {isIALoading ? (
-                    <div className="loading-spinner">
-                      <div className="spinner"></div>
-                    </div>
-                  ) : (
-                    isIAEnabled ? 'Desativar IA' : 'Ativar IA'
-                  )}
-                </CustomButton>
+                <div className="ia-header">
+                  <FontAwesomeIcon icon={faRobot} className="ia-icon" />
+                  <h3>Inteligência Artificial</h3>
+                </div>
+                <div className="ia-content">
+                  <div className="month-input">
+                    <label>
+                      <FontAwesomeIcon icon={faCalendarAlt} />
+                      <span>Mês de Referência</span>
+                    </label>
+                    <CustomInput
+                      type="text"
+                      placeholder="YYYY-MM"
+                      value={mesSelecionado}
+                      onChange={(e) => setMesSelecionado(e.target.value)}
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                  <CustomButton
+                    onClick={handleIAChange}
+                    disabled={!canEnableIA() || isIALoading}
+                    isDarkMode={isDarkMode}
+                    className={`ia-button ${isIAEnabled ? 'enabled' : 'disabled'}`}
+                  >
+                    {isIALoading ? (
+                      <>
+                        <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                        <span>Processando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={isIAEnabled ? faTimes : faBrain} />
+                        <span>{isIAEnabled ? 'Desativar IA' : 'Ativar IA'}</span>
+                      </>
+                    )}
+                  </CustomButton>
+                </div>
+                {!canEnableIA() && (
+                  <div className="ia-info">
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    <span>Preencha todas as bandas inferiores e superiores para ativar a IA</span>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Seções de Perfil */}
             {PERFIS.map((perfil) => (
               <div key={perfil} className="portfolio-section">
-                <h3>{perfil}</h3>
+                <div className="section-header" style={{ borderLeftColor: getPerfilColor(perfil) }}>
+                  <FontAwesomeIcon icon={getPerfilIcon(perfil)} style={{ color: getPerfilColor(perfil) }} />
+                  <h3>{perfil}</h3>
+                  <div className="perfil-badge" style={{ backgroundColor: getPerfilColor(perfil) }}>
+                    <FontAwesomeIcon icon={faPercentage} />
+                    <span>100%</span>
+                  </div>
+                </div>
+                
                 <div className="portfolio-grid">
+                  <div className="grid-header">
+                    <span className="classe-label">Classe de Ativo</span>
+                    <div className="bandas-header">
+                      <span>Banda Inferior (%)</span>
+                      <span>Banda Neutra (%)</span>
+                      <span>Banda Superior (%)</span>
+                    </div>
+                  </div>
+                  
                   {CLASSES_ATIVO.map((classe) => {
                     const carteira = carteiras.find(
                       (c) => c.perfil === perfil && c.classe_ativo === classe
@@ -379,7 +543,7 @@ const RecommendedPortfolio: React.FC = () => {
                         <div className="bandas">
                           <CustomInput
                             type="number"
-                            placeholder=""
+                            placeholder="0"
                             value={carteira.banda_inferior === undefined ? '' : carteira.banda_inferior}
                             onChange={(e) => handleCarteiraChange(
                               perfil,
@@ -388,10 +552,11 @@ const RecommendedPortfolio: React.FC = () => {
                               e.target.value
                             )}
                             isDarkMode={isDarkMode}
+                            className="banda-input"
                           />
                           <CustomInput
                             type="number"
-                            placeholder=""
+                            placeholder="0"
                             value={carteira.banda_neutra === undefined ? '' : carteira.banda_neutra}
                             onChange={(e) => handleCarteiraChange(
                               perfil,
@@ -400,10 +565,11 @@ const RecommendedPortfolio: React.FC = () => {
                               e.target.value
                             )}
                             isDarkMode={isDarkMode}
+                            className="banda-input neutra"
                           />
                           <CustomInput
                             type="number"
-                            placeholder=""
+                            placeholder="0"
                             value={carteira.banda_superior === undefined ? '' : carteira.banda_superior}
                             onChange={(e) => handleCarteiraChange(
                               perfil,
@@ -412,6 +578,7 @@ const RecommendedPortfolio: React.FC = () => {
                               e.target.value
                             )}
                             isDarkMode={isDarkMode}
+                            className="banda-input"
                           />
                         </div>
                       </div>
@@ -421,27 +588,60 @@ const RecommendedPortfolio: React.FC = () => {
               </div>
             ))}
 
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            {successMessage && <p className="success-message">{successMessage}</p>}
+            {/* Mensagens */}
+            {errorMessage && (
+              <div className="message error">
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+            {successMessage && (
+              <div className="message success">
+                <FontAwesomeIcon icon={faCheckCircle} />
+                <span>{successMessage}</span>
+              </div>
+            )}
 
+            {/* Botões de Ação */}
             <div className="button-group">
               <CustomButton
                 onClick={handleSave}
                 isDarkMode={isDarkMode}
+                className="save-button"
+                disabled={isLoading}
               >
-                Salvar
+                {isLoading ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                    <span>Salvando...</span>
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faSave} />
+                    <span>Salvar</span>
+                  </>
+                )}
               </CustomButton>
               <CustomButton
                 onClick={handleCancel}
                 isDarkMode={isDarkMode}
-                className="secondary"
+                className="cancel-button"
               >
-                Cancelar
+                <FontAwesomeIcon icon={faTimes} />
+                <span>Cancelar</span>
               </CustomButton>
             </div>
           </CustomCard>
         )}
       </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };
