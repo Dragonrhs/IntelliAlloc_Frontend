@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import './Sidebar.css';
 import { useUser } from '../context/UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,7 +28,9 @@ import {
   faCalendarCheck,
   faLock,
   faTags,
-  faDatabase
+  faDatabase,
+  faChartPie,
+  faUserCog
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
@@ -70,7 +72,8 @@ const routeIcons: Record<string, { label: string; icon: any }> = {
   '/classificar-ativos': { label: 'Classificar Ativos', icon: faTags },
   '/historico-classificacao': { label: 'Histórico de Classificações', icon: faClockRotateLeft },
   '/dados': { label: 'Dados e Integração', icon: faDatabase },
-  '/visualizacao-dados': { label: 'Visualização de Dados', icon: faChartLine }
+  '/visualizacao-dados': { label: 'Visualização de Dados', icon: faChartLine },
+  '/carteira-cliente': { label: 'Carteira para Cliente', icon: faUserCog }
 };
 
 // Agrupamentos de menu para melhor organização
@@ -122,6 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   showBackButton = false
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userRole, user } = useUser();
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -356,12 +360,24 @@ const Sidebar: React.FC<SidebarProps> = ({
     return false;
   };
 
+  // Função para verificar se um item de menu está ativo
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   // Função para renderizar um item de menu
   const renderMenuItem = (item: {path: string, label: string, icon: any}) => {
+    const active = isActive(item.path);
+    
     return (
       <li key={item.path}>
-        <button onClick={() => handleNavigation(item.path)} title={!isExpanded ? item.label : ''}>
-          {isExpanded ? item.label : <FontAwesomeIcon icon={item.icon} />}
+        <button 
+          onClick={() => handleNavigation(item.path)} 
+          title={!isExpanded ? item.label : ''}
+          className={active ? 'active' : ''}
+        >
+          <FontAwesomeIcon icon={item.icon} />
+          {isExpanded && <span>{item.label}</span>}
               </button>
             </li>
     );
@@ -380,14 +396,16 @@ const Sidebar: React.FC<SidebarProps> = ({
           <ul>
             <li>
               <button onClick={() => handleNavigation('/home')} title={!isExpanded ? 'Home' : ''}>
-                {isExpanded ? 'Home' : <FontAwesomeIcon icon={faHome} />}
+                <FontAwesomeIcon icon={faHome} />
+                {isExpanded && <span>Home</span>}
               </button>
             </li>
           </ul>
         </nav>
         <div className="sidebar-footer">
           <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-            {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
+            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+            {isExpanded && <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>}
           </button>
         </div>
       </div>
@@ -445,7 +463,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="sidebar-footer">
         <button className="theme-toggle" onClick={toggleTheme} title={!isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : ''}>
-          {isExpanded ? (isDarkMode ? 'Modo Claro' : 'Modo Escuro') : <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
+          <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+          {isExpanded && <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>}
         </button>
       </div>
     </div>
