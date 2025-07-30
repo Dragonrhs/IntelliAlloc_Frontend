@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper,
-  Typography,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
-  Button,
-  Alert,
-  CircularProgress,
-  SelectChangeEvent,
-  Stack
-} from '@mui/material';
+  faUserShield,
+  faCheck,
+  faTimes,
+  faExclamationTriangle,
+  faCheckCircle,
+  faInfoCircle,
+  faSave,
+  faSpinner,
+  faShieldAlt,
+  faLock,
+  faUnlock,
+  faCog,
+  faDatabase,
+  faKey,
+  faUserCheck,
+  faUserTimes,
+  faFilter,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons';
+import Toast from '../Toast';
 import axios from 'axios';
+import './PermissionsComponents.css';
 
 interface Role {
   id: number;
@@ -42,8 +48,9 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [functionalities, setFunctionalities] = useState<Functionality[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
 
   useEffect(() => {
     loadRoles();
@@ -62,7 +69,9 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
       });
       setRoles(response.data);
     } catch (err: any) {
-      setError('Erro ao carregar cargos');
+      setToastMessage('Erro ao carregar cargos');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro ao carregar cargos:', err);
     }
   };
@@ -74,21 +83,22 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
         withCredentials: true
       });
       setFunctionalities(response.data);
-      setError(null);
     } catch (err: any) {
-      setError('Erro ao carregar permissões do cargo');
+      setToastMessage('Erro ao carregar permissões do cargo');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro ao carregar permissões:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRoleChange = (event: SelectChangeEvent) => {
+  const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRole(event.target.value);
   };
 
   const handlePermissionChange = async (functionalityId: number, checked: boolean) => {
-    if (!selectedRole) return;
+    if (!selectedRole || readOnly) return;
 
     try {
       if (checked) {
@@ -105,16 +115,19 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
 
       // Recarregar permissões
       await loadRolePermissions(parseInt(selectedRole, 10));
-      setSuccess('Permissão atualizada com sucesso');
-      setTimeout(() => setSuccess(null), 3000);
+      setToastMessage('Permissão atualizada com sucesso');
+      setToastType('success');
+      setShowToast(true);
     } catch (err: any) {
-      setError('Erro ao atualizar permissão');
+      setToastMessage('Erro ao atualizar permissão');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro ao atualizar permissão:', err);
     }
   };
 
   const handleSaveAll = async () => {
-    if (!selectedRole) return;
+    if (!selectedRole || readOnly) return;
 
     try {
       const updatedPermissions = functionalities
@@ -127,101 +140,136 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
         withCredentials: true
       });
 
-      setSuccess('Todas as permissões foram salvas com sucesso');
-      setTimeout(() => setSuccess(null), 3000);
+      setToastMessage('Todas as permissões foram salvas com sucesso');
+      setToastType('success');
+      setShowToast(true);
     } catch (err: any) {
-      setError('Erro ao salvar permissões');
+      setToastMessage('Erro ao salvar permissões');
+      setToastType('error');
+      setShowToast(true);
       console.error('Erro ao salvar permissões:', err);
     }
   };
 
+  const selectedRoleData = roles.find(role => role.id === parseInt(selectedRole, 10));
+
   return (
-    <Box>
-      <Stack spacing={3}>
-        <Box>
-          <FormControl fullWidth>
-            <InputLabel>Cargo</InputLabel>
-            <Select
+    <div className="role-permissions">
+      <div className="permissions-section">
+        {/* Seleção de Cargo */}
+        <div className="role-selector">
+          <div className="selector-header">
+            <FontAwesomeIcon icon={faUserShield} className="selector-icon" />
+            <h3>Selecionar Cargo</h3>
+          </div>
+          <div className="select-container">
+            <select
               value={selectedRole}
               onChange={handleRoleChange}
-              label="Cargo"
+              className="role-select"
             >
+              <option value="">Escolha um cargo...</option>
               {roles.map((role) => (
-                <MenuItem key={role.id} value={role.id.toString()}>
+                <option key={role.id} value={role.id.toString()}>
                   {role.nome}
-                </MenuItem>
+                </option>
               ))}
-            </Select>
-          </FormControl>
-        </Box>
+            </select>
+          </div>
+        </div>
 
-        {error && (
-          <Box>
-            <Alert severity="error">{error}</Alert>
-          </Box>
+        {/* Informações do Cargo Selecionado */}
+        {selectedRoleData && (
+          <div className="role-info">
+            <div className="role-info-card">
+              <div className="role-info-header">
+                <FontAwesomeIcon icon={faShieldAlt} className="role-info-icon" />
+                <div className="role-info-content">
+                  <h4>{selectedRoleData.nome}</h4>
+                  <p>{selectedRoleData.descricao}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
-        {success && (
-          <Box>
-            <Alert severity="success">{success}</Alert>
-          </Box>
-        )}
-
+        {/* Lista de Funcionalidades */}
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <CircularProgress />
-          </Box>
+          <div className="loading-container">
+            <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+            <p>Carregando permissões...</p>
+          </div>
         ) : selectedRole ? (
-          <>
-            <Box>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  Funcionalidades
-                </Typography>
-                <FormGroup>
-                  {functionalities.map((func) => (
-                    <FormControlLabel
-                      key={func.id}
-                      control={
-                        <Checkbox
+          <div className="functionalities-section">
+            <div className="functionalities-header">
+              <FontAwesomeIcon icon={faKey} className="functionalities-icon" />
+              <h3>Funcionalidades e Permissões</h3>
+              <p>Marque as funcionalidades que este cargo pode acessar</p>
+            </div>
+
+            <div className="functionalities-grid">
+              {functionalities.map((func) => (
+                <div key={func.id} className="functionality-card">
+                  <div className="functionality-header">
+                    <div className="functionality-info">
+                      <h4>{func.nome}</h4>
+                      <p className="functionality-description">{func.descricao}</p>
+                      <div className="functionality-route">
+                        <FontAwesomeIcon icon={faDatabase} />
+                        <span>{func.metodo} {func.rota}</span>
+                      </div>
+                    </div>
+                    <div className="permission-toggle">
+                      <label className="toggle-switch">
+                        <input
+                          type="checkbox"
                           checked={!!func.permissao_id}
                           onChange={(e) => handlePermissionChange(func.id, e.target.checked)}
                           disabled={readOnly}
                         />
-                      }
-                      label={
-                        <Box>
-                          <Typography variant="subtitle1">{func.nome}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {func.descricao}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {func.metodo} {func.rota}
-                          </Typography>
-                        </Box>
-                      }
-                    />
-                  ))}
-                </FormGroup>
-              </Paper>
-            </Box>
+                        <span className="toggle-slider">
+                          <FontAwesomeIcon 
+                            icon={func.permissao_id ? faCheck : faTimes} 
+                            className="toggle-icon"
+                          />
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
+            {/* Botão Salvar */}
             {!readOnly && (
-              <Box>
-                <Button
-                  variant="contained"
-                  color="primary"
+              <div className="save-section">
+                <button
+                  className="save-all-btn"
                   onClick={handleSaveAll}
-                  fullWidth
                 >
-                  Salvar Todas as Permissões
-                </Button>
-              </Box>
+                  <FontAwesomeIcon icon={faSave} />
+                  <span>Salvar Todas as Permissões</span>
+                </button>
+              </div>
             )}
-          </>
-        ) : null}
-      </Stack>
-    </Box>
+          </div>
+        ) : (
+          <div className="empty-state">
+            <FontAwesomeIcon icon={faUserShield} className="empty-icon" />
+            <h3>Selecione um Cargo</h3>
+            <p>Escolha um cargo acima para gerenciar suas permissões</p>
+          </div>
+        )}
+      </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
+    </div>
   );
 };
 

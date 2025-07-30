@@ -1,0 +1,591 @@
+/* Componentes de Permissões - Estilos Compartilhados */
+
+/* Container principal dos componentes */
+.role-permissions,
+.user-permissions {
+  width: 100%;
+}
+
+.permissions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Seletor de Cargo/Usuário */
+.role-selector,
+.user-selector,
+.user-search {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.role-selector:hover,
+.user-selector:hover,
+.user-search:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.selector-header,
+.search-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.selector-icon,
+.search-icon {
+  font-size: 1.2rem;
+  color: #667eea;
+}
+
+.selector-header h3,
+.search-header h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.select-container,
+.search-container {
+  position: relative;
+}
+
+.role-select,
+.user-select,
+.search-input {
+  width: 100%;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 16px;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.role-select::placeholder,
+.user-select::placeholder,
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.role-select:focus,
+.user-select:focus,
+.search-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.role-select:hover,
+.user-select:hover,
+.search-input:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.role-select option,
+.user-select option {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+}
+
+/* Informações do Cargo/Usuário */
+.role-info,
+.user-info {
+  animation: slideInUp 0.6s ease;
+}
+
+.role-info-card,
+.user-info-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.role-info-card:hover,
+.user-info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.role-info-header,
+.user-info-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.role-info-icon,
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.role-info-card:hover .role-info-icon,
+.user-info-card:hover .user-avatar {
+  transform: scale(1.1);
+}
+
+.role-info-content,
+.user-info-content {
+  flex: 1;
+}
+
+.role-info-content h4,
+.user-info-content h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.role-info-content p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.user-detail svg {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Container de carregamento */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Seção de funcionalidades */
+.functionalities-section {
+  animation: slideInUp 0.8s ease;
+}
+
+.functionalities-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.functionalities-icon {
+  font-size: 2rem;
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.functionalities-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 10px 0;
+}
+
+.functionalities-header p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Grid de funcionalidades */
+.functionalities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.functionality-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.functionality-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.functionality-card:hover::before {
+  opacity: 1;
+}
+
+.functionality-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.functionality-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.functionality-info {
+  flex: 1;
+}
+
+.functionality-info h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.functionality-description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.functionality-route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.functionality-route svg {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Toggle Switch */
+.permission-toggle {
+  flex-shrink: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 2px;
+  background: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(30px);
+}
+
+.toggle-icon {
+  font-size: 0.7rem;
+  color: white;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider .toggle-icon {
+  color: white;
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Seção de salvar */
+.save-section {
+  text-align: center;
+  animation: slideInUp 0.8s ease 0.2s both;
+}
+
+.save-all-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 35px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.save-all-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.save-all-btn:active {
+  transform: translateY(-1px);
+}
+
+.save-all-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estado vazio */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin: 0 0 10px 0;
+  color: white;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Animações */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos específicos para modo claro */
+.permissions-container.light-mode .selector-header h3,
+.permissions-container.light-mode .search-header h3,
+.permissions-container.light-mode .role-info-content h4,
+.permissions-container.light-mode .user-info-content h4,
+.permissions-container.light-mode .functionality-info h4,
+.permissions-container.light-mode .functionalities-header h3,
+.permissions-container.light-mode .empty-state h3,
+.permissions-container.light-mode .role-select,
+.permissions-container.light-mode .user-select,
+.permissions-container.light-mode .search-input {
+  color: #333 !important;
+}
+
+.permissions-container.light-mode .role-select,
+.permissions-container.light-mode .user-select,
+.permissions-container.light-mode .search-input {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.permissions-container.light-mode .role-select:focus,
+.permissions-container.light-mode .user-select:focus,
+.permissions-container.light-mode .search-input:focus {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.permissions-container.light-mode .role-select option,
+.permissions-container.light-mode .user-select option {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #333 !important;
+}
+
+.permissions-container.light-mode .role-info-content p,
+.permissions-container.light-mode .user-detail,
+.permissions-container.light-mode .functionality-description,
+.permissions-container.light-mode .functionality-route,
+.permissions-container.light-mode .functionalities-header p,
+.permissions-container.light-mode .empty-state p,
+.permissions-container.light-mode .loading-container {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.permissions-container.light-mode .role-selector,
+.permissions-container.light-mode .user-selector,
+.permissions-container.light-mode .user-search,
+.permissions-container.light-mode .role-info-card,
+.permissions-container.light-mode .user-info-card,
+.permissions-container.light-mode .functionality-card,
+.permissions-container.light-mode .functionalities-header {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .functionalities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .functionality-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .permission-toggle {
+    align-self: flex-end;
+  }
+  
+  .role-info-header,
+  .user-info-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .user-details {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .role-selector,
+  .user-selector,
+  .user-search,
+  .role-info-card,
+  .user-info-card,
+  .functionality-card {
+    padding: 20px;
+  }
+  
+  .functionalities-header {
+    padding: 20px;
+  }
+  
+  .save-all-btn {
+    padding: 15px 25px;
+    font-size: 14px;
+  }
+} 
