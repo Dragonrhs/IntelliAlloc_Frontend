@@ -1,6 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faDatabase,
+  faChartBar,
+  faCog,
+  faPlay,
+  faSync,
+  faPlus,
+  faEdit,
+  faTrash,
+  faArrowUp,
+  faArrowDown,
+  faSave,
+  faTimes,
+  faInfoCircle,
+  faCheckCircle,
+  faExclamationTriangle,
+  faClock,
+  faTable,
+  faList,
+  faChartLine,
+  faFileAlt,
+  faRefresh
+} from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLoading } from '../context/LoadingContext';
@@ -58,7 +82,7 @@ interface ResultadoApi {
 
 const Dados: React.FC = () => {
   const { user } = useUser();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
 
@@ -433,8 +457,10 @@ const Dados: React.FC = () => {
   };
 
   return (
-    <div className={`dados-page ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <Navbar isDarkMode={isDarkMode} />
+    <div 
+      className={`dados-page ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Sidebar
         isExpanded={isSidebarExpanded}
         toggleSidebar={toggleSidebar}
@@ -442,113 +468,131 @@ const Dados: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-        <h1>Dados e Integração</h1>
+      <div className="content-container">
+        <Navbar isDarkMode={isDarkMode} />
+        <div className="main-content">
+        <CustomCard className="dados-header-card" isDarkMode={isDarkMode}>
+          <div className="dados-header-modern">
+            <h1>
+              <FontAwesomeIcon icon={faDatabase} className="header-icon" />
+              Dados e Integração
+            </h1>
+            <p>Gerencie portfólios, atualize dados e configure ativos prioritários</p>
+          </div>
+        </CustomCard>
 
         <div className="dados-container">
-          <CustomCard 
-            className="portfolio-card" 
-            isDarkMode={isDarkMode}
-            title="Gerar Portfólio no Comdinheiro"
-          >
-            <div className="portfolio-form">
-              <div className="form-group">
-                <label>Nome do Portfólio:</label>
-                <div className="portfolio-name-display">
-                  <strong>ativos_Research</strong>
-                  <span className="portfolio-name-note">(Nome base do portfólio)</span>
-                </div>
-                <div className="portfolio-info-note">
-                  <i className="info-icon">ℹ️</i>
-                  <span>Portfólios são limitados a 900 ativos cada. Se houver mais ativos, serão criados múltiplos portfólios (ativos_Research, ativos_Research1, etc).</span>
-                </div>
+          <CustomCard className="portfolio-form" isDarkMode={isDarkMode}>
+            <h3 className="form-title">
+              <FontAwesomeIcon icon={faChartBar} style={{ marginRight: '10px' }} />
+              Gerar Portfólio no Comdinheiro
+            </h3>
+            <div className="form-group">
+              <label>
+                <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px' }} />
+                Nome do Portfólio:
+              </label>
+              <div className="portfolio-name-display">
+                <strong>ativos_Research</strong>
+                <span className="portfolio-name-note">(Nome base do portfólio)</span>
               </div>
-              
-              <div className="form-actions">
-                <CustomButton 
-                  onClick={handleGerarPortfolio}
-                  className={`btn-primary ${isGenerating ? 'btn-loading' : ''}`}
-                  isDarkMode={isDarkMode}
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? (
-                    <>
-                      <span className="spinner"></span>
-                      Gerando...
-                    </>
-                  ) : (
-                    'Gerar Portfólio'
-                  )}
-                </CustomButton>
-                
-                <CustomButton 
-                  onClick={handleAtualizarDados}
-                  className={`btn-secondary ${isUpdatingData ? 'btn-loading' : ''}`}
-                  isDarkMode={isDarkMode}
-                  disabled={isUpdatingData}
-                >
-                  {isUpdatingData ? (
-                    <>
-                      <span className="spinner"></span>
-                      Atualizando...
-                    </>
-                  ) : (
-                    'Atualizar Dados'
-                  )}
-                </CustomButton>
+              <div className="portfolio-info-note">
+                <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+                <span>Portfólios são limitados a 900 ativos cada. Se houver mais ativos, serão criados múltiplos portfólios (ativos_Research, ativos_Research1, etc).</span>
               </div>
-
-              {isGenerating && (
-                <div className="progress-container">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${progressStep * 25}%` }}
-                    ></div>
-                  </div>
-                  <div className="progress-message">
-                    {progressMessage}
-                    <span className="elapsed-time">
-                      {elapsedTime > 0 ? ` (${elapsedTime}s)` : ''}
-                    </span>
-                  </div>
-                  <div className="progress-steps">
-                    <div className={`step ${progressStep >= 1 ? 'active' : ''}`}>Conectando</div>
-                    <div className={`step ${progressStep >= 2 ? 'active' : ''}`}>Buscando ativos</div>
-                    <div className={`step ${progressStep >= 3 ? 'active' : ''}`}>Processando</div>
-                    <div className={`step ${progressStep >= 4 ? 'active' : ''}`}>Concluído</div>
-                  </div>
-                </div>
-              )}
-
-              {isUpdatingData && (
-                <div className="progress-container">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${updateProgressStep * 20}%` }}
-                    ></div>
-                  </div>
-                  <div className="progress-message">
-                    {updateProgressMessage}
-                    <span className="elapsed-time">
-                      {updateElapsedTime > 0 ? ` (${updateElapsedTime}s)` : ''}
-                    </span>
-                  </div>
-                  <div className="progress-steps">
-                    <div className={`step ${updateProgressStep >= 1 ? 'active' : ''}`}>Conectando</div>
-                    <div className={`step ${updateProgressStep >= 2 ? 'active' : ''}`}>Testando</div>
-                    <div className={`step ${updateProgressStep >= 3 ? 'active' : ''}`}>Buscando</div>
-                    <div className={`step ${updateProgressStep >= 4 ? 'active' : ''}`}>Salvando</div>
-                    <div className={`step ${updateProgressStep >= 5 ? 'active' : ''}`}>Concluído</div>
-                  </div>
-                </div>
-              )}
             </div>
+            
+            <div className="form-actions">
+              <button 
+                onClick={handleGerarPortfolio}
+                className={`btn-primary ${isGenerating ? 'btn-loading' : ''}`}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <span className="spinner"></span>
+                    Gerando...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faPlay} style={{ marginRight: '8px' }} />
+                    Gerar Portfólio
+                  </>
+                )}
+              </button>
+              
+              <button 
+                onClick={handleAtualizarDados}
+                className={`btn-secondary ${isUpdatingData ? 'btn-loading' : ''}`}
+                disabled={isUpdatingData}
+              >
+                {isUpdatingData ? (
+                  <>
+                    <span className="spinner"></span>
+                    Atualizando...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faSync} style={{ marginRight: '8px' }} />
+                    Atualizar Dados
+                  </>
+                )}
+              </button>
+            </div>
+
+            {isGenerating && (
+              <div className="progress-container">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${progressStep * 25}%` }}
+                  ></div>
+                </div>
+                <div className="progress-message">
+                  {progressMessage}
+                  <span className="elapsed-time">
+                    {elapsedTime > 0 ? ` (${elapsedTime}s)` : ''}
+                  </span>
+                </div>
+                <div className="progress-steps">
+                  <div className={`step ${progressStep >= 1 ? 'active' : ''}`}>Conectando</div>
+                  <div className={`step ${progressStep >= 2 ? 'active' : ''}`}>Buscando ativos</div>
+                  <div className={`step ${progressStep >= 3 ? 'active' : ''}`}>Processando</div>
+                  <div className={`step ${progressStep >= 4 ? 'active' : ''}`}>Concluído</div>
+                </div>
+              </div>
+            )}
+
+            {isUpdatingData && (
+              <div className="progress-container">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${updateProgressStep * 20}%` }}
+                  ></div>
+                </div>
+                <div className="progress-message">
+                  {updateProgressMessage}
+                  <span className="elapsed-time">
+                    {updateElapsedTime > 0 ? ` (${updateElapsedTime}s)` : ''}
+                  </span>
+                </div>
+                <div className="progress-steps">
+                  <div className={`step ${updateProgressStep >= 1 ? 'active' : ''}`}>Conectando</div>
+                  <div className={`step ${updateProgressStep >= 2 ? 'active' : ''}`}>Testando</div>
+                  <div className={`step ${updateProgressStep >= 3 ? 'active' : ''}`}>Buscando</div>
+                  <div className={`step ${updateProgressStep >= 4 ? 'active' : ''}`}>Salvando</div>
+                  <div className={`step ${updateProgressStep >= 5 ? 'active' : ''}`}>Concluído</div>
+                </div>
+              </div>
+            )}
 
             {resultadoApi && (
               <div className="resultado-api">
-                <h3>Resultado da Operação</h3>
+                <h3>
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
+                  Resultado da Operação
+                </h3>
                 <div className="resultado-detalhes">
                   {resultadoApi.portfolios && resultadoApi.portfolios.length > 0 ? (
                     <>
@@ -557,7 +601,10 @@ const Dados: React.FC = () => {
                       <p><strong>Status:</strong> {resultadoApi.message ? 'Sucesso' : 'Erro'}</p>
                       
                       <div className="portfolios-table">
-                        <h4>Portfólios Criados</h4>
+                        <h4>
+                          <FontAwesomeIcon icon={faTable} style={{ marginRight: '8px' }} />
+                          Portfólios Criados
+                        </h4>
                         <table className={isDarkMode ? 'dark-mode' : ''}>
                           <thead>
                             <tr>
@@ -595,7 +642,10 @@ const Dados: React.FC = () => {
                   
                   {resultadoApi.estatisticas && (
                     <div className="estatisticas-detalhadas">
-                      <h4>Estatísticas Detalhadas</h4>
+                      <h4>
+                        <FontAwesomeIcon icon={faChartLine} style={{ marginRight: '8px' }} />
+                        Estatísticas Detalhadas
+                      </h4>
                       <ul>
                         <li><strong>Ativos encontrados no banco:</strong> {resultadoApi.estatisticas.total_ativos_encontrados}</li>
                         <li><strong>Ativos incluídos no portfólio:</strong> {resultadoApi.estatisticas.total_portfolio}</li>
@@ -628,7 +678,10 @@ const Dados: React.FC = () => {
 
             {updateResult && (
               <div className="resultado-api">
-                <h3>Resultado da Atualização de Dados</h3>
+                <h3>
+                  <FontAwesomeIcon icon={faRefresh} style={{ marginRight: '8px' }} />
+                  Resultado da Atualização de Dados
+                </h3>
                 <div className="resultado-detalhes">
                   <p><strong>Mensagem:</strong> {updateResult.message}</p>
                   <p><strong>Ativos Processados:</strong> {updateResult.ativos_processados}</p>
@@ -637,7 +690,10 @@ const Dados: React.FC = () => {
                   
                   {updateResult.portfolios_processados && updateResult.portfolios_processados.length > 0 && (
                     <div className="portfolios-processados">
-                      <h4>Portfólios Atualizados:</h4>
+                      <h4>
+                        <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
+                        Portfólios Atualizados:
+                      </h4>
                       <ul>
                         {updateResult.portfolios_processados.map((portfolio: string, index: number) => (
                           <li key={index} className="portfolio-item">
@@ -650,7 +706,10 @@ const Dados: React.FC = () => {
                   
                   {updateResult.erros && updateResult.erros.length > 0 && (
                     <div className="erros-atualizacao">
-                      <h4>Erros Encontrados:</h4>
+                      <h4>
+                        <FontAwesomeIcon icon={faExclamationTriangle} style={{ marginRight: '8px' }} />
+                        Erros Encontrados:
+                      </h4>
                       <ul>
                         {updateResult.erros.map((erro: string, index: number) => (
                           <li key={index} className="erro-item">{erro}</li>
@@ -663,17 +722,20 @@ const Dados: React.FC = () => {
             )}
           </CustomCard>
 
-          <CustomCard 
-            className="ativos-prioritarios-card" 
-            isDarkMode={isDarkMode}
-            title="Ativos Prioritários"
-          >
+          <CustomCard className="ativos-prioritarios-card" isDarkMode={isDarkMode}>
+            <h3 className="form-title">
+              <FontAwesomeIcon icon={faCog} style={{ marginRight: '10px' }} />
+              Ativos Prioritários
+            </h3>
             <div className="ativos-prioritarios-info">
               <p>Ativos listados aqui serão incluídos no início do portfólio gerado, na ordem especificada.</p>
             </div>
 
             <div className="ativos-prioritarios-list">
-              <h3>Lista de Ativos Prioritários</h3>
+              <h3>
+                <FontAwesomeIcon icon={faList} style={{ marginRight: '8px' }} />
+                Lista de Ativos Prioritários
+              </h3>
               
               {ativosPrioritarios.length === 0 ? (
                 <p className="no-data">Nenhum ativo prioritário cadastrado.</p>
@@ -726,6 +788,7 @@ const Dados: React.FC = () => {
                                   className="btn-small btn-success"
                                   isDarkMode={isDarkMode}
                                 >
+                                  <FontAwesomeIcon icon={faSave} style={{ marginRight: '5px' }} />
                                   Salvar
                                 </CustomButton>
                                 <CustomButton 
@@ -733,6 +796,7 @@ const Dados: React.FC = () => {
                                   className="btn-small btn-secondary"
                                   isDarkMode={isDarkMode}
                                 >
+                                  <FontAwesomeIcon icon={faTimes} style={{ marginRight: '5px' }} />
                                   Cancelar
                                 </CustomButton>
                               </>
@@ -742,27 +806,31 @@ const Dados: React.FC = () => {
                                   className="btn-icon" 
                                   onClick={() => handleMoverAtivo(ativo.id!, 'cima')}
                                   disabled={ativo.ordem === 1}
+                                  title="Mover para cima"
                                 >
-                                  ↑
+                                  <FontAwesomeIcon icon={faArrowUp} />
                                 </button>
                                 <button 
                                   className="btn-icon" 
                                   onClick={() => handleMoverAtivo(ativo.id!, 'baixo')}
                                   disabled={ativo.ordem === ativosPrioritarios.length}
+                                  title="Mover para baixo"
                                 >
-                                  ↓
+                                  <FontAwesomeIcon icon={faArrowDown} />
                                 </button>
                                 <button 
                                   className="btn-icon edit" 
                                   onClick={() => setModoEdicao(ativo.id!)}
+                                  title="Editar"
                                 >
-                                  ✎
+                                  <FontAwesomeIcon icon={faEdit} />
                                 </button>
                                 <button 
                                   className="btn-icon delete" 
                                   onClick={() => handleExcluirAtivoPrioritario(ativo.id!)}
+                                  title="Excluir"
                                 >
-                                  ✕
+                                  <FontAwesomeIcon icon={faTrash} />
                                 </button>
                               </>
                             )}
@@ -775,10 +843,16 @@ const Dados: React.FC = () => {
               )}
               
               <div className="novo-ativo-form">
-                <h4>Adicionar Novo Ativo Prioritário</h4>
+                <h4>
+                  <FontAwesomeIcon icon={faPlus} style={{ marginRight: '8px' }} />
+                  Adicionar Novo Ativo Prioritário
+                </h4>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Código:</label>
+                    <label>
+                      <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px' }} />
+                      Código:
+                    </label>
                     <CustomInput
                       type="text"
                       name="codigo"
@@ -789,7 +863,10 @@ const Dados: React.FC = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Descrição:</label>
+                    <label>
+                      <FontAwesomeIcon icon={faEdit} style={{ marginRight: '8px' }} />
+                      Descrição:
+                    </label>
                     <CustomInput
                       type="text"
                       name="descricao"
@@ -800,18 +877,19 @@ const Dados: React.FC = () => {
                     />
                   </div>
                   <div className="form-actions">
-                    <CustomButton 
+                    <button 
                       onClick={handleAdicionarAtivoPrioritario}
                       className="btn-primary"
-                      isDarkMode={isDarkMode}
                     >
+                      <FontAwesomeIcon icon={faPlus} style={{ marginRight: '8px' }} />
                       Adicionar
-                    </CustomButton>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </CustomCard>
+          </div>
         </div>
       </div>
 
