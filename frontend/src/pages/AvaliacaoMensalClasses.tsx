@@ -15,7 +15,7 @@ const AvaliacaoMensalClasses: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const [isLoading, setIsLoading] = useState(false);
-  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   const handleAvaliacaoSalva = () => {
     setToastMessage('Avaliação mensal salva com sucesso!');
@@ -34,7 +34,10 @@ const AvaliacaoMensalClasses: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`avaliacao-mensal-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`avaliacao-mensal-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando avaliação mensal...</p>
@@ -44,7 +47,10 @@ const AvaliacaoMensalClasses: React.FC = () => {
   }
 
   return (
-    <div className={`avaliacao-mensal-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`avaliacao-mensal-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
