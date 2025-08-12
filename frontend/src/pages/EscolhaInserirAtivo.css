@@ -23,6 +23,19 @@ body {
   animation: gradientShift 8s ease-in-out infinite;
 }
 
+/* Quando a animação está desativada, usar cor fixa */
+.app-container.no-animation {
+  animation: none;
+}
+
+.app-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.app-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
 @keyframes gradientShift {
   0%, 100% {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

@@ -16,7 +16,7 @@ import './EscolhaInserirAtivo.css';
 
 const EscolhaInserirAtivo: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { checkPermission } = useUser();
 
   // Verificar permissão usando o sistema centralizado
@@ -26,7 +26,10 @@ const EscolhaInserirAtivo: React.FC = () => {
   if (!temPermissao) {
     console.log('[EscolhaInserirAtivo] Acesso negado - temPermissao é:', temPermissao);
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
         <Sidebar
           isExpanded={isSidebarExpanded}
@@ -50,7 +53,10 @@ const EscolhaInserirAtivo: React.FC = () => {
 
   console.log('[EscolhaInserirAtivo] Acesso permitido - temPermissao é:', temPermissao);
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
