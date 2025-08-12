@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSearch,
+  faFilter,
+  faCalendarAlt,
+  faTag,
+  faUser,
+  faCheckCircle,
+  faClock,
+  faHistory,
+  faChartBar
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import CustomCard from '../components/CustomCard';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import TextHighlight from '../components/TextHighlight';
@@ -42,10 +55,14 @@ const HistoricoClassificacao: React.FC = () => {
   const [buscaNome, setBuscaNome] = useState('');
   const [filtroClasseAtivo, setFiltroClasseAtivo] = useState<string>('');
   const [filtroClasseInvestimento, setFiltroClasseInvestimento] = useState<string>('');
+  const [filtroTipoAcao, setFiltroTipoAcao] = useState<string>('');
+  const [filtroUsuario, setFiltroUsuario] = useState<string>('');
   const [dataInicial, setDataInicial] = useState<string>('');
   const [dataFinal, setDataFinal] = useState<string>('');
   const [classesAtivos, setClassesAtivos] = useState<string[]>([]);
   const [classesInvestimento, setClassesInvestimento] = useState<string[]>([]);
+  const [tiposAcao, setTiposAcao] = useState<string[]>([]);
+  const [usuarios, setUsuarios] = useState<string[]>([]);
   const [mostrarResumo, setMostrarResumo] = useState(false);
   const [resumoDiario, setResumoDiario] = useState<ResumoAtividades>({
     classificacoesCriadas: 0,
@@ -54,28 +71,32 @@ const HistoricoClassificacao: React.FC = () => {
     total: 0
   });
   
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { checkPermission } = useUser();
   const itensPorPagina = 10;
 
   useEffect(() => {
     carregarHistorico();
-    carregarClassesAtivos();
     carregarResumoDiario();
-  }, [paginaAtual]);
+  }, []);
+
+  useEffect(() => {
+    // Atualizar classes disponíveis quando os dados mudarem
+    carregarClassesAtivos();
+  }, [historicoItems]);
 
   const carregarHistorico = async () => {
     try {
       setLoading(true);
-      const offset = (paginaAtual - 1) * itensPorPagina;
       
-      let url = `http://localhost:5000/api/history/classificacao?limit=${itensPorPagina}&offset=${offset}`;
+      // Carregar todos os dados de uma vez para permitir filtros eficientes
+      let url = 'http://localhost:5000/api/history/classificacao?limit=10000'; // Limite alto para pegar todos
       
       const response = await axios.get(url, { withCredentials: true });
       
       if (response.data) {
         setHistoricoItems(response.data.history);
-        setTotalItems(response.data.total);
+        setTotalItems(response.data.history.length);
       } else {
         throw new Error('Formato de resposta inválido');
       }
@@ -130,6 +151,9 @@ const HistoricoClassificacao: React.FC = () => {
       // Extrair classes únicas dos dados já carregados
       const classes = new Set<string>();
       const classesInv = new Set<string>();
+      const tipos = new Set<string>();
+      const users = new Set<string>();
+      
       historicoItems.forEach(item => {
         if (item.ativo_classe) {
           classes.add(item.ativo_classe);
@@ -137,9 +161,18 @@ const HistoricoClassificacao: React.FC = () => {
         if (item.classe_investimento) {
           classesInv.add(item.classe_investimento);
         }
+        if (item.action_type) {
+          tipos.add(traduzirTipoAcao(item.action_type));
+        }
+        if (item.user_name) {
+          users.add(item.user_name);
+        }
       });
+      
       setClassesAtivos(Array.from(classes).sort());
       setClassesInvestimento(Array.from(classesInv).sort());
+      setTiposAcao(Array.from(tipos).sort());
+      setUsuarios(Array.from(users).sort());
     } catch (error) {
       console.error('Erro ao extrair classes de ativos:', error);
     }
@@ -207,6 +240,16 @@ const HistoricoClassificacao: React.FC = () => {
     return item.classe_investimento === filtroClasseInvestimento;
   };
 
+  const filtrarPorTipoAcao = (item: ClassificacaoHistoryItem) => {
+    if (!filtroTipoAcao) return true;
+    return traduzirTipoAcao(item.action_type) === filtroTipoAcao;
+  };
+
+  const filtrarPorUsuario = (item: ClassificacaoHistoryItem) => {
+    if (!filtroUsuario) return true;
+    return item.user_name === filtroUsuario;
+  };
+
   const filtrarPorData = (item: ClassificacaoHistoryItem) => {
     if (!dataInicial && !dataFinal) return true;
     
@@ -251,19 +294,34 @@ const HistoricoClassificacao: React.FC = () => {
       .filter(filtrarPorNome)
       .filter(filtrarPorClasseAtivo)
       .filter(filtrarPorClasseInvestimento)
+      .filter(filtrarPorTipoAcao)
+      .filter(filtrarPorUsuario)
       .filter(filtrarPorData);
   };
+
+  // Resetar página quando os filtros mudarem
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [buscaNome, filtroClasseAtivo, filtroClasseInvestimento, filtroTipoAcao, filtroUsuario, dataInicial, dataFinal]);
 
   const toggleResumo = () => {
     setMostrarResumo(!mostrarResumo);
   };
 
   const historicoFiltrado = aplicarFiltros();
-  const totalPaginas = Math.ceil(totalItems / itensPorPagina);
+  const totalPaginas = Math.ceil(historicoFiltrado.length / itensPorPagina);
+  
+  // Paginação local dos dados filtrados
+  const indiceInicial = (paginaAtual - 1) * itensPorPagina;
+  const indiceFinal = indiceInicial + itensPorPagina;
+  const historicoPaginado = historicoFiltrado.slice(indiceInicial, indiceFinal);
 
   if (loading && paginaAtual === 1) {
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div 
+        className={`historico-classificacao-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Sidebar 
           isExpanded={isSidebarExpanded}
           toggleSidebar={toggleSidebar}
@@ -271,18 +329,19 @@ const HistoricoClassificacao: React.FC = () => {
           toggleTheme={toggleTheme}
           isFullSidebar={true}
         />
-        <div className="content-container">
-          <Navbar isDarkMode={isDarkMode} />
-          <div className="main-content">
-            <div className="loading">Carregando histórico de classificações...</div>
-          </div>
+        <div className="main-content">
+          <Navbar isDarkMode={isDarkMode} showAvatar={true} />
+          <div className="loading">Carregando histórico de classificações...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`historico-classificacao-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Sidebar 
         isExpanded={isSidebarExpanded}
         toggleSidebar={toggleSidebar}
@@ -290,32 +349,51 @@ const HistoricoClassificacao: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className="content-container">
-        <Navbar isDarkMode={isDarkMode} />
-        <div className="main-content">
-          <h1></h1>
+      <div className="main-content">
+        <Navbar isDarkMode={isDarkMode} showAvatar={true} />
+        <div className="historico-classificacao-content">
           {error && <div className="error-message">{error}</div>}
 
+          {/* Header modernizado */}
+          <div className="historico-header-modern">
+            <div className="header-content">
+              <div className="header-title">
+                <FontAwesomeIcon icon={faHistory} className="header-icon" />
+                <h1>Histórico de Classificação</h1>
+              </div>
+              <p>Acompanhe todas as classificações realizadas no sistema</p>
+            </div>
+          </div>
+
+          {/* Filtros modernizados */}
           <div className="filtros-container">
-            <div className="filtro-item">
-              <label htmlFor="buscaNome">Busca Geral:</label>
+            {/* Busca */}
+            <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faSearch} />
+                <span>Buscar</span>
+              </div>
               <input
                 type="text"
-                id="buscaNome"
+                placeholder="Buscar em todas as colunas..."
                 value={buscaNome}
                 onChange={(e) => setBuscaNome(e.target.value)}
-                placeholder="Buscar em todas as colunas..."
+                className="filtro-input"
               />
             </div>
 
-            <div className="filtro-item">
-              <label htmlFor="filtroClasseAtivo">Classe do Ativo:</label>
+            {/* Classe do Ativo */}
+            <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faTag} />
+                <span>Classe do Ativo</span>
+              </div>
               <select
-                id="filtroClasseAtivo"
                 value={filtroClasseAtivo}
                 onChange={(e) => setFiltroClasseAtivo(e.target.value)}
+                className="filtro-select"
               >
-                <option value="">Todas as Classes</option>
+                <option value="">Todas as classes</option>
                 {classesAtivos.map((classe) => (
                   <option key={classe} value={classe}>
                     {classe}
@@ -324,14 +402,18 @@ const HistoricoClassificacao: React.FC = () => {
               </select>
             </div>
 
-            <div className="filtro-item">
-              <label htmlFor="filtroClasseInvestimento">Classe de Investimento:</label>
+            {/* Classe de Investimento */}
+            <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faFilter} />
+                <span>Classe de Investimento</span>
+              </div>
               <select
-                id="filtroClasseInvestimento"
                 value={filtroClasseInvestimento}
                 onChange={(e) => setFiltroClasseInvestimento(e.target.value)}
+                className="filtro-select"
               >
-                <option value="">Todas as Classes de Investimento</option>
+                <option value="">Todas as classes</option>
                 {classesInvestimento.map((classe) => (
                   <option key={classe} value={classe}>
                     {classe}
@@ -340,38 +422,85 @@ const HistoricoClassificacao: React.FC = () => {
               </select>
             </div>
 
-            <div className="filtro-item">
-              <label htmlFor="dataInicial">Data Inicial:</label>
-              <input
-                type="date"
-                id="dataInicial"
-                value={dataInicial}
-                onChange={(e) => setDataInicial(e.target.value)}
-              />
+            {/* Tipo de Ação */}
+            <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faCheckCircle} />
+                <span>Tipo de Ação</span>
+              </div>
+              <select
+                value={filtroTipoAcao}
+                onChange={(e) => setFiltroTipoAcao(e.target.value)}
+                className="filtro-select"
+              >
+                <option value="">Todos os tipos</option>
+                {tiposAcao.map((tipo) => (
+                  <option key={tipo} value={tipo}>
+                    {tipo}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="filtro-item">
-              <label htmlFor="dataFinal">Data Final:</label>
-              <input
-                type="date"
-                id="dataFinal"
-                value={dataFinal}
-                onChange={(e) => setDataFinal(e.target.value)}
-              />
+            {/* Usuário */}
+            <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faUser} />
+                <span>Usuário</span>
+              </div>
+              <select
+                value={filtroUsuario}
+                onChange={(e) => setFiltroUsuario(e.target.value)}
+                className="filtro-select"
+              >
+                <option value="">Todos os usuários</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario} value={usuario}>
+                    {usuario}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="filtro-item limpar-filtros">
+            {/* Data da Ação */}
+            <div className="filtro-grupo data-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>Data da Ação</span>
+              </div>
+              <div className="data-inputs">
+                <input
+                  type="date"
+                  value={dataInicial}
+                  onChange={(e) => setDataInicial(e.target.value)}
+                  className="filtro-data"
+                />
+                <span className="data-separator">até</span>
+                <input
+                  type="date"
+                  value={dataFinal}
+                  onChange={(e) => setDataFinal(e.target.value)}
+                  className="filtro-data"
+                />
+              </div>
+            </div>
+
+            {/* Botão Limpar Filtros */}
+            <div className="filtro-grupo limpar-filtros">
               <button 
                 onClick={() => {
                   setBuscaNome('');
                   setFiltroClasseAtivo('');
                   setFiltroClasseInvestimento('');
+                  setFiltroTipoAcao('');
+                  setFiltroUsuario('');
                   setDataInicial('');
                   setDataFinal('');
                 }}
                 className="btn-limpar-filtros"
               >
-                Limpar Filtros
+                <FontAwesomeIcon icon={faFilter} />
+                <span>Limpar Filtros</span>
               </button>
             </div>
           </div>
@@ -395,7 +524,7 @@ const HistoricoClassificacao: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {historicoFiltrado.map((item) => (
+                      {historicoPaginado.map((item) => (
                         <tr key={item.id} className={`acao-${item.action_type.toLowerCase()}`}>
                           <td>{formatarData(item.action_date)}</td>
                           <td>
@@ -459,7 +588,7 @@ const HistoricoClassificacao: React.FC = () => {
                   </table>
                 </div>
               ) : (
-                <div className="no-data">Nenhum registro de classificação encontrado.</div>
+                <div className="sem-resultados">Nenhum registro de classificação encontrado.</div>
               )}
 
               {totalPaginas > 1 && (
@@ -471,7 +600,7 @@ const HistoricoClassificacao: React.FC = () => {
                     Anterior
                   </button>
                   <span>
-                    Página {paginaAtual} de {totalPaginas}
+                    Página {paginaAtual} de {totalPaginas} ({historicoFiltrado.length} registros)
                   </span>
                   <button
                     onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
@@ -486,7 +615,7 @@ const HistoricoClassificacao: React.FC = () => {
 
           {/* Botão flutuante para mostrar resumo */}
           <div className="botao-resumo" onClick={toggleResumo}>
-            <i className="fas fa-chart-pie"></i>
+            <FontAwesomeIcon icon={faChartBar} />
           </div>
 
           {/* Modal de resumo diário */}
