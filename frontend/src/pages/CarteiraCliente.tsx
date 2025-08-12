@@ -1,6 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faWallet,
+  faUser,
+  faCalendarAlt,
+  faChartPie,
+  faSearch,
+  faCog,
+  faDownload,
+  faFileAlt,
+  faFilter,
+  faUsers,
+  faCheckCircle,
+  faExclamationTriangle,
+  faInfoCircle,
+  faRefresh,
+  faPlay,
+  faSpinner,
+  faTimes,
+  faPlus,
+  faMinus,
+  faChartLine,
+  faBalanceScale,
+  faRocket,
+  faShield,
+  faBullseye,
+  faCalculator,
+  faClipboardList,
+  faLightbulb,
+  faAward,
+  faStar
+} from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import CustomCard from '../components/CustomCard';
@@ -156,7 +188,7 @@ const CarteiraCliente: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { userRole } = useUser();
   const navigate = useNavigate();
 
@@ -577,7 +609,10 @@ const CarteiraCliente: React.FC = () => {
   };
 
   return (
-    <div className={`carteira-cliente-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`carteira-cliente-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={true} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -586,20 +621,39 @@ const CarteiraCliente: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className={`carteira-cliente-content ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
-        <h2>Confecção de Carteira para Cliente</h2>
+      <div className="content-container">
+        <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+          <CustomCard className="carteira-header-card" isDarkMode={isDarkMode}>
+            <div className="carteira-header-modern">
+              <h1>
+                <FontAwesomeIcon icon={faWallet} className="header-icon" />
+                Carteira para Cliente
+              </h1>
+              <p>Configure e gere carteiras otimizadas personalizadas</p>
+            </div>
+          </CustomCard>
         
         <CustomCard className="form-card" isDarkMode={isDarkMode}>
+          <div className="card-header">
+            <h3>
+              <FontAwesomeIcon icon={faSearch} className="card-icon" />
+              Seleção de Cliente
+            </h3>
+            <p>Selecione o cliente e configure os parâmetros da carteira</p>
+          </div>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="filtroCliente">Buscar cliente:</label>
+              <label htmlFor="filtroCliente">
+                <FontAwesomeIcon icon={faSearch} className="label-icon" />
+                Buscar cliente:
+              </label>
               <input
                 type="text"
                 id="filtroCliente"
                 value={filtroCliente}
                 onChange={handleFiltroChange}
                 placeholder="Digite o nome do cliente, perfil ou consultor"
-                className={isDarkMode ? 'dark-mode' : ''}
+                className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
               />
             </div>
             
@@ -611,19 +665,25 @@ const CarteiraCliente: React.FC = () => {
                   checked={mostrarTodos}
                   onChange={handleToggleMostrarTodos}
                 />
-                <label htmlFor="mostrarTodos">Mostrar todos os clientes</label>
+                <label htmlFor="mostrarTodos">
+                  <FontAwesomeIcon icon={faUsers} className="label-icon" />
+                  Mostrar todos os clientes
+                </label>
               </div>
             )}
           </div>
           
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="clienteSelecionado">Selecione o cliente:</label>
+              <label htmlFor="clienteSelecionado">
+                <FontAwesomeIcon icon={faUser} className="label-icon" />
+                Selecione o cliente:
+              </label>
               <select
                 id="clienteSelecionado"
                 value={clienteSelecionado}
                 onChange={handleClienteChange}
-                className={isDarkMode ? 'dark-mode' : ''}
+                className={`custom-select ${isDarkMode ? 'dark-mode' : ''}`}
               >
                 <option value="">Selecione um cliente</option>
                 {clientesFiltrados.map(cliente => (
@@ -634,17 +694,23 @@ const CarteiraCliente: React.FC = () => {
                 ))}
               </select>
               {clientesFiltrados.length === 0 && filtroCliente.trim() !== '' && (
-                <div className="no-results">Nenhum cliente encontrado com o filtro aplicado.</div>
+                <div className="no-results">
+                  <FontAwesomeIcon icon={faExclamationTriangle} className="no-results-icon" />
+                  Nenhum cliente encontrado com o filtro aplicado.
+                </div>
               )}
             </div>
             
             <div className="form-group">
-              <label htmlFor="mesSelecionado">Mês de referência:</label>
+              <label htmlFor="mesSelecionado">
+                <FontAwesomeIcon icon={faCalendarAlt} className="label-icon" />
+                Mês de referência:
+              </label>
               <select
                 id="mesSelecionado"
                 value={mesSelecionado}
                 onChange={(e) => setMesSelecionado(e.target.value)}
-                className={isDarkMode ? 'dark-mode' : ''}
+                className={`custom-select ${isDarkMode ? 'dark-mode' : ''}`}
               >
                 <option value="">Selecione um mês</option>
                 {mesesDisponiveis.map(mes => (
@@ -659,7 +725,10 @@ const CarteiraCliente: React.FC = () => {
           <div className="form-actions">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="periodoDias">Período dos dados (dias):</label>
+                <label htmlFor="periodoDias">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="label-icon" />
+                  Período dos dados (dias):
+                </label>
                 <input
                   type="number"
                   id="periodoDias"
@@ -667,10 +736,10 @@ const CarteiraCliente: React.FC = () => {
                   max={1825}
                   value={periodoDias}
                   onChange={(e) => setPeriodoDias(Number(e.target.value))}
-                  className={isDarkMode ? 'dark-mode' : ''}
-                  style={{ width: 100 }}
+                  className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
+                  style={{ width: 120 }}
                 />
-                <span style={{ fontSize: 12, color: isDarkMode ? '#aaa' : '#555', marginLeft: 8 }}>
+                <span className="input-help">
                   (30-1825 dias, padrão: 365)
                 </span>
               </div>
@@ -684,6 +753,7 @@ const CarteiraCliente: React.FC = () => {
                 onChange={(e) => setApenasPassamFiltros(e.target.checked)}
               />
               <label htmlFor="apenasPassamFiltros">
+                <FontAwesomeIcon icon={faFilter} className="label-icon" />
                 Apenas ativos que passam nos filtros
               </label>
             </div>
@@ -692,18 +762,29 @@ const CarteiraCliente: React.FC = () => {
               <button
                 onClick={handleGerarCarteira}
                 disabled={!clienteSelecionado || !mesSelecionado || isLoading}
-                className={`gerar-button ${isDarkMode ? 'dark-mode' : ''}`}
+                className={`btn-primary ${isDarkMode ? 'dark-mode' : ''}`}
               >
-                {isLoading ? 'Gerando...' : 'Gerar Carteira'}
+                {isLoading ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="fa-spin" />
+                    Gerando...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faPlay} />
+                    Gerar Carteira
+                  </>
+                )}
               </button>
               {carteiraGerada && (
                 <button
                   onClick={handleRegenerarCarteira}
                   disabled={!clienteSelecionado || !mesSelecionado || isLoading}
-                  className={`forcar-regeneracao-button ${isDarkMode ? 'dark-mode' : ''}`}
+                  className={`btn-secondary ${isDarkMode ? 'dark-mode' : ''}`}
                   title="Forçar regeneração da carteira"
                 >
-                  🔄 Regenerar
+                  <FontAwesomeIcon icon={faRefresh} />
+                  Regenerar
                 </button>
               )}
             </div>
@@ -713,11 +794,18 @@ const CarteiraCliente: React.FC = () => {
         {/* Inputs para definir o máximo de ativos por classe */}
         {carteiraGerada && carteiraGerada.carteira_original && (
           <CustomCard className="max-ativos-card" isDarkMode={isDarkMode}>
-            <h4>Configuração: Máximo de Ativos por Classe</h4>
+            <div className="card-header">
+              <h3>
+                <FontAwesomeIcon icon={faCog} className="card-icon" />
+                Configuração: Máximo de Ativos por Classe
+              </h3>
+              <p>Configure o número máximo de ativos por classe de investimento</p>
+            </div>
             <div className="max-ativos-grid">
               {carteiraGerada.carteira_original.map((classe, idx) => (
                 <div key={classe.classe_ativo} className="max-ativos-item">
                   <label>
+                    <FontAwesomeIcon icon={faChartPie} className="label-icon" />
                     {classe.classe_ativo}:
                     <input
                       type="number"
@@ -725,41 +813,48 @@ const CarteiraCliente: React.FC = () => {
                       max={10}
                       value={maxAtivosPorClasse[classe.classe_ativo] || 4}
                       onChange={e => handleChangeMaxAtivos(classe.classe_ativo, Number(e.target.value))}
-                      className={isDarkMode ? 'dark-mode' : ''}
-                      style={{ marginLeft: 8, width: 60 }}
+                      className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
+                      style={{ marginLeft: 8, width: 70 }}
                     />
                   </label>
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 13, color: isDarkMode ? '#aaa' : '#555', marginTop: 8 }}>
-              (Por padrão, cada classe terá até 4 ativos. Você pode ajustar para cada classe antes de gerar ou regenerar a carteira.)
+            <div className="config-help">
+              <FontAwesomeIcon icon={faInfoCircle} className="help-icon" />
+              Por padrão, cada classe terá até 4 ativos. Você pode ajustar para cada classe antes de gerar ou regenerar a carteira.
             </div>
           </CustomCard>
         )}
         
         {/* Filtros Personalizados */}
         <CustomCard className="filtros-personalizados-card" isDarkMode={isDarkMode}>
-          <div className="filtros-header">
-            <h4>Filtros Personalizados por Perfil de Risco</h4>
-            <div className="filtros-controls">
+          <div className="card-header">
+            <h3>
+              <FontAwesomeIcon icon={faFilter} className="card-icon" />
+              Filtros Personalizados por Perfil de Risco
+            </h3>
+            <p>Configure critérios quantitativos para cada perfil</p>
+          </div>
+          <div className="filtros-controls">
+            <button
+              type="button"
+              onClick={() => setMostrarFiltrosPersonalizados(!mostrarFiltrosPersonalizados)}
+              className={`btn-toggle ${isDarkMode ? 'dark-mode' : ''}`}
+            >
+              <FontAwesomeIcon icon={mostrarFiltrosPersonalizados ? faMinus : faPlus} />
+              {mostrarFiltrosPersonalizados ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+            </button>
+            {mostrarFiltrosPersonalizados && (
               <button
                 type="button"
-                onClick={() => setMostrarFiltrosPersonalizados(!mostrarFiltrosPersonalizados)}
-                className={`toggle-filtros-button ${isDarkMode ? 'dark-mode' : ''}`}
+                onClick={resetarFiltrosPadrao}
+                className={`btn-reset ${isDarkMode ? 'dark-mode' : ''}`}
               >
-                {mostrarFiltrosPersonalizados ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+                <FontAwesomeIcon icon={faRefresh} />
+                Resetar para Padrão
               </button>
-              {mostrarFiltrosPersonalizados && (
-                <button
-                  type="button"
-                  onClick={resetarFiltrosPadrao}
-                  className={`resetar-filtros-button ${isDarkMode ? 'dark-mode' : ''}`}
-                >
-                  🔄 Resetar para Padrão
-                </button>
-              )}
-            </div>
+            )}
           </div>
           
           {mostrarFiltrosPersonalizados && (
@@ -772,11 +867,18 @@ const CarteiraCliente: React.FC = () => {
                 {Object.entries(filtrosPersonalizados).map(([perfil, filtros]) => (
                   <div key={perfil} className="filtro-perfil-card">
                     <h5 className={`perfil-titulo perfil-${perfil.toLowerCase()}`}>
+                      <FontAwesomeIcon 
+                        icon={perfil === 'Conservador' ? faShield : perfil === 'Moderado' ? faBalanceScale : faRocket} 
+                        className="perfil-icon" 
+                      />
                       {perfil}
                     </h5>
                     <div className="filtros-campos">
                       <div className="filtro-campo">
-                        <label>Volatilidade Máxima (%):</label>
+                        <label>
+                          <FontAwesomeIcon icon={faChartLine} className="campo-icon" />
+                          Volatilidade Máxima (%):
+                        </label>
                         <input
                           type="number"
                           min={0}
@@ -784,11 +886,14 @@ const CarteiraCliente: React.FC = () => {
                           step={1}
                           value={Math.round(filtros.max_volatilidade * 100)}
                           onChange={e => handleChangeFiltro(perfil, 'max_volatilidade', Number(e.target.value) / 100)}
-                          className={isDarkMode ? 'dark-mode' : ''}
+                          className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
                         />
                       </div>
                       <div className="filtro-campo">
-                        <label>Drawdown Máximo (%):</label>
+                        <label>
+                          <FontAwesomeIcon icon={faExclamationTriangle} className="campo-icon" />
+                          Drawdown Máximo (%):
+                        </label>
                         <input
                           type="number"
                           min={0}
@@ -796,11 +901,14 @@ const CarteiraCliente: React.FC = () => {
                           step={1}
                           value={Math.round(filtros.max_drawdown * 100)}
                           onChange={e => handleChangeFiltro(perfil, 'max_drawdown', Number(e.target.value) / 100)}
-                          className={isDarkMode ? 'dark-mode' : ''}
+                          className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
                         />
                       </div>
                       <div className="filtro-campo">
-                        <label>Sharpe Mínimo:</label>
+                        <label>
+                          <FontAwesomeIcon icon={faStar} className="campo-icon" />
+                          Sharpe Mínimo:
+                        </label>
                         <input
                           type="number"
                           min={-20}
@@ -808,7 +916,7 @@ const CarteiraCliente: React.FC = () => {
                           step={1}
                           value={Math.round(filtros.min_sharpe * 10)}
                           onChange={e => handleChangeFiltro(perfil, 'min_sharpe', Number(e.target.value) / 10)}
-                          className={isDarkMode ? 'dark-mode' : ''}
+                          className={`custom-input ${isDarkMode ? 'dark-mode' : ''}`}
                         />
                       </div>
                     </div>
@@ -822,7 +930,10 @@ const CarteiraCliente: React.FC = () => {
               </div>
               
               <div className="filtros-observacoes">
-                <h6>Observações sobre os Filtros:</h6>
+                <h6>
+                  <FontAwesomeIcon icon={faLightbulb} className="observacoes-icon" />
+                  Observações sobre os Filtros:
+                </h6>
                 <ul>
                   <li><strong>Volatilidade:</strong> Digite o valor em % (ex: 20 = 20%). Mede a variabilidade dos retornos (menor = mais estável)</li>
                   <li><strong>Drawdown:</strong> Digite o valor em % (ex: 15 = 15%). Mede a maior perda histórica (menor = mais seguro)</li>
@@ -836,39 +947,59 @@ const CarteiraCliente: React.FC = () => {
         
         {carteiraGerada && (
           <CustomCard className="resultado-card" isDarkMode={isDarkMode}>
-            <div className="carteira-header">
-              <h3>Carteira Otimizada Gerada</h3>
-              {mensagemCarteira && (
-                <div className={`carteira-status ${carteiraRegenerada ? 'regenerada' : 'recuperada'}`}>
-                  <span className="status-icon">
-                    {carteiraRegenerada ? '🔄' : '📋'}
-                  </span>
-                  <span className="status-text">{mensagemCarteira}</span>
-                  {dataGeracao && (
-                    <span className="data-geracao">
-                      Data: {new Date(dataGeracao).toLocaleString('pt-BR')}
-                    </span>
-                  )}
-                </div>
-              )}
+            <div className="card-header">
+              <h3>
+                <FontAwesomeIcon icon={faWallet} className="card-icon" />
+                Carteira Otimizada Gerada
+              </h3>
+              <p>Resultado da otimização baseada no perfil do cliente</p>
             </div>
+            {mensagemCarteira && (
+              <div className={`carteira-status ${carteiraRegenerada ? 'regenerada' : 'recuperada'}`}>
+                <span className="status-icon">
+                  <FontAwesomeIcon icon={carteiraRegenerada ? faRefresh : faClipboardList} />
+                </span>
+                <span className="status-text">{mensagemCarteira}</span>
+                {dataGeracao && (
+                  <span className="data-geracao">
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                    Data: {new Date(dataGeracao).toLocaleString('pt-BR')}
+                  </span>
+                )}
+              </div>
+            )}
             
             {/* Informações do Cliente */}
             <div className="info-row">
               <div className="info-item">
-                <span className="info-label">Cliente:</span>
+                <span className="info-label">
+                  <FontAwesomeIcon icon={faUser} className="info-icon" />
+                  Cliente:
+                </span>
                 <span className="info-value">{carteiraGerada.cliente_nome}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Perfil Principal:</span>
+                <span className="info-label">
+                  <FontAwesomeIcon icon={
+                    carteiraGerada.perfil_risco === 'Conservador' ? faShield : 
+                    carteiraGerada.perfil_risco === 'Moderado' ? faBalanceScale : faRocket
+                  } className="info-icon" />
+                  Perfil Principal:
+                </span>
                 <span className="info-value">{carteiraGerada.perfil_risco}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Score Suitability:</span>
+                <span className="info-label">
+                  <FontAwesomeIcon icon={faAward} className="info-icon" />
+                  Score Suitability:
+                </span>
                 <span className="info-value">{carteiraGerada.score_suitability}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Mês de referência:</span>
+                <span className="info-label">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="info-icon" />
+                  Mês de referência:
+                </span>
                 <span className="info-value">{carteiraGerada.mes_referencia}</span>
               </div>
             </div>
@@ -876,7 +1007,10 @@ const CarteiraCliente: React.FC = () => {
             {/* Período dos Dados da Carteira */}
             {carteiraGerada.periodo_dados_carteira && (
               <div className="periodo-carteira">
-                <h4>Período dos Dados Utilizados</h4>
+                <h4>
+                  <FontAwesomeIcon icon={faCalendarAlt} className="section-icon" />
+                  Período dos Dados Utilizados
+                </h4>
                 <div className="periodo-info">
                   <div className="periodo-item">
                     <span className="periodo-label">Data Inicial:</span>
@@ -892,7 +1026,10 @@ const CarteiraCliente: React.FC = () => {
 
             {/* Perfil Ponderado */}
             <div className="perfil-ponderado">
-              <h4>Análise de Perfil Ponderado</h4>
+              <h4>
+                <FontAwesomeIcon icon={faBalanceScale} className="section-icon" />
+                Análise de Perfil Ponderado
+              </h4>
               <div className="perfil-details">
                 <p><strong>Perfil Principal:</strong> {carteiraGerada.perfil_ponderado.perfil_principal} (Peso: {carteiraGerada.perfil_ponderado.peso_principal * 100}%)</p>
                 <p><strong>Perfil Secundário:</strong> {carteiraGerada.perfil_ponderado.perfil_secundario} (Peso: {carteiraGerada.perfil_ponderado.peso_secundario * 100}%)</p>
@@ -901,7 +1038,10 @@ const CarteiraCliente: React.FC = () => {
 
             {/* Notas Qualitativas */}
             <div className="notas-qualitativas">
-              <h4>Notas Qualitativas por Classe de Ativo</h4>
+              <h4>
+                <FontAwesomeIcon icon={faStar} className="section-icon" />
+                Notas Qualitativas por Classe de Ativo
+              </h4>
               <div className="notas-grid">
                 {Object.entries(carteiraGerada.notas_qualitativas).map(([classe, nota]) => (
                   <div key={classe} className="nota-item">
@@ -916,7 +1056,10 @@ const CarteiraCliente: React.FC = () => {
 
             {/* Carteira Original vs Otimizada */}
             <div className="comparacao-carteiras">
-              <h4>Comparação: Carteira Original vs Otimizada</h4>
+              <h4>
+                <FontAwesomeIcon icon={faBalanceScale} className="section-icon" />
+                Comparação: Carteira Original vs Otimizada
+              </h4>
               <div className="carteira-table-container">
                 <table className={`carteira-table ${isDarkMode ? 'dark-mode' : ''}`}>
                   <thead>
@@ -951,7 +1094,10 @@ const CarteiraCliente: React.FC = () => {
 
             {/* Carteira Otimizada Detalhada */}
             <div className="carteira-detalhada">
-              <h4>Carteira Otimizada - Ativos Específicos</h4>
+              <h4>
+                <FontAwesomeIcon icon={faClipboardList} className="section-icon" />
+                Carteira Otimizada - Ativos Específicos
+              </h4>
               {Object.entries(agruparAtivosPorClasse(carteiraGerada.carteira_otimizada)).map(([classe, ativos]) => (
                 <div key={classe} className="classe-grupo">
                   <h5 className="classe-titulo">{classe}</h5>
@@ -1129,12 +1275,18 @@ const CarteiraCliente: React.FC = () => {
             {/* Metodologia e Justificativas */}
             {carteiraGerada.explicacoes_metodologia && (
               <div className="metodologia-section">
-                <h4>Metodologia e Justificativas</h4>
+                <h4>
+                  <FontAwesomeIcon icon={faLightbulb} className="section-icon" />
+                  Metodologia e Justificativas
+                </h4>
                 
                 {/* Metodologia Geral */}
                 {carteiraGerada.explicacoes_metodologia.metodologia_geral && (
                   <div className="metodologia-geral">
-                    <h5>{carteiraGerada.explicacoes_metodologia.metodologia_geral.titulo}</h5>
+                    <h5>
+                      <FontAwesomeIcon icon={faClipboardList} className="subsection-icon" />
+                      {carteiraGerada.explicacoes_metodologia.metodologia_geral.titulo}
+                    </h5>
                     <ol className="passos-metodologia">
                       {carteiraGerada.explicacoes_metodologia.metodologia_geral.passos?.map((passo, index) => (
                         <li key={index}>{passo}</li>
@@ -1146,7 +1298,10 @@ const CarteiraCliente: React.FC = () => {
                 {/* Perfil Ponderado */}
                 {carteiraGerada.explicacoes_metodologia.perfil_ponderado && (
                   <div className="perfil-ponderado-explicacao">
-                    <h5>{carteiraGerada.explicacoes_metodologia.perfil_ponderado.titulo}</h5>
+                    <h5>
+                      <FontAwesomeIcon icon={faBalanceScale} className="subsection-icon" />
+                      {carteiraGerada.explicacoes_metodologia.perfil_ponderado.titulo}
+                    </h5>
                     <div className="explicacao-texto">
                       {carteiraGerada.explicacoes_metodologia.perfil_ponderado.explicacao?.split('\n').map((linha, index) => (
                         <p key={index}>{linha.trim()}</p>
@@ -1158,7 +1313,10 @@ const CarteiraCliente: React.FC = () => {
                 {/* Otimização de Alocação */}
                 {carteiraGerada.explicacoes_metodologia.otimizacao_alocacao && (
                   <div className="otimizacao-explicacao">
-                    <h5>{carteiraGerada.explicacoes_metodologia.otimizacao_alocacao.titulo}</h5>
+                    <h5>
+                      <FontAwesomeIcon icon={faCalculator} className="subsection-icon" />
+                      {carteiraGerada.explicacoes_metodologia.otimizacao_alocacao.titulo}
+                    </h5>
                     <div className="explicacao-texto">
                       {carteiraGerada.explicacoes_metodologia.otimizacao_alocacao.explicacao?.split('\n').map((linha, index) => (
                         <p key={index}>{linha.trim()}</p>
@@ -1170,7 +1328,10 @@ const CarteiraCliente: React.FC = () => {
                 {/* Seleção Quantitativa */}
                 {carteiraGerada.explicacoes_metodologia.selecao_quantitativa && (
                   <div className="selecao-quantitativa-explicacao">
-                    <h5>{carteiraGerada.explicacoes_metodologia.selecao_quantitativa.titulo}</h5>
+                    <h5>
+                      <FontAwesomeIcon icon={faBullseye} className="subsection-icon" />
+                      {carteiraGerada.explicacoes_metodologia.selecao_quantitativa.titulo}
+                    </h5>
                     <div className="explicacao-texto">
                       {carteiraGerada.explicacoes_metodologia.selecao_quantitativa.explicacao?.split('\n').map((linha, index) => (
                         <p key={index}>{linha.trim()}</p>
@@ -1182,7 +1343,10 @@ const CarteiraCliente: React.FC = () => {
                 {/* Justificativas por Ativo */}
                 {carteiraGerada.explicacoes_metodologia.justificativas_ativos && (
                   <div className="justificativas-ativos">
-                    <h5>Justificativas de Escolha por Ativo</h5>
+                    <h5>
+                      <FontAwesomeIcon icon={faAward} className="subsection-icon" />
+                      Justificativas de Escolha por Ativo
+                    </h5>
                     {carteiraGerada.explicacoes_metodologia.justificativas_ativos.map((justificativa, index) => (
                       <div key={index} className="justificativa-item">
                         <div className="justificativa-header">
@@ -1252,22 +1416,36 @@ const CarteiraCliente: React.FC = () => {
             
             {carteiraGerada.observacoes && (
               <div className="observacoes">
-                <h4>Observações</h4>
+                <h4>
+                  <FontAwesomeIcon icon={faInfoCircle} className="section-icon" />
+                  Observações
+                </h4>
                 <p>{carteiraGerada.observacoes}</p>
               </div>
             )}
             
             <div className="form-actions">
               <button
-                className={`exportar-button ${isDarkMode ? 'dark-mode' : ''}`}
+                className={`btn-export ${isDarkMode ? 'dark-mode' : ''}`}
                 onClick={handleExportarRelatorio}
                 disabled={isGeneratingReport}
               >
-                {isGeneratingReport ? 'Gerando PDF...' : 'Exportar PDF da Carteira'}
+                {isGeneratingReport ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="fa-spin" />
+                    Gerando PDF...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faDownload} />
+                    Exportar PDF da Carteira
+                  </>
+                )}
               </button>
             </div>
           </CustomCard>
         )}
+        </div>
       </div>
       {showToast && (
         <Toast
