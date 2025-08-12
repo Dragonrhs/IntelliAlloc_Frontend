@@ -23,6 +23,19 @@ body {
   animation: gradientShift 8s ease-in-out infinite;
 }
 
+/* Quando a animação está desativada, usar cor fixa */
+.asset-class-evaluation-container.no-animation {
+  animation: none;
+}
+
+.asset-class-evaluation-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.asset-class-evaluation-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
 @keyframes gradientShift {
   0%, 100% {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -134,6 +147,12 @@ body {
 .evaluation-header {
   margin-bottom: 40px;
   animation: slideInDown 0.6s ease-out;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 30px !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
 }
 
 @keyframes slideInDown {
@@ -192,6 +211,12 @@ body {
 
 .asset-class-evaluation-container.light-mode .header-content p {
   color: rgba(0, 0, 0, 0.8);
+}
+
+/* Modo claro - ajustes do header */
+.asset-class-evaluation-container.light-mode .evaluation-header {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Seletor de mês */

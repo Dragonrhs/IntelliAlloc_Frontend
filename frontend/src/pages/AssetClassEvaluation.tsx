@@ -29,7 +29,7 @@ const AssetClassEvaluation: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const [isLoading, setIsLoading] = useState(false);
-  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   const handleAvaliacaoSalva = () => {
     setToastMessage('Avaliações salvas com sucesso!');
@@ -48,7 +48,10 @@ const AssetClassEvaluation: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`asset-class-evaluation-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`asset-class-evaluation-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando avaliações...</p>
@@ -58,7 +61,10 @@ const AssetClassEvaluation: React.FC = () => {
   }
 
   return (
-    <div className={`asset-class-evaluation-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`asset-class-evaluation-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -71,7 +77,7 @@ const AssetClassEvaluation: React.FC = () => {
       
       <div className="asset-class-evaluation-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         {/* Header */}
-        <div className="evaluation-header">
+        <CustomCard className="evaluation-header" isDarkMode={isDarkMode}>
           <div className="header-content">
             <div className="header-title">
               <FontAwesomeIcon icon={faChartBar} className="header-icon" />
@@ -79,7 +85,7 @@ const AssetClassEvaluation: React.FC = () => {
             </div>
             <p>Avalie e classifique as classes de ativos por mês para otimizar as carteiras</p>
           </div>
-        </div>
+        </CustomCard>
 
         {/* Seletor de Mês */}
         <CustomCard className="month-selector-card" isDarkMode={isDarkMode}>
