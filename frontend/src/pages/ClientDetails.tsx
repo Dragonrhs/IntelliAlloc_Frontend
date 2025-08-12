@@ -38,7 +38,7 @@ const ClientDetails: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { clientId } = useParams<{ clientId: string }>();
-  const { isDarkMode, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     const fetchClient = async () => {
@@ -130,7 +130,10 @@ const ClientDetails: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Carregando dados do cliente...</p>
@@ -141,7 +144,10 @@ const ClientDetails: React.FC = () => {
 
   if (!client) {
     return (
-      <div className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="error-container">
           <FontAwesomeIcon icon={faExclamationTriangle} className="error-icon" />
           <h3>Cliente não encontrado</h3>
@@ -160,7 +166,10 @@ const ClientDetails: React.FC = () => {
   }
 
   return (
-    <div className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`client-details-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}

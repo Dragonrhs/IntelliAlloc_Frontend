@@ -35,7 +35,7 @@ const ClientsList: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -152,7 +152,10 @@ const ClientsList: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`clients-list-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div 
+        className={`clients-list-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Carregando clientes...</p>
@@ -162,7 +165,10 @@ const ClientsList: React.FC = () => {
   }
 
   return (
-    <div className={`clients-list-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`clients-list-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
