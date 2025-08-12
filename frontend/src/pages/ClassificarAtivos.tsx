@@ -1,5 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faTags,
+  faSearch,
+  faFilter,
+  faDownload,
+  faUpload,
+  faCheckCircle,
+  faExclamationTriangle,
+  faChartBar,
+  faTable,
+  faFileExcel,
+  faTimes,
+  faSave,
+  faEdit,
+  faSpinner
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useTheme } from '../context/ThemeContext';
@@ -50,7 +67,7 @@ const ClassificarAtivos: React.FC = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { checkPermission } = useUser();
   const itensPorPagina = 10;
 
@@ -633,7 +650,10 @@ const ClassificarAtivos: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div 
+        className={`classificar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Sidebar 
           isExpanded={isSidebarExpanded}
           toggleSidebar={toggleSidebar}
@@ -642,9 +662,12 @@ const ClassificarAtivos: React.FC = () => {
           isFullSidebar={true}
         />
         <div className="content-container">
-          <Navbar isDarkMode={isDarkMode} />
+          <Navbar isDarkMode={isDarkMode} showAvatar={true} />
           <div className="main-content">
-            <div className="loading">Carregando...</div>
+            <div className="loading-container">
+              <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
+              <p>Carregando ativos...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -652,7 +675,10 @@ const ClassificarAtivos: React.FC = () => {
   }
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`classificar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Sidebar 
         isExpanded={isSidebarExpanded}
         toggleSidebar={toggleSidebar}
@@ -661,9 +687,18 @@ const ClassificarAtivos: React.FC = () => {
         isFullSidebar={true}
       />
       <div className="content-container">
-        <Navbar isDarkMode={isDarkMode} />
+        <Navbar isDarkMode={isDarkMode} showAvatar={true} />
         <div className="main-content">
-          <h1>Classificar Ativos</h1>
+          {/* Header modernizado */}
+          <div className="classificar-header-modern">
+            <div className="header-content">
+              <div className="header-title">
+                <FontAwesomeIcon icon={faTags} className="header-icon" />
+                <h1>Classificar Ativos</h1>
+              </div>
+              <p>Gerencie a classificação de todos os ativos do sistema</p>
+            </div>
+          </div>
 
           {error && <div className="error-message">{error}</div>}
           {mensagem && (
@@ -672,20 +707,44 @@ const ClassificarAtivos: React.FC = () => {
             </div>
           )}
 
-          <div className="estatisticas-container">
-            <div className="estatistica-item">
-              <span className="estatistica-label">Total de Ativos:</span>
-              <span className="estatistica-valor">{totalAtivos}</span>
+          {/* Estatísticas modernizadas */}
+          <div className="estatisticas-grid">
+            <div className="estatistica-item" style={{ '--card-color': '#667eea' } as React.CSSProperties}>
+              <div className="estatistica-icon">
+                <FontAwesomeIcon icon={faTable} />
+              </div>
+              <div className="estatistica-content">
+                <span className="estatistica-valor">{totalAtivos}</span>
+                <span className="estatistica-label">Total de Ativos</span>
+              </div>
             </div>
-            <div className="estatistica-item">
-              <span className="estatistica-label">Ativos Classificados:</span>
-              <span className="estatistica-valor">{totalClassificados}</span>
+            <div className="estatistica-item" style={{ '--card-color': '#4caf50' } as React.CSSProperties}>
+              <div className="estatistica-icon">
+                <FontAwesomeIcon icon={faCheckCircle} />
+              </div>
+              <div className="estatistica-content">
+                <span className="estatistica-valor">{totalClassificados}</span>
+                <span className="estatistica-label">Classificados</span>
+              </div>
             </div>
-            <div className="estatistica-item">
-              <span className="estatistica-label">Percentual Classificado:</span>
-              <span className="estatistica-valor">{percentualClassificados.toFixed(2)}%</span>
+            <div className="estatistica-item" style={{ '--card-color': '#ff9800' } as React.CSSProperties}>
+              <div className="estatistica-icon">
+                <FontAwesomeIcon icon={faChartBar} />
+              </div>
+              <div className="estatistica-content">
+                <span className="estatistica-valor">{percentualClassificados.toFixed(1)}%</span>
+                <span className="estatistica-label">Percentual</span>
+              </div>
             </div>
-            <div className="progresso-container">
+          </div>
+
+          {/* Barra de Progresso */}
+          <div className="progresso-container">
+            <div className="progresso-info">
+              <span>Progresso de Classificação</span>
+              <span>{percentualClassificados.toFixed(1)}%</span>
+            </div>
+            <div className="progresso-barra-container">
               <div 
                 className="progresso-barra" 
                 style={{ width: `${percentualClassificados}%` }}
@@ -693,131 +752,171 @@ const ClassificarAtivos: React.FC = () => {
             </div>
           </div>
 
-          <div className="acoes-container">
-            <div className="acoes-grupo">
-              <button 
-                className="acao-button modelo"
-                onClick={baixarModelo}
-              >
-                Baixar Modelo de Importação
-              </button>
-              <div className="importar-container">
-                <input
-                  type="file"
-                  id="importarClassificacoes"
-                  ref={fileInputRef}
-                  onChange={importarClassificacoes}
-                  accept=".xlsx,.xls"
-                  style={{ display: 'none' }}
-                />
-                <button 
-                  className={`acao-button importar ${importacaoSucesso ? 'importacao-sucesso' : ''}`}
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={importando}
-                >
-                  {importando ? 'Importando...' : importacaoSucesso ? '✓ Importação Concluída!' : 'Importar Classificações'}
-                </button>
-              </div>
-            </div>
+          {/* Ações centralizadas */}
+          <div className="acoes-centralizadas">
+            <button 
+              className="acao-button modelo"
+              onClick={baixarModelo}
+            >
+              <FontAwesomeIcon icon={faDownload} />
+              <span>Baixar Modelo</span>
+            </button>
+            <input
+              type="file"
+              id="importarClassificacoes"
+              ref={fileInputRef}
+              onChange={importarClassificacoes}
+              accept=".xlsx,.xls"
+              style={{ display: 'none' }}
+            />
+            <button 
+              className={`acao-button importar ${importacaoSucesso ? 'importacao-sucesso' : ''}`}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={importando}
+            >
+              {importando ? (
+                <>
+                  <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                  <span>Importando...</span>
+                </>
+              ) : importacaoSucesso ? (
+                <>
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                  <span>Importação Concluída!</span>
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faUpload} />
+                  <span>Importar Classificações</span>
+                </>
+              )}
+            </button>
           </div>
 
           {mostrarErros && errosImportacao.length > 0 && (
             <div className="erros-importacao">
-              <h3>Erros de Importação</h3>
-              <button 
-                className="fechar-erros"
-                onClick={() => setMostrarErros(false)}
-              >
-                Fechar
-              </button>
-              <table className="tabela-erros">
-                <thead>
-                  <tr>
-                    <th>Linha</th>
-                    <th>Erro</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {errosImportacao.map((erro, index) => (
-                    <tr key={index}>
-                      <td>{erro.linha}</td>
-                      <td>{erro.mensagem}</td>
+              <div className="erros-header">
+                <div className="erros-title">
+                  <FontAwesomeIcon icon={faExclamationTriangle} />
+                  <h3>Erros de Importação</h3>
+                </div>
+                <button 
+                  className="fechar-erros"
+                  onClick={() => setMostrarErros(false)}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+              <div className="erros-content">
+                <table className="tabela-erros">
+                  <thead>
+                    <tr>
+                      <th>Linha</th>
+                      <th>Erro</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {errosImportacao.map((erro, index) => (
+                      <tr key={index}>
+                        <td>{erro.linha}</td>
+                        <td>{erro.mensagem}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
+          {/* Filtros modernizados */}
           <div className="filtros-container">
-            <div className="filtro-item">
-              <label htmlFor="filtroClasse">Filtrar por Classe:</label>
-              <select
-                id="filtroClasse"
-                value={filtroClasse}
-                onChange={(e) => setFiltroClasse(e.target.value)}
-              >
-                <option value="">Todas as Classes</option>
-                {classesAtivos.map((classe) => (
-                  <option key={classe} value={classe}>
-                    {classe}
-                  </option>
-                ))}
-              </select>
+            <div className="filtros-header">
+              <h3>Filtros de Busca</h3>
+              <p>Filtre os ativos por diferentes critérios</p>
             </div>
+            <div className="filtros-grid">
+              <div className="filtro-item">
+                <div className="filtro-label">
+                  <FontAwesomeIcon icon={faSearch} />
+                  <span>Buscar Ativo</span>
+                </div>
+                <input
+                  type="text"
+                  value={buscaGlobal}
+                  onChange={(e) => setBuscaGlobal(e.target.value)}
+                  placeholder="Nome, ticker, CNPJ ou emissor..."
+                  className="filtro-input"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="filtroClasseInvestimento">Filtrar por Classe de Investimento:</label>
-              <select
-                id="filtroClasseInvestimento"
-                value={filtroClasseInvestimento}
-                onChange={(e) => setFiltroClasseInvestimento(e.target.value)}
-              >
-                <option value="">Todas as Classes de Investimento</option>
-                {classesInvestimento.map((classe) => (
-                  <option key={classe} value={classe}>
-                    {classe}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div className="filtro-item">
+                <div className="filtro-label">
+                  <FontAwesomeIcon icon={faFilter} />
+                  <span>Classe do Ativo</span>
+                </div>
+                <select
+                  value={filtroClasse}
+                  onChange={(e) => setFiltroClasse(e.target.value)}
+                  className="filtro-select"
+                >
+                  <option value="">Todas as classes</option>
+                  {classesAtivos.map((classe) => (
+                    <option key={classe} value={classe}>
+                      {classe}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="filtroClassificacao">Status de Classificação:</label>
-              <select
-                id="filtroClassificacao"
-                value={filtroClassificacao}
-                onChange={(e) => setFiltroClassificacao(e.target.value as 'todos' | 'classificados' | 'nao_classificados')}
-              >
-                <option value="todos">Todos</option>
-                <option value="classificados">Classificados</option>
-                <option value="nao_classificados">Não Classificados</option>
-              </select>
-            </div>
+              <div className="filtro-item">
+                <div className="filtro-label">
+                  <FontAwesomeIcon icon={faTags} />
+                  <span>Classe de Investimento</span>
+                </div>
+                <select
+                  value={filtroClasseInvestimento}
+                  onChange={(e) => setFiltroClasseInvestimento(e.target.value)}
+                  className="filtro-select"
+                >
+                  <option value="">Todas as classes</option>
+                  {classesInvestimento.map((classe) => (
+                    <option key={classe} value={classe}>
+                      {classe}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="buscaGlobal">Busca Global:</label>
-              <input
-                type="text"
-                id="buscaGlobal"
-                value={buscaGlobal}
-                onChange={(e) => setBuscaGlobal(e.target.value)}
-                placeholder="Buscar por nome, ticker, ISIN ou CNPJ..."
-              />
-            </div>
+              <div className="filtro-item">
+                <div className="filtro-label">
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                  <span>Status</span>
+                </div>
+                <select
+                  value={filtroClassificacao}
+                  onChange={(e) => setFiltroClassificacao(e.target.value as 'todos' | 'classificados' | 'nao_classificados')}
+                  className="filtro-select"
+                >
+                  <option value="todos">Todos os status</option>
+                  <option value="classificados">Classificados</option>
+                  <option value="nao_classificados">Não Classificados</option>
+                </select>
+              </div>
 
-            <div className="filtro-item limpar-filtros">
-              <button 
-                onClick={() => {
-                  setBuscaGlobal('');
-                  setFiltroClasse('');
-                  setFiltroClasseInvestimento('');
-                  setFiltroClassificacao('todos');
-                }}
-                className="btn-limpar-filtros"
-              >
-                Limpar Filtros
-              </button>
+              <div className="filtro-item limpar-filtros">
+                <button 
+                  onClick={() => {
+                    setBuscaGlobal('');
+                    setFiltroClasse('');
+                    setFiltroClasseInvestimento('');
+                    setFiltroClassificacao('todos');
+                  }}
+                  className="btn-limpar-filtros"
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                  <span>Limpar Filtros</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -918,7 +1017,22 @@ const ClassificarAtivos: React.FC = () => {
                             disabled={salvando}
                             className={`salvar-button ${isClassificado ? 'atualizar' : 'criar'}`}
                           >
-                            {salvando ? 'Salvando...' : isClassificado ? 'Atualizar' : 'Salvar'}
+                            {salvando ? (
+                              <>
+                                <FontAwesomeIcon icon={faSpinner} className="spinner" />
+                                <span>Salvando...</span>
+                              </>
+                            ) : isClassificado ? (
+                              <>
+                                <FontAwesomeIcon icon={faEdit} />
+                                <span>Atualizar</span>
+                              </>
+                            ) : (
+                              <>
+                                <FontAwesomeIcon icon={faSave} />
+                                <span>Salvar</span>
+                              </>
+                            )}
                           </button>
                         </td>
                       </tr>
@@ -940,15 +1054,18 @@ const ClassificarAtivos: React.FC = () => {
               <button
                 onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
                 disabled={paginaAtual === 1}
+                className="paginacao-button"
               >
                 Anterior
               </button>
-              <span>
-                Página {paginaAtual} de {totalPaginas}
-              </span>
+              <div className="paginacao-info">
+                <span>Página {paginaAtual} de {totalPaginas}</span>
+                <span className="paginacao-total">({ativosFiltrados.length} ativos)</span>
+              </div>
               <button
                 onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
                 disabled={paginaAtual === totalPaginas}
+                className="paginacao-button"
               >
                 Próxima
               </button>
