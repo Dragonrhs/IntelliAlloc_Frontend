@@ -64,7 +64,7 @@ const ConsultarAtivos: React.FC = () => {
   });
   const [showColunasPopup, setShowColunasPopup] = useState(false);
 
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     const carregarAtivos = async () => {
@@ -272,22 +272,37 @@ const ConsultarAtivos: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="loading">Carregando...</div>
+      <div 
+        className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Carregando ativos...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-        <div className="error">{error}</div>
+      <div 
+        className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <p>{error}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`consultar-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar
         showAvatar={true}
         isDarkMode={isDarkMode}
@@ -319,7 +334,7 @@ const ConsultarAtivos: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className="tabela-container">
+        <div className={`tabela-container ${colunaFiltroAberto ? 'popup-open' : ''}`}>
           <table>
             <thead>
               <tr>
