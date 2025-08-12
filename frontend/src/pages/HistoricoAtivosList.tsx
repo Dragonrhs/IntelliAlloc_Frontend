@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSearch,
+  faFilter,
+  faCalendarAlt,
+  faTag,
+  faBuilding,
+  faCheckCircle,
+  faClock,
+  faHistory
+} from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import CustomCard from '../components/CustomCard';
@@ -69,7 +80,7 @@ const formatarAlteracoes = (changes: string): React.ReactElement => {
 
 const HistoricoAtivosList: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { userRole } = useUser();
   const [ativos, setAtivos] = useState<Ativo[]>([]);
   const [ativosFiltrados, setAtivosFiltrados] = useState<Ativo[]>([]);
@@ -240,7 +251,10 @@ const HistoricoAtivosList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div 
+        className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Sidebar 
           isExpanded={isSidebarExpanded} 
           toggleSidebar={toggleSidebar} 
@@ -258,7 +272,10 @@ const HistoricoAtivosList: React.FC = () => {
 
   if (error) {
     return (
-      <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div 
+        className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Sidebar 
           isExpanded={isSidebarExpanded} 
           toggleSidebar={toggleSidebar} 
@@ -275,7 +292,10 @@ const HistoricoAtivosList: React.FC = () => {
   }
 
   return (
-    <div className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`historico-ativos-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Sidebar 
         isExpanded={isSidebarExpanded} 
         toggleSidebar={toggleSidebar} 
@@ -286,20 +306,40 @@ const HistoricoAtivosList: React.FC = () => {
       <div className={`main-content ${isSidebarExpanded ? 'sidebar-expanded' : ''}`} style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         <Navbar isDarkMode={isDarkMode} showAvatar={true} />
         <div className="historico-ativos-content">
-          <h2>Histórico de Ativos</h2>
+          {/* Header modernizado */}
+          <div className="historico-header-modern">
+            <div className="header-content">
+              <div className="header-title">
+                <FontAwesomeIcon icon={faHistory} className="header-icon" />
+                <h1>Histórico de Ativos</h1>
+              </div>
+              <p>Acompanhe o histórico completo de todos os ativos do sistema</p>
+            </div>
+          </div>
 
+          {/* Filtros modernizados */}
           <div className="filtros-container">
+            {/* Busca */}
             <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faSearch} />
+                <span>Buscar Ativo</span>
+              </div>
               <input
                 type="text"
-                placeholder="Buscar por nome, ticker, CNPJ ou emissor..."
+                placeholder="Nome, ticker, CNPJ ou emissor..."
                 value={filtros.busca}
                 onChange={(e) => handleFiltroChange('busca', e.target.value)}
                 className="filtro-input"
               />
             </div>
 
+            {/* Classe */}
             <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faTag} />
+                <span>Classe do Ativo</span>
+              </div>
               <select
                 value={filtros.classe}
                 onChange={(e) => handleFiltroChange('classe', e.target.value)}
@@ -312,7 +352,12 @@ const HistoricoAtivosList: React.FC = () => {
               </select>
             </div>
 
+            {/* Gestora */}
             <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faBuilding} />
+                <span>Gestora</span>
+              </div>
               <select
                 value={filtros.gestora}
                 onChange={(e) => handleFiltroChange('gestora', e.target.value)}
@@ -325,7 +370,12 @@ const HistoricoAtivosList: React.FC = () => {
               </select>
             </div>
 
+            {/* Status */}
             <div className="filtro-grupo">
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faCheckCircle} />
+                <span>Status</span>
+              </div>
               <select
                 value={filtros.status}
                 onChange={(e) => handleFiltroChange('status', e.target.value)}
@@ -338,8 +388,12 @@ const HistoricoAtivosList: React.FC = () => {
               </select>
             </div>
 
+            {/* Data da Análise */}
             <div className="filtro-grupo data-grupo">
-              <label>Data da Análise:</label>
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>Data da Análise</span>
+              </div>
               <div className="data-inputs">
                 <input
                   type="date"
@@ -347,7 +401,7 @@ const HistoricoAtivosList: React.FC = () => {
                   onChange={(e) => handleFiltroChange('dataAnaliseInicio', e.target.value)}
                   className="filtro-data"
                 />
-                <span>até</span>
+                <span className="data-separator">até</span>
                 <input
                   type="date"
                   value={filtros.dataAnaliseFim}
@@ -357,8 +411,12 @@ const HistoricoAtivosList: React.FC = () => {
               </div>
             </div>
 
+            {/* Data da Ação */}
             <div className="filtro-grupo data-grupo">
-              <label>Data da Ação:</label>
+              <div className="filtro-label">
+                <FontAwesomeIcon icon={faClock} />
+                <span>Data da Ação</span>
+              </div>
               <div className="data-inputs">
                 <input
                   type="date"
@@ -366,7 +424,7 @@ const HistoricoAtivosList: React.FC = () => {
                   onChange={(e) => handleFiltroChange('dataAcaoInicio', e.target.value)}
                   className="filtro-data"
                 />
-                <span>até</span>
+                <span className="data-separator">até</span>
                 <input
                   type="date"
                   value={filtros.dataAcaoFim}
