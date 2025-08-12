@@ -55,7 +55,7 @@ const Estatisticas: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,28 +181,28 @@ const Estatisticas: React.FC = () => {
         value: totalUsuarios, 
         icon: faUsers, 
         color: '#667eea',
-        description: 'Usuários ativos no sistema'
+        
       },
       { 
         label: 'Total de Clientes', 
         value: totalClientes, 
         icon: faUserTie, 
         color: '#764ba2',
-        description: 'Clientes cadastrados'
+        description: ''
       },
       { 
         label: 'Perfis de Risco', 
         value: totalPerfis, 
         icon: faShieldAlt, 
         color: '#f093fb',
-        description: 'Tipos de perfil disponíveis'
+        description: ''
       },
       { 
         label: 'Média por Usuário', 
         value: mediaClientesPorUsuario, 
         icon: faChartBar, 
         color: '#4facfe',
-        description: 'Clientes por usuário'
+        description: ''
       }
     ];
   };
@@ -218,7 +218,10 @@ const Estatisticas: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando estatísticas...</p>
@@ -228,7 +231,10 @@ const Estatisticas: React.FC = () => {
   }
 
   return (
-    <div className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`estatisticas-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -241,7 +247,7 @@ const Estatisticas: React.FC = () => {
       
       <div className="estatisticas-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         {/* Header */}
-        <div className="estatisticas-header">
+        <CustomCard className="estatisticas-header" isDarkMode={isDarkMode}>
           <div className="header-content">
             <div className="header-title">
               <FontAwesomeIcon icon={faChartLine} className="header-icon" />
@@ -249,7 +255,7 @@ const Estatisticas: React.FC = () => {
             </div>
             <p>Análise completa de usuários, clientes e perfis de risco</p>
           </div>
-        </div>
+        </CustomCard>
 
         {/* Estatísticas Gerais */}
         <div className="stats-section">

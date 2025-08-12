@@ -41,6 +41,19 @@ body {
   animation: gradientShift 8s ease-in-out infinite;
 }
 
+/* Quando a animação está desativada, usar cor fixa */
+.estatisticas-container.no-animation {
+  animation: none;
+}
+
+.estatisticas-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.estatisticas-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
 @keyframes gradientShift {
   0%, 100% {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -109,6 +122,9 @@ body {
   padding: 90px 30px 30px;
   transition: margin-left 0.3s ease;
   animation: slideInUp 0.6s ease-out;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 @keyframes slideInUp {
@@ -148,6 +164,12 @@ body {
 .estatisticas-header {
   margin-bottom: 40px;
   animation: slideInDown 0.6s ease-out;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 30px !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
 }
 
 @keyframes slideInDown {
@@ -457,6 +479,11 @@ body {
 }
 
 /* Modo claro - ajustes */
+.estatisticas-container.light-mode .estatisticas-header {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
 .estatisticas-container.light-mode .header-title h1,
 .estatisticas-container.light-mode .header-content p,
 .estatisticas-container.light-mode .card-header h2,
@@ -576,6 +603,7 @@ body {
 @media (max-width: 768px) {
   .estatisticas-content {
     padding: 80px 20px 20px;
+    max-width: 100%;
   }
   
   .header-title h1 {
@@ -624,6 +652,7 @@ body {
 @media (max-width: 480px) {
   .estatisticas-content {
     padding: 70px 15px 15px;
+    max-width: 100%;
   }
   
   .header-title h1 {
