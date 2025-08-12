@@ -1,6 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSearch,
+  faEdit,
+  faHistory,
+  faSave,
+  faTimes,
+  faSpinner,
+  faCheckCircle,
+  faExclamationTriangle,
+  faInfoCircle,
+  faArrowLeft,
+  faDatabase,
+  faBarcode,
+  faIdCard,
+  faBuilding,
+  faShieldAlt,
+  faChartLine,
+  faUserTie,
+  faClock,
+  faCheckDouble,
+  faUser,
+  faSitemap,
+  faBan,
+  faCalendarAlt,
+  faTag,
+  faLayerGroup,
+  faBroadcastTower,
+  faCog,
+  faFileAlt,
+  faList,
+  faEye
+} from '@fortawesome/free-solid-svg-icons';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomCard from '../components/CustomCard';
@@ -42,7 +75,28 @@ const AtualizarAtivo: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
+
+  // Mapeamento de ícones para campos
+  const campoIcons = {
+    nome: faFileAlt,
+    classe: faLayerGroup,
+    canal: faBroadcastTower,
+    emissor: faBuilding,
+    risco_credito: faShieldAlt,
+    ticker: faChartLine,
+    isin: faBarcode,
+    cnpj: faIdCard,
+    gestora: faUserTie,
+    prazo_total: faClock,
+    data: faCalendarAlt,
+    status: faCheckDouble,
+    emissor_emissao: faUser,
+    analista_responsavel: faUserTie,
+    perfil: faSitemap,
+    master_feeder: faBan,
+    restrito_alocacao: faBan
+  };
 
   const formatarData = (data: string) => {
     if (!data) return '';
@@ -341,8 +395,48 @@ const AtualizarAtivo: React.FC = () => {
     }
   };
 
+  const renderCampo = (campo: string, label: string, type: string = 'text', options?: string[]) => {
+    const IconComponent = campoIcons[campo as keyof typeof campoIcons];
+    
+    return (
+      <div className="input-group" key={campo}>
+        <label>
+          <FontAwesomeIcon icon={IconComponent} />
+          {label}
+        </label>
+        {type === 'select' ? (
+          <select
+            name={campo}
+            value={ativoSelecionado?.[campo as keyof Ativo] || ''}
+            onChange={handleInputChange}
+            className={`modern-select ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+            disabled={loading}
+          >
+            {options?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <CustomInput
+            type={type}
+            name={campo}
+            value={ativoSelecionado?.[campo as keyof Ativo] || ''}
+            onChange={handleInputChange}
+            isDarkMode={isDarkMode}
+            disabled={loading}
+          />
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className={`atualizar-ativo-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`atualizar-ativo-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${!isBackgroundAnimationEnabled ? 'no-animation' : ''}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={true} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -352,294 +446,248 @@ const AtualizarAtivo: React.FC = () => {
         isFullSidebar={true}
       />
       <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-        <CustomCard className="busca-card" isDarkMode={isDarkMode}>
-          <h2>Buscar Ativo</h2>
-          <div className="busca-form">
-            <div className="input-group">
-              <label>Tipo de Busca</label>
-              <select
-                value={tipoBusca}
-                onChange={(e) => setTipoBusca(e.target.value as 'isin' | 'cnpj' | 'ticker')}
-                className={isDarkMode ? 'dark-mode' : 'light-mode'}
-              >
-                <option value="isin">ISIN</option>
-                <option value="cnpj">CNPJ</option>
-                <option value="ticker">Ticker</option>
-              </select>
+        {/* Header */}
+        <CustomCard className="atualizar-header" isDarkMode={isDarkMode}>
+          <div className="header-content">
+            <div className="header-title">
+              <FontAwesomeIcon icon={faEdit} />
+              <h1>Atualizar Ativo</h1>
             </div>
-            <div className="input-group">
-              <label>Valor</label>
-              <CustomInput
-                type="text"
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                placeholder={`Digite o ${tipoBusca.toUpperCase()}`}
-                isDarkMode={isDarkMode}
-              />
-            </div>
-            <CustomButton
-              onClick={handleBuscar}
-              isDarkMode={isDarkMode}
-              disabled={loading}
-            >
-              Buscar
-            </CustomButton>
+            <p>Busque e atualize informações dos ativos cadastrados no sistema</p>
           </div>
         </CustomCard>
 
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-
-        {ativosEncontrados.length > 0 && !ativoSelecionado && (
-          <CustomCard className="resultados-card" isDarkMode={isDarkMode}>
-            <h3>Resultados da Busca</h3>
-            <div className="resultados-list">
-              {ativosEncontrados.map((ativo) => (
-                <div
-                  key={ativo.id}
-                  className={`ativo-item ${isDarkMode ? 'dark-mode' : ''}`}
-                  onClick={() => handleSelecionarAtivo(ativo)}
-                >
-                  <p><strong>Nome:</strong> {ativo.nome}</p>
-                  <p><strong>Classe:</strong> {ativo.classe}</p>
-                  <p><strong>Emissor:</strong> {ativo.emissor}</p>
-                  {ativo.ticker && <p><strong>Ticker:</strong> {ativo.ticker}</p>}
-                  {ativo.isin && <p><strong>ISIN:</strong> {ativo.isin}</p>}
-                  <p><strong>CNPJ:</strong> {ativo.cnpj}</p>
-                  <p><strong>Data:</strong> {formatarDataExibicao(ativo.data)}</p>
-                  <p><strong>Status:</strong> {ativo.status}</p>
-                </div>
-              ))}
-            </div>
-          </CustomCard>
-        )}
-
-        {ativoSelecionado && (
-          <CustomCard className="edicao-card" isDarkMode={isDarkMode}>
+        {/* Seção de Busca */}
+        <div className="busca-section">
+          <CustomCard className="busca-card" isDarkMode={isDarkMode}>
             <div className="card-header">
-              <h3>Editar Ativo</h3>
-              <CustomButton
-                onClick={handleVerHistorico}
-                isDarkMode={isDarkMode}
-                className="historico-button"
-              >
-                Ver Histórico
-              </CustomButton>
+              <FontAwesomeIcon icon={faSearch} />
+              <h3>Buscar Ativo</h3>
             </div>
-            <div className="edicao-form">
-              <div className="input-group">
-                <label>Nome</label>
-                <CustomInput
-                  type="text"
-                  name="nome"
-                  value={ativoSelecionado.nome}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Classe</label>
-                <select
-                  name="classe"
-                  value={ativoSelecionado.classe}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="Renda Fixa">Renda Fixa</option>
-                  <option value="Fundos">Fundos</option>
-                  <option value="Prev">Prev</option>
-                  <option value="Listados">Listados</option>
-                  <option value="Cetipados">Cetipados</option>
-                  <option value="COE">COE</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Canal</label>
-                <select
-                  name="canal"
-                  value={ativoSelecionado.canal}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="AAI">AAI</option>
-                  <option value="MFO">MFO</option>
-                  <option value="Todos">Todos</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Emissor</label>
-                <CustomInput
-                  type="text"
-                  name="emissor"
-                  value={ativoSelecionado.emissor}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Risco de Crédito</label>
-                <CustomInput
-                  type="text"
-                  name="risco_credito"
-                  value={ativoSelecionado.risco_credito}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Ticker</label>
-                <CustomInput
-                  type="text"
-                  name="ticker"
-                  value={ativoSelecionado.ticker || ''}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>ISIN</label>
-                <CustomInput
-                  type="text"
-                  name="isin"
-                  value={ativoSelecionado.isin || ''}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>CNPJ</label>
-                <CustomInput
-                  type="text"
-                  name="cnpj"
-                  value={ativoSelecionado.cnpj}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Gestora</label>
-                <CustomInput
-                  type="text"
-                  name="gestora"
-                  value={ativoSelecionado.gestora}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Prazo Total (meses)</label>
-                <CustomInput
-                  type="number"
-                  name="prazo_total"
-                  value={ativoSelecionado.prazo_total}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Data</label>
-                <CustomInput
-                  type="date"
-                  name="data"
-                  value={ativoSelecionado.data || ''}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                  required
-                />
-              </div>
-              <div className="input-group">
-                <label>Status</label>
-                <select
-                  name="status"
-                  value={ativoSelecionado.status}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="Em Analise">Em Análise</option>
-                  <option value="Aprovado">Aprovado</option>
-                  <option value="Reprovado">Reprovado</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Emissor ou Emissão</label>
-                <select
-                  name="emissor_emissao"
-                  value={ativoSelecionado.emissor_emissao || ''}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="">Selecione...</option>
-                  <option value="Emissor">Emissor</option>
-                  <option value="Emissao">Emissão</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Analista Responsável</label>
-                <CustomInput
-                  type="text"
-                  name="analista_responsavel"
-                  value={ativoSelecionado.analista_responsavel}
-                  onChange={handleInputChange}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-              <div className="input-group">
-                <label>Perfil</label>
-                <select
-                  name="perfil"
-                  value={ativoSelecionado.perfil}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="Conservador">Conservador</option>
-                  <option value="Moderado">Moderado</option>
-                  <option value="Sofisticado">Sofisticado</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Master ou Feeder</label>
-                <select
-                  name="master_feeder"
-                  value={ativoSelecionado.master_feeder || ''}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="">Selecione...</option>
-                  <option value="Master">Master</option>
-                  <option value="Feeder">Feeder</option>
-                </select>
-              </div>
-              <div className="input-group">
-                <label>Restrito para alocação</label>
-                <select
-                  name="restrito_alocacao"
-                  value={ativoSelecionado.restrito_alocacao || ''}
-                  onChange={handleInputChange}
-                  className={isDarkMode ? 'dark-mode' : 'light-mode'}
-                >
-                  <option value="">Não</option>
-                  <option value="Restrito">Sim</option>
-                </select>
-              </div>
-              <div className="button-group">
+            <div className="busca-form">
+              <div className="search-controls">
+                <div className="input-group">
+                  <label>
+                    <FontAwesomeIcon icon={faDatabase} />
+                    Tipo de Busca
+                  </label>
+                  <select
+                    value={tipoBusca}
+                    onChange={(e) => setTipoBusca(e.target.value as 'isin' | 'cnpj' | 'ticker')}
+                    className={`modern-select ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+                  >
+                    <option value="isin">ISIN</option>
+                    <option value="cnpj">CNPJ</option>
+                    <option value="ticker">Ticker</option>
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label>
+                    <FontAwesomeIcon icon={faBarcode} />
+                    Valor
+                  </label>
+                  <CustomInput
+                    type="text"
+                    value={busca}
+                    onChange={(e) => setBusca(e.target.value)}
+                    placeholder={`Digite o ${tipoBusca.toUpperCase()}`}
+                    isDarkMode={isDarkMode}
+                  />
+                </div>
                 <CustomButton
-                  onClick={handleAtualizar}
+                  onClick={handleBuscar}
                   isDarkMode={isDarkMode}
                   disabled={loading}
+                  className="search-button"
                 >
-                  Atualizar
-                </CustomButton>
-                <CustomButton
-                  onClick={() => setAtivoSelecionado(null)}
-                  isDarkMode={isDarkMode}
-                  className="secondary"
-                >
-                  Cancelar
+                  {loading ? (
+                    <FontAwesomeIcon icon={faSpinner} spin />
+                  ) : (
+                    <FontAwesomeIcon icon={faSearch} />
+                  )}
+                  Buscar
                 </CustomButton>
               </div>
             </div>
           </CustomCard>
+        </div>
+
+        {/* Mensagem de Erro */}
+        {errorMessage && (
+          <div className="error-container">
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+            <p>{errorMessage}</p>
+          </div>
+        )}
+
+        {/* Resultados da Busca */}
+        {ativosEncontrados.length > 0 && !ativoSelecionado && (
+          <div className="resultados-section">
+            <CustomCard className="resultados-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <FontAwesomeIcon icon={faList} />
+                <h3>Resultados da Busca</h3>
+                <span className="results-count">{ativosEncontrados.length} ativo(s) encontrado(s)</span>
+              </div>
+              <div className="resultados-grid">
+                {ativosEncontrados.map((ativo) => (
+                  <div
+                    key={ativo.id}
+                    className="ativo-card"
+                    onClick={() => handleSelecionarAtivo(ativo)}
+                  >
+                    <div className="ativo-header">
+                      <FontAwesomeIcon icon={faFileAlt} />
+                      <h4>{ativo.nome}</h4>
+                    </div>
+                    <div className="ativo-details">
+                      <div className="detail-item">
+                        <FontAwesomeIcon icon={faLayerGroup} />
+                        <span><strong>Classe:</strong> {ativo.classe}</span>
+                      </div>
+                      <div className="detail-item">
+                        <FontAwesomeIcon icon={faBuilding} />
+                        <span><strong>Emissor:</strong> {ativo.emissor}</span>
+                      </div>
+                      {ativo.ticker && (
+                        <div className="detail-item">
+                          <FontAwesomeIcon icon={faChartLine} />
+                          <span><strong>Ticker:</strong> {ativo.ticker}</span>
+                        </div>
+                      )}
+                      {ativo.isin && (
+                        <div className="detail-item">
+                          <FontAwesomeIcon icon={faBarcode} />
+                          <span><strong>ISIN:</strong> {ativo.isin}</span>
+                        </div>
+                      )}
+                      <div className="detail-item">
+                        <FontAwesomeIcon icon={faIdCard} />
+                        <span><strong>CNPJ:</strong> {ativo.cnpj}</span>
+                      </div>
+                      <div className="detail-item">
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                        <span><strong>Data:</strong> {formatarDataExibicao(ativo.data)}</span>
+                      </div>
+                      <div className="detail-item">
+                        <FontAwesomeIcon icon={faCheckDouble} />
+                        <span><strong>Status:</strong> {ativo.status}</span>
+                      </div>
+                    </div>
+                    <div className="ativo-actions">
+                      <FontAwesomeIcon icon={faEye} />
+                      <span>Clique para editar</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CustomCard>
+          </div>
+        )}
+
+        {/* Formulário de Edição */}
+        {ativoSelecionado && (
+          <div className="edicao-section">
+            <CustomCard className="edicao-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <div className="header-info">
+                  <FontAwesomeIcon icon={faEdit} />
+                  <h3>Editar Ativo</h3>
+                  <span className="ativo-id">ID: {ativoSelecionado.id}</span>
+                </div>
+                <CustomButton
+                  onClick={handleVerHistorico}
+                  isDarkMode={isDarkMode}
+                  className="historico-button"
+                >
+                  <FontAwesomeIcon icon={faHistory} />
+                  Ver Histórico
+                </CustomButton>
+              </div>
+              
+              <div className="edicao-form">
+                <div className="form-section">
+                  <h4>Informações Básicas</h4>
+                  <div className="form-grid">
+                    {renderCampo('nome', 'Nome')}
+                    {renderCampo('classe', 'Classe', 'select', [
+                      'Renda Fixa', 'Fundos', 'Prev', 'Listados', 'Cetipados', 'COE'
+                    ])}
+                    {renderCampo('canal', 'Canal', 'select', ['AAI', 'MFO', 'Todos'])}
+                    {renderCampo('emissor', 'Emissor')}
+                    {renderCampo('risco_credito', 'Risco de Crédito')}
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4>Identificação</h4>
+                  <div className="form-grid">
+                    {renderCampo('ticker', 'Ticker')}
+                    {renderCampo('isin', 'ISIN')}
+                    {renderCampo('cnpj', 'CNPJ')}
+                    {renderCampo('gestora', 'Gestora')}
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4>Características</h4>
+                  <div className="form-grid">
+                    {renderCampo('prazo_total', 'Prazo Total (meses)', 'number')}
+                    {renderCampo('data', 'Data', 'date')}
+                    {renderCampo('status', 'Status', 'select', [
+                      'Em Analise', 'Aprovado', 'Reprovado'
+                    ])}
+                    {renderCampo('emissor_emissao', 'Emissor ou Emissão', 'select', [
+                      '', 'Emissor', 'Emissao'
+                    ])}
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4>Responsabilidade</h4>
+                  <div className="form-grid">
+                    {renderCampo('analista_responsavel', 'Analista Responsável')}
+                    {renderCampo('perfil', 'Perfil', 'select', [
+                      'Conservador', 'Moderado', 'Sofisticado'
+                    ])}
+                    {renderCampo('master_feeder', 'Master ou Feeder', 'select', [
+                      '', 'Master', 'Feeder'
+                    ])}
+                    {renderCampo('restrito_alocacao', 'Restrito para alocação', 'select', [
+                      '', 'Não', 'Restrito'
+                    ])}
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <CustomButton
+                    onClick={handleAtualizar}
+                    isDarkMode={isDarkMode}
+                    disabled={loading}
+                    className="save-button"
+                  >
+                    {loading ? (
+                      <FontAwesomeIcon icon={faSpinner} spin />
+                    ) : (
+                      <FontAwesomeIcon icon={faSave} />
+                    )}
+                    Atualizar
+                  </CustomButton>
+                  <CustomButton
+                    onClick={() => setAtivoSelecionado(null)}
+                    isDarkMode={isDarkMode}
+                    className="cancel-button"
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                    Cancelar
+                  </CustomButton>
+                </div>
+              </div>
+            </CustomCard>
+          </div>
         )}
       </div>
+      
       {showToast && (
         <Toast
           message={toastMessage}
