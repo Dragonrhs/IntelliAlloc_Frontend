@@ -37,7 +37,7 @@ const History: React.FC = () => {
   const fetchedCarteiraIds = useRef<Set<number>>(new Set());
   const hasInitializedClientNames = useRef(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -304,7 +304,10 @@ const History: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Carregando histórico...</p>
@@ -314,7 +317,10 @@ const History: React.FC = () => {
   }
 
   return (
-    <div className={`history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
