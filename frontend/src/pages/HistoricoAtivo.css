@@ -1,6 +1,126 @@
-.historico-container {
+.historico-ativos-container {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Quando a animação está desativada, usar cor fixa */
+.historico-ativos-container.no-animation {
+  animation: none !important;
+}
+
+.historico-ativos-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e) !important;
+}
+
+.historico-ativos-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea) !important;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+}
+
+/* Estilos específicos para modo claro */
+.historico-ativos-container.light-mode .header-title h1,
+.historico-ativos-container.light-mode .header-content p,
+.historico-ativos-container.light-mode .filtro-label,
+.historico-ativos-container.light-mode .action-info h3,
+.historico-ativos-container.light-mode .historico-data,
+.historico-ativos-container.light-mode .historico-usuario,
+.historico-ativos-container.light-mode .historico-changes h4,
+.historico-ativos-container.light-mode .historico-changes pre,
+.historico-ativos-container.light-mode .loading,
+.historico-ativos-container.light-mode .error {
+  color: #333 !important;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Correção específica para a descrição do título no modo claro */
+.historico-ativos-container.light-mode .header-content p {
+  color: rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Correção específica para o título no modo escuro */
+.historico-ativos-container.dark-mode .header-title h1 {
+  color: white !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.historico-ativos-container.dark-mode .header-content p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Correção específica para os labels dos filtros no modo escuro */
+.historico-ativos-container.dark-mode .filtro-label {
+  color: white !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.historico-ativos-container.dark-mode .filtro-label svg {
+  color: #667eea !important;
+}
+
+.historico-ativos-container.light-mode .historico-header-modern,
+.historico-ativos-container.light-mode .filtros-container,
+.historico-ativos-container.light-mode .historico-item,
+.historico-ativos-container.light-mode .historico-changes {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.historico-ativos-container.light-mode .filtro-input,
+.historico-ativos-container.light-mode .filtro-select,
+.historico-ativos-container.light-mode .filtro-data {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #333 !important;
+}
+
+.historico-ativos-container.light-mode .filtro-input::placeholder {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.historico-ativos-container.light-mode .filtro-input:focus,
+.historico-ativos-container.light-mode .filtro-select:focus,
+.historico-ativos-container.light-mode .filtro-data:focus {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.historico-ativos-container.light-mode .filtro-label svg,
+.historico-ativos-container.light-mode .historico-data svg,
+.historico-ativos-container.light-mode .historico-usuario svg {
+  color: #667eea !important;
+}
+
+.historico-ativos-container.light-mode .data-separator {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.historico-ativos-container.light-mode .historico-changes pre {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #333 !important;
+  border-left-color: #667eea !important;
+}
+
+.historico-ativos-container.light-mode .historico-header-modern {
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 .main-content {
@@ -15,28 +135,258 @@
   padding: 20px;
 }
 
-.historico-content h2 {
-  margin-bottom: 20px;
-  color: #333;
+/* Header modernizado */
+.historico-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  animation: slideInDown 0.8s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: #667eea;
+}
+
+.header-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Filtros modernizados */
+.filtros-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  animation: slideInUp 0.8s ease 0.2s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filtro-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: white;
+  font-size: 0.95rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.filtro-label svg {
+  color: #667eea;
+  font-size: 1rem;
+}
+
+.filtro-input,
+.filtro-select,
+.filtro-data {
+  padding: 15px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 16px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  box-sizing: border-box;
+  height: 50px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.filtro-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.filtro-input:focus,
+.filtro-select:focus,
+.filtro-data:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.filtro-input:hover,
+.filtro-select:hover,
+.filtro-data:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.filtro-select {
+  cursor: pointer;
+}
+
+.data-grupo {
+  grid-column: 1 / -1;
+}
+
+.data-inputs {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.data-separator {
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  text-align: center;
+  padding: 0 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.filtro-data {
+  flex: 1;
+  width: 100%;
 }
 
 .historico-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: slideInUp 0.8s ease 0.4s both;
 }
 
 .historico-item {
-  padding: 20px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.historico-header {
+.historico-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.historico-item:hover::before {
+  opacity: 1;
+}
+
+.historico-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.historico-header-modern {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.action-info {
+  flex: 1;
+}
+
+.action-info h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.action-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historico-data,
+.historico-usuario {
+  display: flex;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.historico-data svg,
+.historico-usuario svg {
+  color: #667eea;
+  font-size: 0.8rem;
 }
 
 .tipo-acao {
@@ -55,22 +405,35 @@
 }
 
 .historico-changes {
-  background-color: #f8f8f8;
-  padding: 15px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .historico-changes h4 {
-  margin-bottom: 10px;
-  color: #333;
+  margin-bottom: 15px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .historico-changes pre {
   white-space: pre-wrap;
   word-wrap: break-word;
   margin: 0;
-  font-family: monospace;
-  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
 }
 
 .loading {
@@ -88,42 +451,166 @@
 }
 
 /* Dark Mode */
-.historico-container.dark-mode {
-  background-color: #1a1a1a;
+.historico-ativos-container.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  animation: darkGradientShift 20s ease infinite;
+}
+
+@keyframes darkGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+  33% {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  }
+  66% {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 50%, #1a1a2e 100%);
+  }
+}
+
+/* Dark mode para elementos glassmorphism */
+.historico-ativos-container.dark-mode .historico-header-modern,
+.historico-ativos-container.dark-mode .filtros-container,
+.historico-ativos-container.dark-mode .historico-item,
+.historico-ativos-container.dark-mode .historico-changes {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(20px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.historico-ativos-container.dark-mode .filtro-input,
+.historico-ativos-container.dark-mode .filtro-select,
+.historico-ativos-container.dark-mode .filtro-data {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.historico-ativos-container.dark-mode .filtro-input:focus,
+.historico-ativos-container.dark-mode .filtro-select:focus,
+.historico-ativos-container.dark-mode .filtro-data:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+.historico-ativos-container.dark-mode .filtro-input:hover,
+.historico-ativos-container.dark-mode .filtro-select:hover,
+.historico-ativos-container.dark-mode .filtro-data:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.historico-ativos-container.dark-mode .filtro-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.historico-ativos-container.dark-mode .historico-changes pre {
+  background: rgba(0, 0, 0, 0.3) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-left-color: #667eea !important;
+}
+
+.historico-ativos-container.dark-mode .historico-header-modern {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.historico-ativos-container.dark-mode .loading,
+.historico-ativos-container.dark-mode .error {
   color: #fff;
 }
 
-.historico-container.dark-mode .historico-content h2 {
-  color: #fff;
-}
-
-.historico-container.dark-mode .tipo-acao {
-  background-color: #333;
-  color: #fff;
-}
-
-.historico-container.dark-mode .data {
-  color: #ccc;
-}
-
-.historico-container.dark-mode .historico-changes {
-  background-color: #2d2d2d;
-}
-
-.historico-container.dark-mode .historico-changes h4 {
-  color: #fff;
-}
-
-.historico-container.dark-mode .historico-changes pre {
-  color: #e0e0e0;
-}
-
-.historico-container.dark-mode .loading,
-.historico-container.dark-mode .error {
-  color: #fff;
-}
-
+/* Light Mode */
 .historico-ativos-container.light-mode {
-  background-color: #f5f5f5;
-  color: #333;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  animation: lightGradientShift 15s ease infinite;
+}
+
+@keyframes lightGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+} 
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 80px 20px 20px;
+  }
+  
+  .historico-header-modern {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .header-title h1 {
+    font-size: 2rem;
+  }
+  
+  .filtros-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .data-inputs {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .data-separator {
+    padding: 5px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 70px 15px 15px;
+  }
+  
+  .header-title h1 {
+    font-size: 1.8rem;
+  }
+  
+  .header-content p {
+    font-size: 1rem;
+  }
+  
+  .filtro-grupo {
+    gap: 8px;
+  }
+  
+  .filtro-input,
+  .filtro-select,
+  .filtro-data {
+    height: 45px;
+    font-size: 14px;
+  }
+  
+  .historico-item {
+    padding: 20px;
+  }
+  
+  .action-meta {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .historico-changes {
+    padding: 15px;
+  }
+  
+  .historico-changes pre {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
 } 
