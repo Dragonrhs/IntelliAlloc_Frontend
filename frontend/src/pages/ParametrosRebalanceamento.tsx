@@ -38,7 +38,7 @@ const ParametrosRebalanceamento: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const [isLoading, setIsLoading] = useState(false);
-  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     carregarParametros();
@@ -139,7 +139,10 @@ const ParametrosRebalanceamento: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`parametros-rebalanceamento-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`parametros-rebalanceamento-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando parâmetros...</p>
@@ -149,7 +152,10 @@ const ParametrosRebalanceamento: React.FC = () => {
   }
 
   return (
-    <div className={`parametros-rebalanceamento-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`parametros-rebalanceamento-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
