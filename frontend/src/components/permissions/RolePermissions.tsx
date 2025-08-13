@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Toast from '../Toast';
 import axios from 'axios';
+import { useTheme } from '../../context/ThemeContext';
 import './PermissionsComponents.css';
 
 interface Role {
@@ -44,6 +45,7 @@ interface RolePermissionsProps {
 }
 
 const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) => {
+  const { selectedBackgroundColor } = useTheme();
   const [roles, setRoles] = useState<Role[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [functionalities, setFunctionalities] = useState<Functionality[]>([]);
@@ -154,7 +156,10 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ readOnly = false }) =
   const selectedRoleData = roles.find(role => role.id === parseInt(selectedRole, 10));
 
   return (
-    <div className="role-permissions">
+    <div 
+      className="role-permissions"
+      style={{ '--selected-background-color': selectedBackgroundColor } as React.CSSProperties}
+    >
       <div className="permissions-section">
         {/* Seleção de Cargo */}
         <div className="role-selector">

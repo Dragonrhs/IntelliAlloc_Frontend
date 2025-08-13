@@ -25,6 +25,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Toast from '../Toast';
 import axios from 'axios';
+import { useTheme } from '../../context/ThemeContext';
 import './PermissionsComponents.css';
 
 interface User {
@@ -50,6 +51,7 @@ interface UserPermissionsProps {
 }
 
 const UserPermissions: React.FC<UserPermissionsProps> = ({ readOnly = false }) => {
+  const { selectedBackgroundColor } = useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [functionalities, setFunctionalities] = useState<Functionality[]>([]);
@@ -165,7 +167,10 @@ const UserPermissions: React.FC<UserPermissionsProps> = ({ readOnly = false }) =
   const selectedUserData = users.find(user => user.id === parseInt(selectedUser, 10));
 
   return (
-    <div className="user-permissions">
+    <div 
+      className="user-permissions"
+      style={{ '--selected-background-color': selectedBackgroundColor } as React.CSSProperties}
+    >
       <div className="permissions-section">
         {/* Busca de Usuários */}
         <div className="user-search">

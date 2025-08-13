@@ -4,6 +4,7 @@
 .role-permissions,
 .user-permissions {
   width: 100%;
+  --selected-background-color: #667eea;
 }
 
 .permissions-section {
