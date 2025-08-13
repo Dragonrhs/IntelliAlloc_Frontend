@@ -70,7 +70,7 @@ const RecommendedPortfolio: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   useEffect(() => {
     fetchMeses();
@@ -374,7 +374,10 @@ const RecommendedPortfolio: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando carteiras...</p>
@@ -384,7 +387,10 @@ const RecommendedPortfolio: React.FC = () => {
   }
 
   return (
-    <div className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`recommended-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
