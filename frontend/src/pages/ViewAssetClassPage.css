@@ -4,14 +4,85 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow-x: hidden;
+  transition: all 0.3s ease;
+}
+
+.view-asset-class-page.animated {
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+/* Quando a animação está desativada, usar cor fixa */
+.view-asset-class-page.no-animation {
+  animation: none;
+}
+
+.view-asset-class-page.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.view-asset-class-page.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #f5576c 0%, #4facfe 100%);
+  }
 }
 
 .view-asset-class-page.dark-mode {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
+.view-asset-class-page.dark-mode.animated {
+  animation: darkGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes darkGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #533483 0%, #1a1a2e 100%);
+  }
+}
+
 .view-asset-class-page.light-mode {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.view-asset-class-page.light-mode.animated {
+  animation: lightGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes lightGradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  25% {
+    background: linear-gradient(135deg, #00f2fe 0%, #43e97b 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+  75% {
+    background: linear-gradient(135deg, #38f9d7 0%, #4facfe 100%);
+  }
 }
 
 /* Conteúdo principal */

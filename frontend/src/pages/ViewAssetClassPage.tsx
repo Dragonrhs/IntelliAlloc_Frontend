@@ -10,10 +10,13 @@ import './ViewAssetClassPage.css';
 
 const ViewAssetClassPage: React.FC = () => {
   const [mesSelecionado, setMesSelecionado] = useState('');
-  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme } = useTheme();
+  const { isDarkMode, isSidebarExpanded, toggleSidebar, toggleTheme, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   return (
-    <div className={`view-asset-class-page ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`view-asset-class-page ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
