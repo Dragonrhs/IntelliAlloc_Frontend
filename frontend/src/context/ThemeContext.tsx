@@ -9,6 +9,8 @@ interface ThemeContextType {
   setRole: (role: string) => void;
   isBackgroundAnimationEnabled: boolean;
   toggleBackgroundAnimation: () => void;
+  selectedBackgroundColor: string;
+  setSelectedBackgroundColor: (color: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -18,6 +20,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [role, setRole] = useState<string | undefined>(undefined);
   const [isBackgroundAnimationEnabled, setIsBackgroundAnimationEnabled] = useState(true);
+  const [selectedBackgroundColor, setSelectedBackgroundColor] = useState('#667eea');
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -40,7 +43,9 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       role, 
       setRole,
       isBackgroundAnimationEnabled,
-      toggleBackgroundAnimation
+      toggleBackgroundAnimation,
+      selectedBackgroundColor,
+      setSelectedBackgroundColor
     }}>
       {children}
     </ThemeContext.Provider>
