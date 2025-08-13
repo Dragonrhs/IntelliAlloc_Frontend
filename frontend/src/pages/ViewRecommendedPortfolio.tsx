@@ -44,7 +44,7 @@ const ViewRecommendedPortfolio: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingComparison, setIsLoadingComparison] = useState(false);
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const [userRole, setUserRole] = useState<string>('');
   const [comparacaoResultado, setComparacaoResultado] = useState<string>('');
   const navigate = useNavigate();
@@ -210,7 +210,10 @@ const ViewRecommendedPortfolio: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`view-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`view-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando carteiras...</p>
@@ -220,7 +223,10 @@ const ViewRecommendedPortfolio: React.FC = () => {
   }
 
   return (
-    <div className={`view-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`view-portfolio-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -233,7 +239,7 @@ const ViewRecommendedPortfolio: React.FC = () => {
       
       <div className="view-portfolio-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
         {/* Header */}
-        <div className="portfolio-header">
+        <CustomCard className="portfolio-header" isDarkMode={isDarkMode}>
           <div className="header-content">
             <div className="header-title">
               <FontAwesomeIcon icon={faEye} className="header-icon" />
@@ -241,7 +247,7 @@ const ViewRecommendedPortfolio: React.FC = () => {
             </div>
             <p>Analise e compare carteiras de investimento por perfil de risco</p>
           </div>
-        </div>
+        </CustomCard>
 
         {/* Controles */}
         <div className="controls-section">
