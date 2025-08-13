@@ -40,31 +40,15 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
   );
 
   useEffect(() => {
-    if (buttonRef?.current && popupRef.current) {
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const popupRect = popupRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const windowWidth = window.innerWidth;
-
-      let top = buttonRect.bottom + window.scrollY;
-      let left = buttonRect.left + window.scrollX;
-
-      // Ajusta a posição vertical se o popup ultrapassar a janela
-      if (top + popupRect.height > windowHeight) {
-        top = buttonRect.top - popupRect.height + window.scrollY;
-      }
-
-      // Ajusta a posição horizontal se o popup ultrapassar a janela
-      if (left + popupRect.width > windowWidth) {
-        left = windowWidth - popupRect.width - 20;
-      }
-
-      setPopupStyle({
-        top: `${top}px`,
-        left: `${left}px`
-      });
-    }
-  }, [buttonRef]);
+    // Posiciona o popup sempre no centro da tela
+    setPopupStyle({
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 99999
+    });
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -74,7 +58,9 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [onClose]);
 
   const handleSelectAll = () => {
@@ -124,15 +110,26 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
 
   return (
     <>
-      <div className="filtro-popup-overlay" onClick={onClose} />
+      <div 
+        className="filtro-popup-overlay" 
+        onClick={onClose}
+      />
       <div 
         ref={popupRef}
         className={`filtro-popup ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
         style={popupStyle}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       >
         <div className="filtro-header">
           <h3>Filtrar {coluna}</h3>
-          <div className="ordenacao-buttons">
+          <div 
+            className="ordenacao-buttons" 
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
             <button 
               onClick={() => handleOrdenar('asc')}
               className={ordenacao === 'asc' ? 'active' : ''}
@@ -154,14 +151,25 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
           value={pesquisa}
           onChange={(e) => setPesquisa(e.target.value)}
           className="filtro-search"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
         />
 
-        <div className="filtro-options">
+        <div 
+          className="filtro-options" 
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <label className="filtro-checkbox-item">
             <input
               type="checkbox"
               checked={valoresSelecionados.length === valoresUnicos.length}
               onChange={handleSelectAll}
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
             />
             <span>Selecionar Todos</span>
           </label>
@@ -173,6 +181,9 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
                   type="checkbox"
                   checked={valoresSelecionados.includes(String(valor))}
                   onChange={() => handleToggleValor(String(valor))}
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                 />
                 <span>{valor}</span>
               </label>
@@ -180,7 +191,12 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
           </div>
         </div>
 
-        <div className="filtro-actions">
+        <div 
+          className="filtro-actions" 
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <button onClick={handleLimparFiltro}>Limpar</button>
           <button onClick={handleAplicarFiltro} className="aplicar">Aplicar</button>
         </div>
