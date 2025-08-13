@@ -24,7 +24,7 @@ interface ErroImportacao {
 
 const ImportarAtivosLote: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { userRole } = useUser();
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [errosImportacao, setErrosImportacao] = useState<ErroImportacao[]>([]);
@@ -77,7 +77,10 @@ const ImportarAtivosLote: React.FC = () => {
   // Verificar se o usuário tem permissão
   if (userRole !== 'Admin' && userRole !== 'Research') {
     return (
-      <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <Navbar isDarkMode={isDarkMode} showAvatar={false} />
         <Sidebar
           isExpanded={isSidebarExpanded}
@@ -100,7 +103,10 @@ const ImportarAtivosLote: React.FC = () => {
   }
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
