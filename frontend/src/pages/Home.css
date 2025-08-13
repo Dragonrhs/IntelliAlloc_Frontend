@@ -22,6 +22,19 @@ body {
   animation: gradientShift 15s ease infinite;
 }
 
+/* Quando a animação está desativada, usar cor fixa */
+.home-container.no-animation {
+  animation: none;
+}
+
+.home-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.home-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
 /* Animação do gradiente de fundo */
 @keyframes gradientShift {
   0%, 100% {
@@ -983,4 +996,54 @@ body {
   .setting-info p {
     font-size: 0.8rem;
   }
+}
+
+/* Color Picker Styles */
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.color-picker {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: none;
+  transition: transform 0.3s ease;
+}
+
+.color-picker:hover {
+  transform: scale(1.1);
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.color-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Light mode adjustments for color picker */
+.home-container.light-mode .color-value {
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.1);
 }

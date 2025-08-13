@@ -54,7 +54,7 @@ const Home: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, toggleBackgroundAnimation } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, toggleBackgroundAnimation, selectedBackgroundColor, setSelectedBackgroundColor } = useTheme();
   const { userRole, user } = useUser();
 
   // Dados de atalhos baseados no cargo do usuário
@@ -203,7 +203,10 @@ const Home: React.FC = () => {
   );
 
   return (
-    <div className={`home-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`home-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar
         showAvatar={true}
         username={currentUsername}
@@ -366,6 +369,24 @@ const Home: React.FC = () => {
                       <span>{isDarkMode ? 'Ativado' : 'Desativado'}</span>
                     </button>
                   </div>
+                  
+                  {!isBackgroundAnimationEnabled && (
+                    <div className="settings-item">
+                      <div className="setting-info">
+                        <label>Cor de Fundo</label>
+                        <p>Escolha a cor fixa do fundo quando a animação estiver desativada</p>
+                      </div>
+                      <div className="color-picker-container">
+                        <input
+                          type="color"
+                          value={selectedBackgroundColor}
+                          onChange={(e) => setSelectedBackgroundColor(e.target.value)}
+                          className="color-picker"
+                        />
+                        <span className="color-value">{selectedBackgroundColor}</span>
+                      </div>
+                    </div>
+                  )}
                 </CustomCard>
               </div>
             </div>
