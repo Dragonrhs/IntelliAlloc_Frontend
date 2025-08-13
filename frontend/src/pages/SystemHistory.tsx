@@ -44,7 +44,7 @@ const SystemHistory: React.FC = () => {
   const fetchedCarteiraIds = useRef<Set<number>>(new Set());
   const hasInitializedClientNames = useRef<boolean>(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
 
   const getClientNameByCarteiraId = async (carteiraId: number) => {
     if (clientNames[carteiraId]) {
@@ -290,7 +290,10 @@ const SystemHistory: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className={`system-history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+      <div 
+        className={`system-history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+        style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+      >
         <div className="loading-container">
           <FontAwesomeIcon icon={faSpinner} className="loading-spinner" />
           <p>Carregando histórico do sistema...</p>
@@ -300,7 +303,10 @@ const SystemHistory: React.FC = () => {
   }
 
   return (
-    <div className={`system-history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : ''}`}>
+    <div 
+      className={`system-history-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} showAvatar={false} />
       <Sidebar
         isExpanded={isSidebarExpanded}
