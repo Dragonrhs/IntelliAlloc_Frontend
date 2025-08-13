@@ -22,6 +22,19 @@ body {
   animation: gradientShift 15s ease infinite;
 }
 
+/* Quando a animação está desativada, usar cor fixa */
+.suitability-container.no-animation {
+  animation: none;
+}
+
+.suitability-container.no-animation.dark-mode {
+  background: var(--selected-background-color, #1a1a2e);
+}
+
+.suitability-container.no-animation.light-mode {
+  background: var(--selected-background-color, #667eea);
+}
+
 /* Animação do gradiente de fundo */
 @keyframes gradientShift {
   0%, 100% {
