@@ -1,10 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChartLine,
+  faDatabase,
+  faDownload,
+  faFileExcel,
+  faFileCsv,
+  faPlus,
+  faTimes,
+  faCog,
+  faEye,
+  faTable,
+  faCalculator,
+  faChartBar,
+  faChartArea,
+  faChartPie,
+  faFilter,
+  faSearch,
+  faPalette,
+  faExpand,
+  faCompress,
+  faPlay,
+  faRefresh
+} from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLoading } from '../context/LoadingContext';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+import CustomCard from '../components/CustomCard';
 import Toast from '../components/Toast';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -43,7 +68,7 @@ interface GraficoConfig {
 
 const VisualizacaoDados: React.FC = () => {
   const { user } = useUser();
-  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar } = useTheme();
+  const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, selectedBackgroundColor } = useTheme();
   const { showLoading, hideLoading } = useLoading();
 
   const [ativosDisponiveis, setAtivosDisponiveis] = useState<string[]>([]);
@@ -508,7 +533,14 @@ const VisualizacaoDados: React.FC = () => {
     plugins: {
       legend: {
         display: configGrafico.mostrarLegenda,
-        position: 'top'
+        position: 'top',
+        labels: {
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 12,
+            weight: 'normal'
+          }
+        }
       },
       tooltip: {
         mode: 'index',
@@ -520,29 +552,49 @@ const VisualizacaoDados: React.FC = () => {
         display: true,
         title: {
           display: true,
-          text: 'Data'
+          text: 'Data',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
           autoSkip: true,
           maxTicksLimit: 20,
-          stepSize: configGrafico.stepX
+          stepSize: configGrafico.stepX,
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
+          }
         }
       },
       y: {
         display: true,
         title: {
           display: true,
-          text: 'Valor'
+          text: 'Valor',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         type: 'linear',
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
-          stepSize: configGrafico.stepY
+          stepSize: configGrafico.stepY,
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
+          }
         }
       }
     },
@@ -556,7 +608,14 @@ const VisualizacaoDados: React.FC = () => {
     plugins: {
       legend: {
         display: configGrafico.mostrarLegenda,
-        position: 'top'
+        position: 'top',
+        labels: {
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 12,
+            weight: 'normal'
+          }
+        }
       },
       tooltip: {
         mode: 'index',
@@ -568,29 +627,49 @@ const VisualizacaoDados: React.FC = () => {
         display: true,
         title: {
           display: true,
-          text: 'Data'
+          text: 'Data',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
           autoSkip: true,
           maxTicksLimit: 20,
-          stepSize: configGrafico.stepX
+          stepSize: configGrafico.stepX,
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
+          }
         }
       },
       y: {
         display: true,
         title: {
           display: true,
-          text: 'Valor'
+          text: 'Valor',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         type: 'linear',
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
-          stepSize: configGrafico.stepY
+          stepSize: configGrafico.stepY,
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
+          }
         }
       }
     },
@@ -604,7 +683,14 @@ const VisualizacaoDados: React.FC = () => {
     plugins: {
       legend: {
         display: configGrafico.mostrarLegenda,
-        position: 'top'
+        position: 'top',
+        labels: {
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 12,
+            weight: 'normal'
+          }
+        }
       },
       tooltip: {
         mode: 'index',
@@ -616,14 +702,24 @@ const VisualizacaoDados: React.FC = () => {
         display: true,
         title: {
           display: true,
-          text: 'Risco (Volatilidade Anualizada)'
+          text: 'Risco (Volatilidade Anualizada)',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
           callback: function(value) {
             return value + '%';
+          },
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
           }
         },
         // stepSize não faz sentido para scatter X
@@ -632,15 +728,25 @@ const VisualizacaoDados: React.FC = () => {
         display: true,
         title: {
           display: true,
-          text: 'Retorno no Período'
+          text: 'Retorno no Período',
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
         },
         type: 'linear',
         grid: {
-          display: configGrafico.mostrarGrid
+          display: configGrafico.mostrarGrid,
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         },
         ticks: {
           callback: function(value) {
             return value + '%';
+          },
+          color: isDarkMode ? '#ffffff' : '#333333',
+          font: {
+            size: 11
           }
         },
         // stepSize não faz sentido para scatter Y
@@ -703,7 +809,10 @@ const VisualizacaoDados: React.FC = () => {
   };
 
   return (
-    <div className={`visualizacao-dados-page ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div 
+      className={`visualizacao-dados-page ${isDarkMode ? 'dark-mode' : 'light-mode'} ${isBackgroundAnimationEnabled ? 'animated' : 'no-animation'}`}
+      style={!isBackgroundAnimationEnabled ? { '--selected-background-color': selectedBackgroundColor } as React.CSSProperties : {}}
+    >
       <Navbar isDarkMode={isDarkMode} />
       <Sidebar
         isExpanded={isSidebarExpanded}
@@ -712,128 +821,264 @@ const VisualizacaoDados: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className="main-content" style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
-        <h1>Visualização de Dados</h1>
-        <div className="visualizacao-container">
-          <div className="ativos-selector">
-            <label>Adicionar Ativo:</label>
-            <div className="autocomplete-bar">
-              <input
-                type="text"
-                list="ativos-list"
-                value={inputAtivo}
-                onChange={e => setInputAtivo(e.target.value)}
-                placeholder="Digite o código do ativo"
-                className="custom-input"
-              />
-              <datalist id="ativos-list">
-                {ativosDisponiveis.map(ativo => (
-                  <option key={ativo} value={ativo} />
+      <div className="content-container">
+        <div className="main-content">
+          <CustomCard className="visualizacao-header-card" isDarkMode={isDarkMode}>
+            <div className="visualizacao-header-modern">
+              <h1>
+                <FontAwesomeIcon icon={faChartLine} className="header-icon" />
+                Visualização de Dados
+              </h1>
+              <p>Analise séries históricas, correlações e riscos dos ativos</p>
+            </div>
+          </CustomCard>
+          <CustomCard className="ativos-selector-card" isDarkMode={isDarkMode}>
+            <div className="card-header">
+              <h3>
+                <FontAwesomeIcon icon={faDatabase} className="card-icon" />
+                Seleção de Ativos
+              </h3>
+              <p>Escolha os ativos para análise</p>
+            </div>
+            <div className="ativos-selector">
+              <div className="selector-label">
+                <FontAwesomeIcon icon={faSearch} className="label-icon" />
+                <label>Adicionar Ativo:</label>
+              </div>
+              <div className="autocomplete-bar">
+                <input
+                  type="text"
+                  list="ativos-list"
+                  value={inputAtivo}
+                  onChange={e => setInputAtivo(e.target.value)}
+                  placeholder="Digite o código do ativo (ex: PETR4)"
+                  className="custom-input"
+                />
+                <datalist id="ativos-list">
+                  {ativosDisponiveis.map(ativo => (
+                    <option key={ativo} value={ativo} />
+                  ))}
+                </datalist>
+                <CustomButton onClick={handleAdicionarAtivo} className="btn-primary" isDarkMode={isDarkMode}>
+                  <FontAwesomeIcon icon={faPlus} />
+                  Adicionar
+                </CustomButton>
+              </div>
+              <div className="ativos-selecionados-list">
+                {ativosSelecionados.map(ativo => (
+                  <span key={ativo} className="ativo-badge">
+                    <FontAwesomeIcon icon={faChartBar} className="badge-icon" />
+                    {ativo}
+                    <button className="remove-btn" onClick={() => handleRemoverAtivo(ativo)}>
+                      <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                  </span>
                 ))}
-              </datalist>
-              <CustomButton onClick={handleAdicionarAtivo} className="btn-primary" isDarkMode={isDarkMode}>
-                Adicionar
-              </CustomButton>
+              </div>
             </div>
-            <div className="ativos-selecionados-list">
-              {ativosSelecionados.map(ativo => (
-                <span key={ativo} className="ativo-badge">
-                  {ativo}
-                  <button className="remove-btn" onClick={() => handleRemoverAtivo(ativo)}>×</button>
-                </span>
-              ))}
-            </div>
-          </div>
+          </CustomCard>
 
           {/* Botão de gerar carteira eficiente de Markowitz */}
           {ativosSelecionados.length >= 2 && (
-            <div style={{ margin: '20px 0' }}>
+            <CustomCard className="carteira-eficiente-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <h3>
+                  <FontAwesomeIcon icon={faCalculator} className="card-icon" />
+                  Carteira Eficiente
+                </h3>
+                <p>Otimização de Markowitz baseada em retorno e risco</p>
+              </div>
               <CustomButton
                 onClick={handleGerarCarteiraEficiente}
-                className="btn-primary"
+                className="btn-primary carteira-btn"
                 isDarkMode={isDarkMode}
                 disabled={loadingCarteiraEficiente}
               >
-                {loadingCarteiraEficiente ? 'Calculando...' : 'Gerar Carteira Eficiente (Markowitz)'}
+                <FontAwesomeIcon icon={loadingCarteiraEficiente ? faRefresh : faPlay} className={loadingCarteiraEficiente ? 'fa-spin' : ''} />
+                {loadingCarteiraEficiente ? 'Calculando...' : 'Gerar Carteira Eficiente'}
               </CustomButton>
-            </div>
+            </CustomCard>
           )}
 
           {/* Resultado da carteira eficiente */}
           {resultadoCarteiraEficiente && (
-            <div className="carteira-eficiente-resultado" style={{ marginBottom: 30 }}>
-              <h2>Carteira Eficiente (Markowitz)</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-                <div>
-                  <h4>Alocação Ótima:</h4>
-                  <ul>
+            <CustomCard className="carteira-resultado-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <h3>
+                  <FontAwesomeIcon icon={faChartPie} className="card-icon" />
+                  Carteira Eficiente (Markowitz)
+                </h3>
+                <p>Resultado da otimização de portfólio</p>
+              </div>
+              <div className="carteira-resultado-grid">
+                <div className="alocacao-section">
+                  <h4>
+                    <FontAwesomeIcon icon={faChartPie} className="section-icon" />
+                    Alocação Ótima
+                  </h4>
+                  <div className="alocacao-list">
                     {Object.entries(resultadoCarteiraEficiente.alocacao || {}).map(([ativo, pct]: any) => (
-                      <li key={ativo}><b>{ativo}:</b> {Number(pct * 100).toFixed(2)}%</li>
+                      <div key={ativo} className="alocacao-item">
+                        <span className="ativo-nome">{ativo}:</span>
+                        <span className="ativo-percentual">{Number(pct * 100).toFixed(2)}%</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
-                <div>
-                  <h4>Indicadores:</h4>
-                  <ul>
-                    <li><b>Retorno Esperado:</b> {resultadoCarteiraEficiente.retorno ? (resultadoCarteiraEficiente.retorno * 100).toFixed(2) + '%' : 'N/D'}</li>
-                    <li><b>Risco (Vol):</b> {resultadoCarteiraEficiente.risco ? (resultadoCarteiraEficiente.risco * 100).toFixed(2) + '%' : 'N/D'}</li>
-                    <li><b>Sharpe:</b> {resultadoCarteiraEficiente.sharpe ? resultadoCarteiraEficiente.sharpe.toFixed(2) : 'N/D'}</li>
-                  </ul>
+                <div className="indicadores-section">
+                  <h4>
+                    <FontAwesomeIcon icon={faCalculator} className="section-icon" />
+                    Indicadores
+                  </h4>
+                  <div className="indicadores-list">
+                    <div className="indicador-item">
+                      <span className="indicador-label">Retorno Esperado:</span>
+                      <span className="indicador-valor">{resultadoCarteiraEficiente.retorno ? (resultadoCarteiraEficiente.retorno * 100).toFixed(2) + '%' : 'N/D'}</span>
+                    </div>
+                    <div className="indicador-item">
+                      <span className="indicador-label">Risco (Vol):</span>
+                      <span className="indicador-valor">{resultadoCarteiraEficiente.risco ? (resultadoCarteiraEficiente.risco * 100).toFixed(2) + '%' : 'N/D'}</span>
+                    </div>
+                    <div className="indicador-item">
+                      <span className="indicador-label">Sharpe:</span>
+                      <span className="indicador-valor">{resultadoCarteiraEficiente.sharpe ? resultadoCarteiraEficiente.sharpe.toFixed(2) : 'N/D'}</span>
+                    </div>
+                  </div>
                 </div>
                 {resultadoCarteiraEficiente.parecer && (
-                  <div style={{ minWidth: 200 }}>
-                    <h4>Parecer:</h4>
-                    <div style={{ background: isDarkMode ? '#232323' : '#f8f9fa', padding: 10, borderRadius: 8 }}>{resultadoCarteiraEficiente.parecer}</div>
+                  <div className="parecer-section">
+                    <h4>
+                      <FontAwesomeIcon icon={faEye} className="section-icon" />
+                      Parecer
+                    </h4>
+                    <div className="parecer-content">{resultadoCarteiraEficiente.parecer}</div>
                   </div>
                 )}
               </div>
-            </div>
+            </CustomCard>
           )}
 
           {/* Gráfico de backtest da carteira eficiente */}
           {backtestCarteira && backtestCarteira.series && (
-            <div className="carteira-eficiente-backtest" style={{ marginBottom: 30 }}>
-              <h3>Backtest da Carteira Eficiente</h3>
-              <Line
-                data={{
-                  labels: backtestCarteira.series.map((p: any) => p.data),
-                  datasets: [
-                    {
-                      label: 'Carteira Eficiente',
-                      data: backtestCarteira.series.map((p: any) => p.valor),
-                      borderColor: '#28a745',
-                      backgroundColor: 'rgba(40,167,69,0.2)',
-                      tension: 0.2,
-                      borderWidth: 3,
-                    }
-                  ]
-                }}
-                options={{
-                  responsive: true,
-                  plugins: { legend: { display: true, position: 'top' } },
-                  scales: {
-                    x: { title: { display: true, text: 'Data' } },
-                    y: { title: { display: true, text: 'Retorno Acumulado (%)' } }
-                  }
-                }}
-                width={900}
-                height={350}
-              />
-              <div style={{ marginTop: 10 }}>
-                <b>Retorno Total no Período:</b> {backtestCarteira.retornoTotal !== undefined ? backtestCarteira.retornoTotal.toFixed(2) + '%' : 'N/D'}
+            <CustomCard className="backtest-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <h3>
+                  <FontAwesomeIcon icon={faChartArea} className="card-icon" />
+                  Backtest da Carteira Eficiente
+                </h3>
+                <p>Evolução histórica da carteira otimizada</p>
               </div>
-            </div>
+              <div className="backtest-chart">
+                <Line
+                  data={{
+                    labels: backtestCarteira.series.map((p: any) => p.data),
+                    datasets: [
+                      {
+                        label: 'Carteira Eficiente',
+                        data: backtestCarteira.series.map((p: any) => p.valor),
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40,167,69,0.2)',
+                        tension: 0.2,
+                        borderWidth: 3,
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: { 
+                      legend: { 
+                        display: true, 
+                        position: 'top',
+                        labels: {
+                          color: isDarkMode ? '#ffffff' : '#333333',
+                          font: {
+                            size: 12,
+                            weight: 'normal'
+                          }
+                        }
+                      } 
+                    },
+                    scales: {
+                      x: { 
+                        title: { 
+                          display: true, 
+                          text: 'Data',
+                          color: isDarkMode ? '#ffffff' : '#333333',
+                          font: {
+                            size: 13,
+                            weight: 'bold'
+                          }
+                        },
+                        grid: {
+                          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                          color: isDarkMode ? '#ffffff' : '#333333',
+                          font: {
+                            size: 11
+                          }
+                        }
+                      },
+                      y: { 
+                        title: { 
+                          display: true, 
+                          text: 'Retorno Acumulado (%)',
+                          color: isDarkMode ? '#ffffff' : '#333333',
+                          font: {
+                            size: 13,
+                            weight: 'bold'
+                          }
+                        },
+                        grid: {
+                          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                          color: isDarkMode ? '#ffffff' : '#333333',
+                          font: {
+                            size: 11
+                          }
+                        }
+                      }
+                    }
+                  }}
+                  width={900}
+                  height={350}
+                />
+              </div>
+              <div className="backtest-summary">
+                <div className="summary-item">
+                  <FontAwesomeIcon icon={faCalculator} className="summary-icon" />
+                  <span className="summary-label">Retorno Total no Período:</span>
+                  <span className="summary-value">{backtestCarteira.retornoTotal !== undefined ? backtestCarteira.retornoTotal.toFixed(2) + '%' : 'N/D'}</span>
+                </div>
+              </div>
+            </CustomCard>
           )}
 
           {ativosSelecionados.length > 0 && (
-            <div className="graficos-section">
+            <CustomCard className="graficos-section-card" isDarkMode={isDarkMode}>
+              <div className="card-header">
+                <h3>
+                  <FontAwesomeIcon icon={faChartLine} className="card-icon" />
+                  Visualização de Dados
+                </h3>
+                <p>Configure e visualize gráficos dos ativos selecionados</p>
+              </div>
               {/* Controles do gráfico */}
               <div className="controles-grafico">
-                <h3>Configurações do Gráfico</h3>
+                <div className="controles-header">
+                  <h4>
+                    <FontAwesomeIcon icon={faCog} className="section-icon" />
+                    Configurações do Gráfico
+                  </h4>
+                </div>
                 <div className="controles-grid">
                   {/* Tamanho do gráfico */}
                   <div className="controle-grupo">
-                    <label>Largura do Gráfico (px):</label>
+                    <label>
+                      <FontAwesomeIcon icon={faExpand} className="label-icon" />
+                      Largura do Gráfico (px):
+                    </label>
                     <input
                       type="number"
                       min={400}
@@ -847,7 +1092,10 @@ const VisualizacaoDados: React.FC = () => {
                     />
                   </div>
                   <div className="controle-grupo">
-                    <label>Altura do Gráfico (px):</label>
+                    <label>
+                      <FontAwesomeIcon icon={faCompress} className="label-icon" />
+                      Altura do Gráfico (px):
+                    </label>
                     <input
                       type="number"
                       min={200}
@@ -861,7 +1109,7 @@ const VisualizacaoDados: React.FC = () => {
                     />
                   </div>
                   {/* Retorno acumulado */}
-                  <div className="controle-grupo">
+                  <div className="controle-grupo checkbox-group">
                     <label>
                       <input
                         type="checkbox"
@@ -871,11 +1119,15 @@ const VisualizacaoDados: React.FC = () => {
                           mostrarRetornoAcumulado: e.target.checked
                         })}
                       />
+                      <FontAwesomeIcon icon={faCalculator} className="label-icon" />
                       Mostrar Retorno Acumulado
                     </label>
                   </div>
                   <div className="controle-grupo">
-                    <label>Tipo de Gráfico:</label>
+                    <label>
+                      <FontAwesomeIcon icon={faChartBar} className="label-icon" />
+                      Tipo de Gráfico:
+                    </label>
                     <select 
                       value={configGrafico.tipo}
                       onChange={(e) => setConfigGrafico({
@@ -891,7 +1143,10 @@ const VisualizacaoDados: React.FC = () => {
                   </div>
                   {/* Suavização da curva */}
                   <div className="controle-grupo">
-                    <label>Suavização da Curva:</label>
+                    <label>
+                      <FontAwesomeIcon icon={faPalette} className="label-icon" />
+                      Suavização da Curva:
+                    </label>
                     <select
                       value={configGrafico.suavizacao ? 'sim' : 'nao'}
                       onChange={e => setConfigGrafico({
@@ -906,7 +1161,10 @@ const VisualizacaoDados: React.FC = () => {
                   </div>
                   {/* Marcadores */}
                   <div className="controle-grupo">
-                    <label>Marcadores:</label>
+                    <label>
+                      <FontAwesomeIcon icon={faFilter} className="label-icon" />
+                      Marcadores:
+                    </label>
                     <select
                       value={configGrafico.marcadores}
                       onChange={e => setConfigGrafico({
@@ -1057,14 +1315,21 @@ const VisualizacaoDados: React.FC = () => {
 
               {/* Botões de Exportação */}
               <div className="exportacao-section">
-                <h3>Exportar Dados</h3>
+                <div className="exportacao-header">
+                  <h4>
+                    <FontAwesomeIcon icon={faDownload} className="section-icon" />
+                    Exportar Dados
+                  </h4>
+                  <p>Baixe os dados em formato Excel</p>
+                </div>
                 <div className="botoes-exportacao">
                   <CustomButton 
                     onClick={exportarSeriesHistoricas}
                     className="btn-export"
                     isDarkMode={isDarkMode}
                   >
-                    📊 Séries Históricas (Excel)
+                    <FontAwesomeIcon icon={faFileExcel} />
+                    Séries Históricas
                   </CustomButton>
                   
                   {retorno && risco && (
@@ -1073,7 +1338,8 @@ const VisualizacaoDados: React.FC = () => {
                       className="btn-export"
                       isDarkMode={isDarkMode}
                     >
-                      📈 Estatísticas (Excel)
+                      <FontAwesomeIcon icon={faCalculator} />
+                      Estatísticas
                     </CustomButton>
                   )}
                   
@@ -1083,7 +1349,8 @@ const VisualizacaoDados: React.FC = () => {
                       className="btn-export"
                       isDarkMode={isDarkMode}
                     >
-                      🔗 Correlação (Excel)
+                      <FontAwesomeIcon icon={faTable} />
+                      Correlação
                     </CustomButton>
                   )}
                   
@@ -1093,84 +1360,121 @@ const VisualizacaoDados: React.FC = () => {
                       className="btn-export"
                       isDarkMode={isDarkMode}
                     >
-                      📊 Covariância (Excel)
+                      <FontAwesomeIcon icon={faFileExcel} />
+                      Covariância
                     </CustomButton>
                   )}
                 </div>
               </div>
 
-              <h2>Série Histórica</h2>
-              {/* Informações de retorno total */}
-              {configGrafico.mostrarRetornoAcumulado && Object.keys(retornosTotais).length > 0 && (
-                <div className="retorno-total-info">
-                  <h3>Retorno Total no Período</h3>
-                  <div className="retorno-cards">
-                    {ativosSelecionados.map(ativo => (
-                      <div key={ativo} className="retorno-card">
-                        <div className="ativo-nome">{ativo}</div>
-                        <div className={`retorno-valor ${retornosTotais[ativo] >= 0 ? 'positivo' : 'negativo'}`}>
-                          {retornosTotais[ativo] !== undefined && retornosTotais[ativo] !== null
-                            ? `${retornosTotais[ativo] >= 0 ? '+' : ''}${retornosTotais[ativo].toFixed(2)}%`
-                            : 'N/D'}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="serie-historica-section">
+                <div className="serie-header">
+                  <h4>
+                    <FontAwesomeIcon icon={faChartLine} className="section-icon" />
+                    Série Histórica
+                  </h4>
                 </div>
-              )}
-              
-              <div className="grafico-linha">
-                {renderGrafico()}
+                
+                {/* Informações de retorno total */}
+                {configGrafico.mostrarRetornoAcumulado && Object.keys(retornosTotais).length > 0 && (
+                  <div className="retorno-total-info">
+                    <div className="retorno-header">
+                      <h5>
+                        <FontAwesomeIcon icon={faCalculator} className="subsection-icon" />
+                        Retorno Total no Período
+                      </h5>
+                    </div>
+                    <div className="retorno-cards">
+                      {ativosSelecionados.map(ativo => (
+                        <div key={ativo} className="retorno-card">
+                          <div className="ativo-nome">
+                            <FontAwesomeIcon icon={faChartBar} className="ativo-icon" />
+                            {ativo}
+                          </div>
+                          <div className={`retorno-valor ${retornosTotais[ativo] >= 0 ? 'positivo' : 'negativo'}`}>
+                            {retornosTotais[ativo] !== undefined && retornosTotais[ativo] !== null
+                              ? `${retornosTotais[ativo] >= 0 ? '+' : ''}${retornosTotais[ativo].toFixed(2)}%`
+                              : 'N/D'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="grafico-linha">
+                  {renderGrafico()}
+                </div>
               </div>
 
               {correlacao && (
                 <div className="tabela-correlacao">
-                  <h3>Matriz de Correlação</h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {ativosSelecionados.map(ativo => <th key={ativo}>{ativo}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ativosSelecionados.map(rowAtivo => (
-                        <tr key={rowAtivo}>
-                          <td>{rowAtivo}</td>
-                          {ativosSelecionados.map(colAtivo => (
-                            <td key={colAtivo}>{correlacao[rowAtivo]?.[colAtivo]}</td>
-                          ))}
+                  <div className="tabela-header">
+                    <h4>
+                      <FontAwesomeIcon icon={faTable} className="section-icon" />
+                      Matriz de Correlação
+                    </h4>
+                    <p>Correlação entre os retornos dos ativos</p>
+                  </div>
+                  <div className="tabela-wrapper">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {ativosSelecionados.map(ativo => <th key={ativo}>{ativo}</th>)}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {ativosSelecionados.map(rowAtivo => (
+                          <tr key={rowAtivo}>
+                            <td className="row-header">{rowAtivo}</td>
+                            {ativosSelecionados.map(colAtivo => (
+                              <td key={colAtivo} className="data-cell">
+                                {correlacao[rowAtivo]?.[colAtivo] ? Number(correlacao[rowAtivo][colAtivo]).toFixed(3) : '-'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
               {covariancia && (
                 <div className="tabela-covariancia">
-                  <h3>Matriz de Covariância</h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {ativosSelecionados.map(ativo => <th key={ativo}>{ativo}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ativosSelecionados.map(rowAtivo => (
-                        <tr key={rowAtivo}>
-                          <td>{rowAtivo}</td>
-                          {ativosSelecionados.map(colAtivo => (
-                            <td key={colAtivo}>{covariancia[rowAtivo]?.[colAtivo]}</td>
-                          ))}
+                  <div className="tabela-header">
+                    <h4>
+                      <FontAwesomeIcon icon={faCalculator} className="section-icon" />
+                      Matriz de Covariância
+                    </h4>
+                    <p>Covariância entre os retornos dos ativos</p>
+                  </div>
+                  <div className="tabela-wrapper">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {ativosSelecionados.map(ativo => <th key={ativo}>{ativo}</th>)}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {ativosSelecionados.map(rowAtivo => (
+                          <tr key={rowAtivo}>
+                            <td className="row-header">{rowAtivo}</td>
+                            {ativosSelecionados.map(colAtivo => (
+                              <td key={colAtivo} className="data-cell">
+                                {covariancia[rowAtivo]?.[colAtivo] ? Number(covariancia[rowAtivo][colAtivo]).toFixed(6) : '-'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
-            </div>
+            </CustomCard>
           )}
         </div>
       </div>
