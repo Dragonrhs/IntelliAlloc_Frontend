@@ -21,9 +21,6 @@ import {
   faTimes,
   faUserCog,
   faShieldAlt,
-  faBell,
-  faStar,
-  faTrophy,
   faChartLine,
   faDatabase,
   faFileAlt,
@@ -88,15 +85,7 @@ const Home: React.FC = () => {
     return baseShortcuts;
   };
 
-  // Estatísticas simuladas do usuário
-  const getUserStats = () => {
-    return [
-      { icon: faUsers, label: 'Clientes Ativos', value: '12', color: '#667eea' },
-      { icon: faBriefcase, label: 'Carteiras', value: '8', color: '#4facfe' },
-      { icon: faChartBar, label: 'Avaliações', value: '24', color: '#43e97b' },
-      { icon: faHistory, label: 'Atividades', value: '156', color: '#f093fb' }
-    ];
-  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,20 +228,7 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Cards de estatísticas */}
-            <div className="stats-grid">
-              {getUserStats().map((stat, index) => (
-                <div key={index} className="stat-card" style={{ '--card-color': stat.color } as React.CSSProperties}>
-                  <div className="stat-icon">
-                    <FontAwesomeIcon icon={stat.icon} />
-                  </div>
-                  <div className="stat-content">
-                    <h3>{stat.value}</h3>
-                    <p>{stat.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+
 
             {/* Seção de atalhos */}
             <div className="shortcuts-section">
