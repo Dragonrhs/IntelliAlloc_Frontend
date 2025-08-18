@@ -1,37 +1,63 @@
 .filtro-popup {
+  /* Reset completo de posicionamento */
   position: fixed !important;
-  z-index: 99999 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin: auto !important;
+  
+  /* Dimensões */
+  width: 400px !important;
+  height: 600px !important;
+  max-width: 90vw !important;
+  max-height: 85vh !important;
+  
+  /* Visual */
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 16px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  width: 400px;
-  height: 600px;
+  
+  /* Layout */
   display: flex;
   flex-direction: column;
+  
+  /* Z-index e interação */
+  z-index: 999999 !important;
   pointer-events: auto;
-  isolation: isolate;
-  will-change: auto;
+  
+  /* Reset transforms */
+  transform: none !important;
+  translate: none !important;
 }
 
 .dark-mode.filtro-popup {
-  background: rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+.light-mode.filtro-popup {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #333 !important;
 }
 
 .filtro-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
-  z-index: 99998;
-  pointer-events: none;
+  z-index: 999998 !important;
+  pointer-events: auto !important;
   cursor: pointer;
   animation: fadeIn 0.2s ease;
 }
@@ -284,22 +310,27 @@
   pointer-events: auto !important;
 }
 
+
+
 /* Garantir renderização única */
 .filtro-popup {
-  contain: layout style paint;
+  contain: none !important;
   transform-style: flat;
 }
 
 /* Prevenir qualquer movimento do popup */
 .filtro-popup {
-  transform: none !important;
-  transition: none !important;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-.filtro-popup:hover {
-  transform: none !important;
+/* Garantir que o popup esteja sempre visível e acima de tudo */
+.filtro-popup {
+  clip: none !important;
+  clip-path: none !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+  filter: none !important;
 }
 
 /* Permitir scroll da página quando popup estiver aberto */
@@ -357,6 +388,23 @@ body.popup-open *:not(.filtro-popup):not(.filtro-popup-overlay):not(.filtro-popu
 .light-mode .ordenacao-buttons button:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 480px) {
+  .filtro-popup {
+    width: 95vw !important;
+    height: 80vh !important;
+    max-width: 95vw !important;
+    max-height: 80vh !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .filtro-popup {
+    height: 90vh !important;
+    max-height: 90vh !important;
+  }
 }
 
 /* Scrollbar personalizada moderna */

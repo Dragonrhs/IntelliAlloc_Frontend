@@ -175,6 +175,34 @@ body {
 .tabela-container.popup-open {
   pointer-events: none;
   user-select: none;
+  overflow: visible !important;
+}
+
+/* Garantir que os containers não cortem o popup */
+.consultar-ativos-container,
+.main-content,
+.tabela-container {
+  overflow: visible !important;
+}
+
+/* Resetar qualquer clipping que possa afetar o popup */
+.consultar-ativos-container * {
+  contain: none !important;
+}
+
+/* Garantir que o popup tenha espaço para aparecer */
+.main-content {
+  position: relative;
+  overflow: visible !important;
+  clip: none !important;
+  clip-path: none !important;
+}
+
+.tabela-container {
+  position: relative;
+  overflow: visible !important;
+  clip: none !important;
+  clip-path: none !important;
 }
 
 @keyframes slideInUp {

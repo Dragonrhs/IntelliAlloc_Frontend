@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import './FiltroPopup.css';
 
 interface FiltroPopupProps {
@@ -23,7 +24,6 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
   const [pesquisa, setPesquisa] = useState('');
   const [valoresSelecionados, setValoresSelecionados] = useState<string[]>(filtrosAtivos);
   const [ordenacao, setOrdenacao] = useState<'asc' | 'desc' | null>(null);
-  const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({});
   const popupRef = useRef<HTMLDivElement>(null);
 
   // Remove duplicatas e valores nulos/undefined e adiciona opção vazia se existirem valores nulos
@@ -38,17 +38,6 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
   const valoresFiltrados = valoresUnicos.filter(valor =>
     String(valor).toLowerCase().includes(pesquisa.toLowerCase())
   );
-
-  useEffect(() => {
-    // Posiciona o popup sempre no centro da tela
-    setPopupStyle({
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 99999
-    });
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -108,7 +97,7 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
     onClose();
   };
 
-  return (
+  return createPortal(
     <>
       <div 
         className="filtro-popup-overlay" 
@@ -117,7 +106,6 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
       <div 
         ref={popupRef}
         className={`filtro-popup ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
-        style={popupStyle}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
@@ -201,7 +189,8 @@ const FiltroPopup: React.FC<FiltroPopupProps> = ({
           <button onClick={handleAplicarFiltro} className="aplicar">Aplicar</button>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };
 
