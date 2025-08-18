@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -74,6 +75,11 @@ const VisualizacaoDados: React.FC = () => {
   const [ativosDisponiveis, setAtivosDisponiveis] = useState<string[]>([]);
   const [ativosSelecionados, setAtivosSelecionados] = useState<string[]>([]);
   const [inputAtivo, setInputAtivo] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const autocompleteRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [series, setSeries] = useState<Record<string, SerieAtivo[]>>({});
   const [correlacao, setCorrelacao] = useState<any>(null);
   const [covariancia, setCovariancia] = useState<any>(null);
@@ -179,11 +185,111 @@ const VisualizacaoDados: React.FC = () => {
     }
   }, [ativosSelecionados]);
 
+  // Fechar dropdown ao clicar fora e gerenciar posição
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+        setSelectedIndex(-1);
+      }
+    };
+
+    const handleResize = () => {
+      if (showDropdown) {
+        updateDropdownPosition();
+      }
+    };
+
+    const handleScroll = () => {
+      if (showDropdown) {
+        updateDropdownPosition();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll, true);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [showDropdown]);
+
+  // Filtrar ativos disponíveis baseado no input
+  const ativosFiltrados = ativosDisponiveis.filter(ativo =>
+    ativo.toLowerCase().includes(inputAtivo.toLowerCase()) &&
+    !ativosSelecionados.includes(ativo)
+  );
+
   // Adicionar ativo selecionado
-  const handleAdicionarAtivo = () => {
-    if (!inputAtivo || ativosSelecionados.includes(inputAtivo)) return;
-    setAtivosSelecionados([...ativosSelecionados, inputAtivo]);
+  const handleAdicionarAtivo = (ativo?: string) => {
+    const ativoParaAdicionar = ativo || inputAtivo;
+    if (!ativoParaAdicionar || ativosSelecionados.includes(ativoParaAdicionar)) return;
+    setAtivosSelecionados([...ativosSelecionados, ativoParaAdicionar]);
     setInputAtivo('');
+    setShowDropdown(false);
+    setSelectedIndex(-1);
+  };
+
+  // Calcular posição do dropdown
+  const updateDropdownPosition = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
+  // Gerenciar input do usuário
+  const handleInputChange = (value: string) => {
+    setInputAtivo(value);
+    if (value.length > 0) {
+      updateDropdownPosition();
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+    setSelectedIndex(-1);
+  };
+
+  // Navegar com teclado
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showDropdown) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < ativosFiltrados.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0 && ativosFiltrados[selectedIndex]) {
+          handleAdicionarAtivo(ativosFiltrados[selectedIndex]);
+        } else if (inputAtivo) {
+          handleAdicionarAtivo();
+        }
+        break;
+      case 'Escape':
+        setShowDropdown(false);
+        setSelectedIndex(-1);
+        break;
+    }
+  };
+
+  // Selecionar ativo do dropdown
+  const handleSelectAtivo = (ativo: string) => {
+    handleAdicionarAtivo(ativo);
   };
 
   // Remover ativo
@@ -845,24 +951,29 @@ const VisualizacaoDados: React.FC = () => {
                 <FontAwesomeIcon icon={faSearch} className="label-icon" />
                 <label>Adicionar Ativo:</label>
               </div>
-              <div className="autocomplete-bar">
-                <input
-                  type="text"
-                  list="ativos-list"
-                  value={inputAtivo}
-                  onChange={e => setInputAtivo(e.target.value)}
-                  placeholder="Digite o código do ativo (ex: PETR4)"
-                  className="custom-input"
-                />
-                <datalist id="ativos-list">
-                  {ativosDisponiveis.map(ativo => (
-                    <option key={ativo} value={ativo} />
-                  ))}
-                </datalist>
-                <CustomButton onClick={handleAdicionarAtivo} className="btn-primary" isDarkMode={isDarkMode}>
-                  <FontAwesomeIcon icon={faPlus} />
-                  Adicionar
-                </CustomButton>
+              <div className="autocomplete-container" ref={autocompleteRef}>
+                <div className="autocomplete-bar">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputAtivo}
+                    onChange={e => handleInputChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => {
+                      if (inputAtivo) {
+                        updateDropdownPosition();
+                        setShowDropdown(true);
+                      }
+                    }}
+                    placeholder="Digite o código do ativo (ex: PETR4)"
+                    className="custom-input"
+                    autoComplete="off"
+                  />
+                  <CustomButton onClick={() => handleAdicionarAtivo()} className="btn-primary" isDarkMode={isDarkMode}>
+                    <FontAwesomeIcon icon={faPlus} />
+                    Adicionar
+                  </CustomButton>
+                </div>
               </div>
               <div className="ativos-selecionados-list">
                 {ativosSelecionados.map(ativo => (
@@ -1484,6 +1595,39 @@ const VisualizacaoDados: React.FC = () => {
           type={toast.type}
           onClose={() => setShowToast(false)}
         />
+      )}
+      
+      {/* Dropdown do autocomplete renderizado via portal */}
+      {showDropdown && ativosFiltrados.length > 0 && createPortal(
+        <div 
+          className="autocomplete-dropdown"
+          style={{
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+            width: Math.max(dropdownPosition.width, 300)
+          }}
+        >
+          {ativosFiltrados.slice(0, 10).map((ativo, index) => (
+            <div
+              key={ativo}
+              className={`autocomplete-item ${index === selectedIndex ? 'selected' : ''}`}
+              onClick={() => handleSelectAtivo(ativo)}
+              onMouseEnter={() => setSelectedIndex(index)}
+            >
+              <FontAwesomeIcon icon={faChartBar} className="item-icon" />
+              <span className="item-text">{ativo}</span>
+              {ativosSelecionados.includes(ativo) && (
+                <span className="item-added">Já adicionado</span>
+              )}
+            </div>
+          ))}
+          {ativosFiltrados.length > 10 && (
+            <div className="autocomplete-more">
+              +{ativosFiltrados.length - 10} mais ativos disponíveis
+            </div>
+          )}
+        </div>,
+        document.body
       )}
     </div>
   );
