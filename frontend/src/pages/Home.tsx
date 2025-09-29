@@ -35,6 +35,7 @@ import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
+import ConfirmPopup from '../components/ConfirmPopup';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import './Home.css';
@@ -50,6 +51,7 @@ const Home: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, isSidebarExpanded, toggleSidebar, isBackgroundAnimationEnabled, toggleBackgroundAnimation, selectedBackgroundColor, setSelectedBackgroundColor } = useTheme();
   const { userRole, user } = useUser();
@@ -116,24 +118,34 @@ const Home: React.FC = () => {
   }, []);
 
   const handleDeleteUser = async () => {
-    if (window.confirm('Tem certeza que deseja excluir sua conta? Esta ação também excluirá todos os seus clientes e não pode ser desfeita.')) {
-      try {
-        await axios.delete('http://localhost:5000/delete-user', {
-          withCredentials: true,
-        });
-        setToastMessage('Conta excluída com sucesso!');
-        setToastType('success');
-        setShowToast(true);
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
-      } catch (error: any) {
-        console.error('Erro ao excluir usuário:', error);
-        setToastMessage(error.response?.data?.error || 'Erro ao excluir usuário');
-        setToastType('error');
-        setShowToast(true);
-      }
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    try {
+      await axios.delete('http://localhost:5000/delete-user', {
+        withCredentials: true,
+      });
+      setToastMessage('Conta excluída com sucesso!');
+      setToastType('success');
+      setShowToast(true);
+      setShowDeleteConfirm(false);
+      
+      // Redirecionar para login após 2 segundos
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (error: any) {
+      console.error('Erro ao excluir usuário:', error);
+      setToastMessage(error.response?.data?.error || 'Erro ao excluir usuário');
+      setToastType('error');
+      setShowToast(true);
+      setShowDeleteConfirm(false);
     }
+  };
+
+  const cancelDeleteUser = () => {
+    setShowDeleteConfirm(false);
   };
 
   const handleUpdateUser = async () => {
@@ -427,14 +439,15 @@ const Home: React.FC = () => {
                     Cancelar
                   </CustomButton>
                   
-                  <CustomButton
-                    onClick={handleDeleteUser}
-                    className="delete-button"
-                    isDarkMode={isDarkMode}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                    Excluir Conta
-                  </CustomButton>
+                  <div title="Excluir Conta">
+                    <CustomButton
+                      onClick={handleDeleteUser}
+                      className="delete-button icon-only"
+                      isDarkMode={isDarkMode}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </CustomButton>
+                  </div>
                 </div>
               </div>
             </CustomCard>
@@ -449,6 +462,18 @@ const Home: React.FC = () => {
           onClose={() => setShowToast(false)}
         />
       )}
+      
+      {/* Popup de confirmação para exclusão de usuário */}
+      <ConfirmPopup
+        isOpen={showDeleteConfirm}
+        title="Excluir Conta"
+        message="Tem certeza que deseja excluir sua conta? Esta ação também excluirá todos os seus clientes e não pode ser desfeita."
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        onConfirm={confirmDeleteUser}
+        onCancel={cancelDeleteUser}
+        type="danger"
+      />
     </div>
   );
 };
