@@ -23,7 +23,8 @@ import {
   faExpand,
   faCompress,
   faPlay,
-  faRefresh
+  faRefresh,
+  faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
@@ -188,7 +189,14 @@ const VisualizacaoDados: React.FC = () => {
   // Fechar dropdown ao clicar fora e gerenciar posição
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+      // Verificar se o clique foi no dropdown ou no input
+      const target = event.target as Element;
+      const isDropdownClick = target.closest('.autocomplete-dropdown');
+      const isInputClick = autocompleteRef.current?.contains(target);
+      
+      console.log('Click outside check:', { isDropdownClick, isInputClick, target: target.className });
+      
+      if (!isDropdownClick && !isInputClick) {
         setShowDropdown(false);
         setSelectedIndex(-1);
       }
@@ -289,7 +297,21 @@ const VisualizacaoDados: React.FC = () => {
 
   // Selecionar ativo do dropdown
   const handleSelectAtivo = (ativo: string) => {
-    handleAdicionarAtivo(ativo);
+    console.log('Selecionando ativo:', ativo); // Debug
+    if (ativo && !ativosSelecionados.includes(ativo)) {
+      setAtivosSelecionados(prev => [...prev, ativo]);
+      setInputAtivo('');
+      setSelectedIndex(-1);
+      
+      // Mostrar toast de confirmação
+      setToast({ message: `Ativo ${ativo} adicionado com sucesso!`, type: 'success' });
+      setShowToast(true);
+      
+      // Fechar dropdown com pequeno delay para garantir que o clique seja processado
+      setTimeout(() => {
+        setShowDropdown(false);
+      }, 100);
+    }
   };
 
   // Remover ativo
@@ -573,6 +595,28 @@ const VisualizacaoDados: React.FC = () => {
     }
     return acc;
   }, {} as Record<string, number>);
+
+  // Calcular datas mais antigas e mais recentes para cada ativo
+  const datasAtivos = ativosSelecionados.reduce((acc, ativo) => {
+    if (series[ativo] && series[ativo].length > 0) {
+      const dadosFiltrados = filtrarDadosPorIntervalo(series[ativo]);
+      if (dadosFiltrados.length > 0) {
+        // Ordenar por data
+        const dadosOrdenados = [...dadosFiltrados].sort((a, b) => {
+          const da = new Date(a.data.split('/').reverse().join('-'));
+          const db = new Date(b.data.split('/').reverse().join('-'));
+          return da.getTime() - db.getTime();
+        });
+        
+        acc[ativo] = {
+          dataMaisAntiga: dadosOrdenados[0].data,
+          dataMaisRecente: dadosOrdenados[dadosOrdenados.length - 1].data,
+          totalDados: dadosOrdenados.length
+        };
+      }
+    }
+    return acc;
+  }, {} as Record<string, { dataMaisAntiga: string; dataMaisRecente: string; totalDados: number }>);
 
   // Preparar dados para gráfico de linha
   const lineChartData = {
@@ -977,13 +1021,34 @@ const VisualizacaoDados: React.FC = () => {
               </div>
               <div className="ativos-selecionados-list">
                 {ativosSelecionados.map(ativo => (
-                  <span key={ativo} className="ativo-badge">
-                    <FontAwesomeIcon icon={faChartBar} className="badge-icon" />
-                    {ativo}
-                    <button className="remove-btn" onClick={() => handleRemoverAtivo(ativo)}>
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </span>
+                  <div key={ativo} className="ativo-card">
+                    <div className="ativo-header">
+                      <FontAwesomeIcon icon={faChartBar} className="badge-icon" />
+                      <span className="ativo-nome">{ativo}</span>
+                      <button className="remove-btn" onClick={() => handleRemoverAtivo(ativo)}>
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    </div>
+                    {datasAtivos[ativo] && (
+                      <div className="ativo-info">
+                        <div className="info-item">
+                          <FontAwesomeIcon icon={faCalendarAlt} className="info-icon" />
+                          <span className="info-label">Início:</span>
+                          <span className="info-value">{datasAtivos[ativo].dataMaisAntiga}</span>
+                        </div>
+                        <div className="info-item">
+                          <FontAwesomeIcon icon={faCalendarAlt} className="info-icon" />
+                          <span className="info-label">Fim:</span>
+                          <span className="info-value">{datasAtivos[ativo].dataMaisRecente}</span>
+                        </div>
+                        <div className="info-item">
+                          <FontAwesomeIcon icon={faDatabase} className="info-icon" />
+                          <span className="info-label">Total:</span>
+                          <span className="info-value">{datasAtivos[ativo].totalDados} registros</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -1606,12 +1671,17 @@ const VisualizacaoDados: React.FC = () => {
             left: dropdownPosition.left,
             width: Math.max(dropdownPosition.width, 300)
           }}
+          onClick={(e) => e.stopPropagation()} // Prevenir propagação do clique
         >
           {ativosFiltrados.slice(0, 10).map((ativo, index) => (
             <div
               key={ativo}
               className={`autocomplete-item ${index === selectedIndex ? 'selected' : ''}`}
-              onClick={() => handleSelectAtivo(ativo)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSelectAtivo(ativo);
+              }}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <FontAwesomeIcon icon={faChartBar} className="item-icon" />

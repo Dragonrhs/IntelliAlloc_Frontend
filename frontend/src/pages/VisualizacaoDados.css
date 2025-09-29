@@ -410,33 +410,41 @@
 /* Ativos selecionados */
 .ativos-selecionados-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.ativo-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(79, 172, 254, 0.2);
+.ativo-card {
+  background: rgba(79, 172, 254, 0.1);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(79, 172, 254, 0.3);
-  border-radius: 20px;
-  padding: 8px 12px;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
+  border: 1px solid rgba(79, 172, 254, 0.2);
+  border-radius: 12px;
+  padding: 15px;
   transition: all 0.3s ease;
 }
 
-.ativo-badge:hover {
-  background: rgba(79, 172, 254, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+.ativo-card:hover {
+  background: rgba(79, 172, 254, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.2);
+}
+
+.ativo-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ativo-nome {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
 }
 
 .badge-icon {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #4facfe;
 }
 
@@ -445,20 +453,58 @@
   border: none;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 6px;
   border-radius: 50%;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 }
 
 .remove-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   transform: scale(1.1);
+}
+
+.ativo-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-icon {
+  font-size: 0.9rem;
+  color: #4facfe;
+  flex-shrink: 0;
+}
+
+.info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 13px;
+  color: white;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
 }
 
 /* Botão da carteira eficiente */
@@ -947,9 +993,25 @@
   color: rgba(0, 0, 0, 0.5) !important;
 }
 
-.visualizacao-dados-page.light-mode .ativo-badge {
-  background: rgba(102, 126, 234, 0.2) !important;
-  border-color: rgba(102, 126, 234, 0.3) !important;
+.visualizacao-dados-page.light-mode .ativo-card {
+  background: rgba(102, 126, 234, 0.1) !important;
+  border-color: rgba(102, 126, 234, 0.2) !important;
+}
+
+.visualizacao-dados-page.light-mode .ativo-nome {
+  color: #333 !important;
+}
+
+.visualizacao-dados-page.light-mode .info-item {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.visualizacao-dados-page.light-mode .info-label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.visualizacao-dados-page.light-mode .info-value {
   color: #333 !important;
 }
 
@@ -1053,7 +1115,16 @@
   }
   
   .ativos-selecionados-list {
-    justify-content: center;
+    gap: 10px;
+  }
+  
+  .ativo-info {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .info-item {
+    padding: 6px 10px;
   }
   
   .autocomplete-dropdown {
