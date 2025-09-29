@@ -6,6 +6,7 @@ import CustomButton from '../components/CustomButton';
 import CustomCard from '../components/CustomCard';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar'; // Importar o novo componente Navbar
+import Toast from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import './Register.css';
 
@@ -15,6 +16,9 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -26,16 +30,34 @@ const Register: React.FC = () => {
         email,
         password,
       });
-      alert('Registro realizado com sucesso! Faça login.');
-      navigate('/login');
+      
+      // Mostrar toast de sucesso
+      setToastMessage('Registro realizado com sucesso! Redirecionando para login...');
+      setToastType('success');
+      setShowToast(true);
+      
+      // Redirecionar após 2 segundos para dar tempo de ver o toast
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+      
     } catch (error: any) {
       console.error('Erro ao registrar:', error);
       setErrorMessage(error.response?.data?.error || 'Erro ao registrar');
+      
+      // Mostrar toast de erro
+      setToastMessage(error.response?.data?.error || 'Erro ao registrar');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
+  };
+
+  const handleCloseToast = () => {
+    setShowToast(false);
   };
 
   return (
@@ -105,6 +127,16 @@ const Register: React.FC = () => {
           </CustomButton>
         </CustomCard>
       </div>
+      
+      {/* Toast de notificação */}
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={handleCloseToast}
+          duration={4000}
+        />
+      )}
     </div>
   );
 };
