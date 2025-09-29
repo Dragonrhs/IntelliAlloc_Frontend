@@ -1,0 +1,229 @@
+.confirm-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.confirm-popup {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  animation: slideInUp 0.3s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.confirm-popup.danger {
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.confirm-popup.warning {
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.confirm-popup.info {
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.confirm-popup-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.confirm-popup-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.confirm-popup-content {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.confirm-popup-content p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.confirm-popup-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.confirm-popup-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 120px;
+}
+
+.confirm-popup-button.cancel {
+  background: rgba(0, 0, 0, 0.1);
+  color: #666;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.confirm-popup-button.cancel:hover {
+  background: rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.confirm-popup-button.confirm {
+  color: white;
+  border: 2px solid transparent;
+}
+
+.confirm-popup-button.confirm.danger {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+.confirm-popup-button.confirm.danger:hover {
+  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(244, 67, 54, 0.3);
+}
+
+.confirm-popup-button.confirm.warning {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.confirm-popup-button.confirm.warning:hover {
+  background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+}
+
+.confirm-popup-button.confirm.info {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+.confirm-popup-button.confirm.info:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modo escuro */
+.home-container.dark-mode .confirm-popup {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.home-container.dark-mode .confirm-popup-header h3 {
+  color: white;
+}
+
+.home-container.dark-mode .confirm-popup-content p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.home-container.dark-mode .confirm-popup-button.cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.home-container.dark-mode .confirm-popup-button.cancel:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .confirm-popup {
+    padding: 25px;
+    max-width: 90%;
+  }
+  
+  .confirm-popup-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .confirm-popup-button {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirm-popup {
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .confirm-popup-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .confirm-popup-content p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Modo claro */
+.home-container.light-mode .confirm-popup {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.home-container.light-mode .confirm-popup-header h3 {
+  color: #333 !important;
+}
+
+.home-container.light-mode .confirm-popup-content p {
+  color: #666 !important;
+}
+
+.home-container.light-mode .confirm-popup-button.cancel {
+  background: rgba(0, 0, 0, 0.1) !important;
+  color: #666 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.home-container.light-mode .confirm-popup-button.cancel:hover {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
