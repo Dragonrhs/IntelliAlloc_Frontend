@@ -267,6 +267,7 @@
 
 .tabela-container {
   overflow-x: auto;
+  overflow-y: visible;
   margin-bottom: 30px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -274,10 +275,13 @@
   border-radius: 20px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   animation: slideInUp 0.8s ease 0.4s both;
+  max-width: 100%;
+  width: 100%;
 }
 
 .tabela-historico {
   width: 100%;
+  min-width: 1000px; /* Largura mínima para garantir que todas as colunas sejam visíveis */
   border-collapse: collapse;
 }
 
@@ -832,6 +836,39 @@
 @keyframes slideIn {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* Estilos para scroll horizontal */
+.tabela-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tabela-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.tabela-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.tabela-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Estilos para modo claro */
+.historico-classificacao-container.light-mode .tabela-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.historico-classificacao-container.light-mode .tabela-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.historico-classificacao-container.light-mode .tabela-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal-resumo-header {
