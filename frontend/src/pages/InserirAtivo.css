@@ -104,6 +104,8 @@ body {
   padding: 90px 30px 30px;
   transition: margin-left 0.3s ease;
   animation: slideInUp 0.6s ease-out;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 @keyframes slideInUp {
@@ -128,12 +130,46 @@ body {
   border-radius: 24px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.6s ease-out 0.2s both;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .app-container.light-mode .form-container {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilização da barra de rolagem */
+.form-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  background: rgba(79, 172, 254, 0.5);
+  border-radius: 10px;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 172, 254, 0.8);
+}
+
+/* Estilização da barra de rolagem para modo claro */
+.app-container.light-mode .form-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.app-container.light-mode .form-container::-webkit-scrollbar-thumb {
+  background: rgba(79, 172, 254, 0.4);
+}
+
+.app-container.light-mode .form-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 172, 254, 0.6);
 }
 
 @keyframes fadeIn {
