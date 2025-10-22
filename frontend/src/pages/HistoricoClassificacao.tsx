@@ -329,9 +329,11 @@ const HistoricoClassificacao: React.FC = () => {
           toggleTheme={toggleTheme}
           isFullSidebar={true}
         />
-        <div className="main-content">
+        <div className="content-container">
           <Navbar isDarkMode={isDarkMode} showAvatar={true} />
-          <div className="loading">Carregando histórico de classificações...</div>
+          <div className="main-content">
+            <div className="loading">Carregando histórico de classificações...</div>
+          </div>
         </div>
       </div>
     );
@@ -349,9 +351,10 @@ const HistoricoClassificacao: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className="main-content">
+      <div className="content-container">
         <Navbar isDarkMode={isDarkMode} showAvatar={true} />
-        <div className="historico-classificacao-content">
+        <div className="main-content">
+          <div className="historico-classificacao-content">
           {error && <div className="error-message">{error}</div>}
 
           {/* Header modernizado */}
@@ -748,6 +751,7 @@ const HistoricoClassificacao: React.FC = () => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

@@ -169,9 +169,11 @@ const HistoricoAtivo: React.FC = () => {
           toggleTheme={toggleTheme}
           isFullSidebar={true}
         />
-        <div className="main-content">
+        <div className="content-container">
           <Navbar isDarkMode={isDarkMode} showAvatar={true} />
-          <div className="loading">Carregando histórico...</div>
+          <div className="main-content">
+            <div className="loading">Carregando histórico...</div>
+          </div>
         </div>
       </div>
     );
@@ -190,9 +192,11 @@ const HistoricoAtivo: React.FC = () => {
           toggleTheme={toggleTheme}
           isFullSidebar={true}
         />
-        <div className="main-content">
+        <div className="content-container">
           <Navbar isDarkMode={isDarkMode} showAvatar={true} />
-          <div className="error">{error}</div>
+          <div className="main-content">
+            <div className="error">{error}</div>
+          </div>
         </div>
       </div>
     );
@@ -210,9 +214,10 @@ const HistoricoAtivo: React.FC = () => {
         toggleTheme={toggleTheme}
         isFullSidebar={true}
       />
-      <div className={`main-content ${isSidebarExpanded ? 'sidebar-expanded' : ''}`} style={{ marginLeft: isSidebarExpanded ? '200px' : '60px' }}>
+      <div className="content-container">
         <Navbar isDarkMode={isDarkMode} showAvatar={true} />
-        <div className="historico-ativos-content">
+        <div className="main-content">
+          <div className="historico-ativos-content">
           {/* Header modernizado */}
           <div className="historico-header-modern">
             <div className="header-content">
@@ -309,6 +314,7 @@ const HistoricoAtivo: React.FC = () => {
               ))}
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

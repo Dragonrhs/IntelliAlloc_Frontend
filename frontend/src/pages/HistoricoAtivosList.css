@@ -24,19 +24,18 @@
   }
 }
 
-.main-content {
+/* Container para o conteúdo principal */
+.content-container {
   flex: 1;
-  padding: 90px 30px 30px;
-  transition: margin-left 0.3s ease;
-  width: calc(100% - 60px);
-  margin-left: 60px;
-  overflow-y: auto;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.main-content.sidebar-expanded {
-  width: calc(100% - 200px);
-  margin-left: 200px;
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .historico-ativos-content {
@@ -950,7 +949,7 @@
 /* Responsividade geral */
 @media (max-width: 768px) {
   .main-content {
-    padding: 80px 20px 20px;
+    padding: 15px;
   }
   
   .historico-header-modern {
@@ -980,7 +979,7 @@
 
 @media (max-width: 480px) {
   .main-content {
-    padding: 70px 15px 15px;
+    padding: 10px;
   }
   
   .header-title h1 {
